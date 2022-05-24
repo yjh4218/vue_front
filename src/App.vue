@@ -23,6 +23,7 @@ export default {
   position:fixed; 
   margin-top: 20px;
   margin-left: 220px;
+  width: 80vw;
   
 }
 .spanSel{

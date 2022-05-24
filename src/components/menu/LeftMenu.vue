@@ -9,6 +9,51 @@
           </div>
         </li>
         <li id = 'catalogue'>
+          제품 관리
+          <div>
+            <router-link to="/productIn">신규 제품 등록</router-link>
+          </div> 
+          <div>
+            <router-link to="/productSel">제품 조회</router-link>
+          </div> 
+          <div>
+            <router-link to="/productDel">제품 삭제</router-link>     
+          </div>
+          <div>
+            <router-link to="/productUp">제품 정보 수정</router-link>
+          </div>  
+        </li>
+        <li id = 'catalogue'>
+          제품 판매량 관리
+          <div>
+            <router-link to="/incomingIn">입고 검수 등록</router-link>
+          </div> 
+          <div>
+            <router-link to="/incomingSel">입고 검수 조회</router-link>
+          </div> 
+          <div>
+            <router-link to="/incomingDel">입고 검수 삭제</router-link>     
+          </div>
+          <div>
+            <router-link to="/incomingUp">입고 검수 수정</router-link>
+          </div>  
+        </li>
+        <li id = 'catalogue'>
+          제조사 관리
+          <div>
+            <router-link to="/incomingIn">입고 검수 등록</router-link>
+          </div> 
+          <div>
+            <router-link to="/incomingSel">입고 검수 조회</router-link>
+          </div> 
+          <div>
+            <router-link to="/incomingDel">입고 검수 삭제</router-link>     
+          </div>
+          <div>
+            <router-link to="/incomingUp">입고 검수 수정</router-link>
+          </div>  
+        </li>
+        <li id = 'catalogue'>
           입고 검수 관리
           <div>
             <router-link to="/incomingIn">입고 검수 등록</router-link>
@@ -23,18 +68,23 @@
             <router-link to="/incomingUp">입고 검수 수정</router-link>
           </div>  
         </li>
-        <!-- <li>입고검수관리</li>
-        <li>제품 및 판매량 관리</li>
-        <li>클레임 관리</li>
-        <li>제조사 관리</li> -->
-        <!-- <li id='company'>
-          <div>Welcomt to Inventory</div>
-          <div>Seoul Gangnam <br> ... </div>
-          <div>@copyright demnodey</div>
-        </li> -->
+        <li id = 'catalogue'>
+          클레임 관리
+          <div>
+            <router-link to="/incomingIn">입고 검수 등록</router-link>
+          </div> 
+          <div>
+            <router-link to="/incomingSel">입고 검수 조회</router-link>
+          </div> 
+          <div>
+            <router-link to="/incomingDel">입고 검수 삭제</router-link>     
+          </div>
+          <div>
+            <router-link to="/incomingUp">입고 검수 수정</router-link>
+          </div>  
+        </li>
       </ul>
     </div>
-    <!-- <img id='left_btn' @click='toggle' src='../assets/images/left_btn.png'> -->
   </div>
 </template>
 <script>

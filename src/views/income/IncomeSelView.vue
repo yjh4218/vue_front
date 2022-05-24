@@ -4,15 +4,19 @@
     <div>
       <span clas>
         제품명 <input type="text" />
-        <button class="btnSel">검색</button>
+        <b-button variant="primary" class="btnSel">검색</b-button>
       </span>
       <span>
-        SKU-NO <input type="text" />
-        <button class="btnSel">검색</button>
+        SKU-NO <input type="number" />
+        <b-button variant="primary" class="btnSel">검색</b-button>
+      </span>
+       <span>
+        브랜드명 <input type="text" />
+        <b-button variant="primary" class="btnSel">검색</b-button>
       </span>
       <span>
         날짜 <input type="date" /> ~ <input type="date" />
-        <button class="btnSel">검색</button>
+        <b-button variant="primary" class="btnSel">검색</b-button>
       </span>
     </div>
     <div>
