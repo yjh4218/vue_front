@@ -1,6 +1,6 @@
 <template>
   <div>
-      신규 클레임 추가
+      제품 판매량 수정
   </div>
 </template>
 

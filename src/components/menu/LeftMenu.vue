@@ -11,46 +11,46 @@
         <li id = 'catalogue'>
           제품 관리
           <div>
-            <router-link to="/productIn">신규 제품 등록</router-link>
+            <router-link to="/productIn">신규 상품 등록</router-link>
           </div> 
           <div>
-            <router-link to="/productSel">제품 조회</router-link>
+            <router-link to="/productSel">상품 조회</router-link>
           </div> 
           <div>
-            <router-link to="/productDel">제품 삭제</router-link>     
+            <router-link to="/productDel">상품 삭제</router-link>     
           </div>
           <div>
-            <router-link to="/productUp">제품 정보 수정</router-link>
+            <router-link to="/productUp">상품 정보 수정</router-link>
           </div>  
         </li>
         <li id = 'catalogue'>
           제품 판매량 관리
           <div>
-            <router-link to="/incomingIn">입고 검수 등록</router-link>
+            <router-link to="/sellIn">판매량 등록</router-link>
           </div> 
           <div>
-            <router-link to="/incomingSel">입고 검수 조회</router-link>
+            <router-link to="/sellSel">판매량 조회</router-link>
           </div> 
           <div>
-            <router-link to="/incomingDel">입고 검수 삭제</router-link>     
+            <router-link to="/sellDel">판매량 삭제</router-link>     
           </div>
           <div>
-            <router-link to="/incomingUp">입고 검수 수정</router-link>
+            <router-link to="/sellUp">판매량 수정</router-link>
           </div>  
         </li>
         <li id = 'catalogue'>
           제조사 관리
           <div>
-            <router-link to="/incomingIn">입고 검수 등록</router-link>
+            <router-link to="/makerIn">제조사 등록</router-link>
           </div> 
           <div>
-            <router-link to="/incomingSel">입고 검수 조회</router-link>
+            <router-link to="/makerSel">제조사 조회</router-link>
           </div> 
           <div>
-            <router-link to="/incomingDel">입고 검수 삭제</router-link>     
+            <router-link to="/makerDel">제조사 삭제</router-link>     
           </div>
           <div>
-            <router-link to="/incomingUp">입고 검수 수정</router-link>
+            <router-link to="/makerUp">제조사 수정</router-link>
           </div>  
         </li>
         <li id = 'catalogue'>
@@ -71,16 +71,16 @@
         <li id = 'catalogue'>
           클레임 관리
           <div>
-            <router-link to="/incomingIn">입고 검수 등록</router-link>
+            <router-link to="/claimIn">클레임 등록</router-link>
           </div> 
           <div>
-            <router-link to="/incomingSel">입고 검수 조회</router-link>
+            <router-link to="/claimSel">클레임 조회</router-link>
           </div> 
           <div>
-            <router-link to="/incomingDel">입고 검수 삭제</router-link>     
+            <router-link to="/claimDel">클레임 삭제</router-link>     
           </div>
           <div>
-            <router-link to="/incomingUp">입고 검수 수정</router-link>
+            <router-link to="/claimUp">클레임 수정</router-link>
           </div>  
         </li>
       </ul>
@@ -139,11 +139,11 @@ export default {
     /* text-decoration: underline; */
   }
   .left ul {padding: 0 30px,}
-  .left ul li { font: size 20px;  height:75px; font-family: 'Nanum Gothic', sans-serif;} 
-  /* .left ul li#logo {font-family: 'Passion One', cursive; font-size:3vw; font-size:x-large; height:170px;}
-  .left ul li#logo div {line-height: 0.8} */
-  .left ul li#catalogue {font-size:15px; height:170px;}
-  .left ul li#catalogue div {line-height: 0.8; font-size: 19px; padding: 5px;}
+  .left ul li { font: size 20px;  height:35px; font-family: 'Nanum Gothic', sans-serif;} 
+  .left ul li#logo {font-size:20px; height: 50px;}
+  /* .left ul li#logo div {line-height: 0.8} */
+  .left ul li#catalogue {font-size:18px; height:160px;}
+  .left ul li#catalogue div {line-height: 0.8; font-size: 15px; padding: 8px;}
   .left ul li#company {font-size:1vw; margin-top:150px; }
   #left_btn {position:fixed; top:495px; left:-60px; cursor:pointer}
 </style>

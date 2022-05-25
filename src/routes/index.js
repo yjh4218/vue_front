@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from 'vue-router';
 import mainpage from '../views/MainPage.vue';
-import IncomeSelView from '../views/IncomeSelView.vue';
+import IncomeSelView from '../views/income/IncomeSelView.vue';
 import incomedelview from '../views/income/IncomeDelView.vue';
 import incomeupview from '../views/income/IncomeUpView.vue';
 import incomeinview from '../views/income/IncomeInView.vue';
@@ -9,18 +9,18 @@ import productSelView from '../views/product/ProductSelView.vue';
 import productDelView from '../views/product/ProductDelView.vue';
 import productUpView from '../views/product/ProductUpView.vue';
 import productInView from '../views/product/ProductInView.vue';
-import sellSelView from '../views/product/SellSelView.vue';
-import sellDelView from '../views/product/SellDelView.vue';
-import sellInView from '../views/product/SellInView.vue';
-import sellUpView from '../views/product/SellUplView.vue';
+import sellSelView from '../views/sell/SellSelView.vue';
+import sellDelView from '../views/sell/SellDelView.vue';
+import sellInView from '../views/sell/SellInView.vue';
+import sellUpView from '../views/sell/SellUpView.vue';
 import makerSelView from '../views/maker/MakerSelView.vue';
 import makerDelView from '../views/maker/MakerDelView.vue';
 import makerUpView from '../views/maker/MakerUpView.vue';
-import makerInView from '../views/maker/MakeInlView.vue';
+import makerInView from '../views/maker/MakerInView.vue';
 import claimSelView from '../views/claim/ClaimSelView.vue';
 import claimDelView from '../views/claim/ClaimDelView.vue';
 import claimInView from '../views/claim/ClaimInView.vue';
-import claimUpView from '../views/claim/ClaiUplView.vue';
+import claimUpView from '../views/claim/ClaimUpView.vue';
 
 Vue.use(VueRouter);
 

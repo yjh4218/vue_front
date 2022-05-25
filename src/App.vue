@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    
    <left-menu></left-menu>
     <transition name="page">
       <router-view></router-view>
@@ -43,7 +42,7 @@ table{
   border: 2px solid black;
 }
 td, th {
-  border: 10px solid ;
+  border: 1px solid black ;
   padding: 5px;
   border-collapse: collapse;
   background-clip: padding-box;
