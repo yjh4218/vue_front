@@ -1,24 +1,7 @@
 <template>
   <div class="body">
     <div class="title">입고검수 조회</div>
-    <div>
-      <span clas>
-        제품명 <input type="text" />
-        <b-button variant="primary" class="btnSel">검색</b-button>
-      </span>
-      <span>
-        SKU-NO <input type="number" />
-        <b-button variant="primary" class="btnSel">검색</b-button>
-      </span>
-       <span>
-        브랜드명 <input type="text" />
-        <b-button variant="primary" class="btnSel">검색</b-button>
-      </span>
-      <span>
-        날짜 <input type="date" /> ~ <input type="date" />
-        <b-button variant="primary" class="btnSel">검색</b-button>
-      </span>
-    </div>
+    <select-product></select-product>
     <div>
       <table>
         <tr>
@@ -46,7 +29,12 @@
 </template>
 
 <script>
+import SelectProduct from '../../components/select/SelectProduct.vue'
+
 export default {
+  components:{
+    SelectProduct 
+  },
   data() {
     return {
       items: [
