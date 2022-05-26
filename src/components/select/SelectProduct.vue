@@ -44,10 +44,13 @@
                     </b-input-group-prepend>
                 </b-input-group>
             </div>
-            <div class="col-md-6 mb-3" >
+            <div class="col-md-4 mb-3" >
                 <b-button variant="primary" class="btn_margin" >1주일 전</b-button>
                 <b-button variant="primary" class="btn_margin" >1개월 전</b-button>
                 <b-button variant="primary" class="btn_margin" >3개월 전</b-button>
+            </div>
+            <div class="col-md-2 mb-3 ">
+                <b-button  variant="primary" class="left-box" disabled="true">상품 조회</b-button>
             </div>
          </div>
     </div>
@@ -64,6 +67,9 @@ export default {
             beforeDate:'',
             afterDate:''
         }
+    },
+    created(){
+        // this.$store.dispatch("FETCH_USER", userName);
     }
 }
 </script>
@@ -72,5 +78,7 @@ export default {
 .btn_margin{
     margin-right: 5px;
 }
-
+.left-box{
+    float: right;
+}
 </style>
