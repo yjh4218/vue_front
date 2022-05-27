@@ -19,20 +19,27 @@ export default {
   data() {
       return {
         products:{
-          sku_no:'',
+          skuNo:'',
           productName:'',
           brandName:'',
-          maker:''
+          className:'',
+          maker:'',
+          makeDate:'',
+          expDate:''
         }
       }
   },
   created(){
     // this.$store.dispatch("FETCH_USER", userName);
-    axios.get('/selectProducts', this.products)
+    axios.get('/selectProducts')
         .then(response => {
           console.log(response);
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+        });
   }
 }
 </script>
