@@ -23,7 +23,7 @@
             <router-link to="/productUp">상품 정보 수정</router-link>
           </div>  
         </li>
-        <li id = 'catalogue'>
+        <!-- <li id = 'catalogue'>
           제품 판매량 관리
           <div>
             <router-link to="/sellIn">판매량 등록</router-link>
@@ -82,7 +82,7 @@
           <div>
             <router-link to="/claimUp">클레임 수정</router-link>
           </div>  
-        </li>
+        </li> -->
       </ul>
     </div>
   </div>
