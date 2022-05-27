@@ -50,7 +50,7 @@
                 <b-button variant="primary" class="btn_margin" >3개월 전</b-button>
             </div>
             <div class="col-md-2 mb-3 ">
-                <b-button  variant="primary" class="left-box" disabled="true">상품 조회</b-button>
+                <b-button  variant="primary" class="left-box" >상품 조회</b-button>
             </div>
          </div>
     </div>
@@ -68,9 +68,9 @@ export default {
             afterDate:''
         }
     },
-    created(){
-        // this.$store.dispatch("FETCH_USER", userName);
-    }
+    // created(){
+    //     // this.$store.dispatch("FETCH_USER", userName);
+    // }
 }
 </script>
 

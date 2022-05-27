@@ -4,16 +4,16 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    state: {
+    // state: {
         
-    },
-    getters: {
+    // },
+    // getters: {
         
-    },
-    mutations: {
+    // },
+    // mutations: {
         
-    },
-    actions: {
+    // },
+    // actions: {
         
-    }
-})``
+    // }
+})
