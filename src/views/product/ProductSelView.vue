@@ -2,15 +2,31 @@
   <div class="body">
       <div class="title">상품 조회</div>
       <select-product></select-product>
-      <div>
-        <b-table striped hover :product="products"></b-table>
+      <div class="tableCss">
+        <!-- <b-table striped hover :product="products"></b-table> -->
+        <table >
+          <thead>
+                <th v-for="item in header" v-bind:key="item.skuNo">{{item}}</th>
+            </thead>
+            <tbody>
+                <tr v-for="item in this.$store.state.allProducts" v-bind:key="item.skuNo">
+                    <td>{{ item.skuNo }}</td>
+                    <td>{{ item.productName }}</td>
+                    <td>{{ item.brandName }}</td>
+                    <td>{{ item.className }}</td>
+                    <td>{{ item.expDate }}</td>
+                    <td>{{ item.maker }}</td>
+                    <td>{{ item.makeDate }}</td>
+                    <!-- <td v-for="item in line" v-bind:key="item.skuNo">{{ item }}</td> -->
+                </tr>
+            </tbody>
+        </table>
       </div>
   </div>
 </template>
 
 <script>
 import SelectProduct from '../../components/select/SelectProduct.vue';
-import axios from "axios";
 
 export default {
   components:{
@@ -18,28 +34,11 @@ export default {
   },
   data() {
       return {
-        products:{
-          skuNo:'',
-          productName:'',
-          brandName:'',
-          className:'',
-          maker:'',
-          makeDate:'',
-          expDate:''
-        }
+        header:["skuNo", "제품명","브랜드명","분류", "유통기한", "제조사", "출시일자"]
       }
   },
   created(){
-    // this.$store.dispatch("FETCH_USER", userName);
-    axios.get('/selectProducts')
-        .then(response => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-        });
+    this.$store.dispatch("SELECT_ALL_PRODUCT", this.$route.name);
   }
 }
 </script>

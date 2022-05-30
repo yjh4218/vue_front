@@ -23,7 +23,6 @@ export default {
   margin-top: 20px;
   margin-left: 220px;
   width: 80vw;
-  
 }
 .spanSel{
   font-family: 'Nanum Gothic', sans-serif
@@ -55,5 +54,10 @@ td, th {
 .page-enter-from,
 .page-leave-to {
   opacity: 0;
+}
+.tableCss{
+  text-align: center;
+  height: 750px;
+  overflow: auto;
 }
 </style>
