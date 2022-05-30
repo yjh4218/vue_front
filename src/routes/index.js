@@ -60,6 +60,7 @@ export const router = new VueRouter({
     {
       // 제품 조회
       path: "/productSel",
+      name: "selectAllProduct",
       component: productSelView,
     },
     {
