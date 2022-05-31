@@ -46,6 +46,9 @@ td, th {
   border-collapse: collapse;
   background-clip: padding-box;
 }
+tr:hover{
+  background-color: coral
+}
 /* router transition */
 .page-enter-active,
 .page-leave-active {
@@ -59,5 +62,13 @@ td, th {
   text-align: center;
   height: 750px;
   overflow: auto;
+}
+.input-group-text{
+  height: 100%;
+}
+.chkBoxGroup{
+  display: inherit;
+  text-align: center;
+  margin: 8px;
 }
 </style>

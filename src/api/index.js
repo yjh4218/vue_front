@@ -11,15 +11,15 @@ function selectAllProduct() {
   //return axios.get(`${config.baseUrl}news/1.json`);
 }
 
-function selectProduct(sku_no, productName, brandName, maker) {
+function selectProduct(selectCon) {
   console.log("api : sku_no, productName, brandName, maker");
-  console.log(sku_no, productName, brandName, maker);
   return axios.get(config.productUrl + "selectProducts", {
     params: {
-      sku_no: sku_no,
-      productName: productName,
-      brandName: brandName,
-      maker:maker
+        sku_no: selectCon.sku_no,
+        productName: selectCon.productName,
+        brandName: selectCon.brandName,
+      maker: selectCon.maker,
+      selectChk : selectCon.selected
     }
   });
   //return axios.get(`${config.baseUrl}news/1.json`);
