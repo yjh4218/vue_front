@@ -3,11 +3,11 @@
     <div class="modal modal-overlay" @click.self="$emit('close')">
       <div class="modal-window">
         <div class="modal-content">
-          <slot/>
+          <slot />
         </div>
         <footer class="modal-footer">
           <slot name="footer">
-            <button @click="$emit('close')">Close</button>
+            <b-button variant="primary" @click="$emit('close')">close</b-button>
           </slot>
         </footer>
       </div>
@@ -38,13 +38,19 @@
 
   &-content {
     padding: 10px 20px;
+    border: 0px;
   }
 
   &-footer {
-    background: #ccc;
+
     padding: 10px;
     text-align: right;
+    border: 0px;
   }
+}
+
+.slotText{
+  text-align: center;
 }
 
 // 오버레이 트랜지션
