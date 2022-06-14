@@ -1,18 +1,18 @@
 <template>
   <div class="body">
-    <div class="title">신규 상품 등록</div>
+    <div class="title">출고 검사 등록</div>
     <div class="divInsert">
-      <product-input-list :propsdata="message"></product-input-list>
+      <test-input-list :propsdata="message"></test-input-list>
     </div>
   </div>
 </template>
 
 <script>
-import productInputList from "../../components/ProductInputList.vue";
+import testInputList from "../../components/TestInputList.vue";
 
 export default {
   components: {
-    productInputList,
+    testInputList,
   },
   data() {
     return {
@@ -32,6 +32,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 
 </style>

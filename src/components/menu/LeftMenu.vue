@@ -16,12 +16,12 @@
           <div>
             <router-link to="/productSel">상품 조회</router-link>
           </div> 
-          <div>
+          <!-- <div>
             <router-link to="/productDel">상품 삭제</router-link>     
           </div>
           <div>
             <router-link to="/productUp">상품 정보 수정</router-link>
-          </div>  
+          </div>   -->
         </li>
         <!-- <li id = 'catalogue'>
           제품 판매량 관리
@@ -37,8 +37,8 @@
           <div>
             <router-link to="/sellUp">판매량 수정</router-link>
           </div>  
-        </li>
-        <li id = 'catalogue'>
+        </li> -->
+        <!-- <li id = 'catalogue'>
           제조사 관리
           <div>
             <router-link to="/makerIn">제조사 등록</router-link>
@@ -52,23 +52,23 @@
           <div>
             <router-link to="/makerUp">제조사 수정</router-link>
           </div>  
-        </li>
+        </li> -->
         <li id = 'catalogue'>
           입고 검수 관리
           <div>
-            <router-link to="/incomingIn">입고 검수 등록</router-link>
+            <router-link to="/testIn">입고 검수 등록</router-link>
           </div> 
           <div>
-            <router-link to="/incomingSel">입고 검수 조회</router-link>
+            <router-link to="/testSel">입고 검수 조회</router-link>
           </div> 
           <div>
-            <router-link to="/incomingDel">입고 검수 삭제</router-link>     
+            <router-link to="/testDel">입고 검수 삭제</router-link>     
           </div>
           <div>
-            <router-link to="/incomingUp">입고 검수 수정</router-link>
+            <router-link to="/testUp">입고 검수 수정</router-link>
           </div>  
         </li>
-        <li id = 'catalogue'>
+        <!-- <li id = 'catalogue'>
           클레임 관리
           <div>
             <router-link to="/claimIn">클레임 등록</router-link>
@@ -132,7 +132,7 @@ export default {
     min-width: 200px;
     /* max-width: 250px; */
     /* width:20vw;  */
-    height:1000px; 
+    height:100%; 
     background:rgba(98, 205, 255, 0.6); 
     padding:40px 0; 
     overflow: hidden;
