@@ -383,7 +383,7 @@
 </template>
 
 <script>
-import confirmModal from "../components/ConfirmModal.vue";
+import confirmModal from "./modal/ConfirmModal.vue";
 
 export default {
   components: {
@@ -445,7 +445,7 @@ export default {
     checkProductDup() {
       return this.$store.getters.getCheckProductDup;
     },
-    // 제품 추가 확인
+    // 제품 수정 확인
     checkUpdatdState(){
       return this.$store.getters.getUpdateProduct;
     },
@@ -563,7 +563,7 @@ export default {
     // 제품 수정일 경우 데이터 input에 입력
     updateData() {
       if (this.propsdata === "updateView") {
-        console.log("setData if 실행");
+        console.log("setData if 실행 : " + this.propsdata);
         this.skuNo = this.$store.state.getProduct.skuNo;
         this.productName = this.$store.state.getProduct.productName;
         this.brandName = this.$store.state.getProduct.brandName;
@@ -582,7 +582,7 @@ export default {
         this.note = this.$store.state.getProduct.note;
         this.inputRead = false;
       } else {
-        console.log("setData else 실행");
+        console.log("setData else 실행 : " + this.propsdata);
       }
     },
     // 제품 수정진행

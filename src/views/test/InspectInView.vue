@@ -2,17 +2,17 @@
   <div class="body">
     <div class="title">출고 검사 등록</div>
     <div class="divInsert">
-      <test-input-list :propsdata="message"></test-input-list>
+      <inspect-input-list :propsdata="message"></inspect-input-list>
     </div>
   </div>
 </template>
 
 <script>
-import testInputList from "../../components/TestInputList.vue";
+import inspectInputList from '../../components/InspectInputList.vue'
 
 export default {
   components: {
-    testInputList,
+    inspectInputList,
   },
   data() {
     return {

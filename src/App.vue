@@ -22,8 +22,9 @@ export default {
   position: fixed;
   margin-top: 20px;
   margin-left: 220px;
-  width: 80vw;
+  width: 82vw;
   height: 100%;
+  overflow: auto;
 }
 .divInsert{
   height: 80%;
@@ -65,7 +66,8 @@ tr:hover {
 }
 .tableCss {
   text-align: center;
-  height: 750px;
+  width: 100%;
+  height: 52vw;
   overflow: auto;
 }
 .input-group-text {

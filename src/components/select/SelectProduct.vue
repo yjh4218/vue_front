@@ -101,7 +101,7 @@
       </div>
       <div
         slot="bottom"
-        v-if="this.$route.name !== 'selectAllProduct'"
+        v-if="this.$route.name !== 'selectAllProduct' && this.$route.name !== 'inspectInView'"
         class="row"
       >
         <div class="col-md-6 mb-3">
@@ -118,21 +118,6 @@
               :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
               locale="en"
             ></b-form-datepicker>
-            <!-- <b-form-input
-              type="date"
-              v-model="beforeDate"
-              placeholder=""
-              value=""
-            ></b-form-input>
-            <b-form-input
-              type="date"
-              v-model="afterDate"
-              placeholder=""
-              value=""
-            ></b-form-input> -->
-            <!-- <b-input-group-prepend>
-                            <b-button variant="primary" @click="openModal">검색</b-button>
-                        </b-input-group-prepend> -->
           </b-input-group>
         </div>
         <div class="col-md-4 mb-3">
@@ -191,28 +176,18 @@ export default {
   methods: {
     // 데이터 조회
     searchData() {
-      if(this.propsdata === "productSelView"){
-        console.log(this.productName);
-        this.$store.dispatch("SELECT_PRODUCT", {
-          name: this.$route.name,
-          sku_no: this.sku_no,
-          productName: this.productName,
-          brandName: this.brandName,
-          maker: this.maker,
-          className: this.className,
-        });
-      }
-      else if(this.propsdata === "testSelView"){
-        console.log(this.productName);
-        this.$store.dispatch("SELECT_PRODUCT", {
-          name: this.$route.name,
-          sku_no: this.sku_no,
-          productName: this.productName,
-          brandName: this.brandName,
-          maker: this.maker,
-          className: this.className,
-        });
-      }
+      console.log("데이터 조회");
+      console.log("this.propsdata : " + this.propsdata );
+      console.log("this.$route.name : " + this.$route.name);
+      console.log(this.productName);
+      this.$store.dispatch("SELECT_PRODUCT", {
+        name: this.$route.name,
+        sku_no: this.sku_no,
+        productName: this.productName,
+        brandName: this.brandName,
+        maker: this.maker,
+        className: this.className,
+      });
       
     },
     // 오늘 날짜 확인

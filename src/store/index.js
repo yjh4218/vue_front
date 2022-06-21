@@ -12,7 +12,9 @@ import {
   selectSkuNo,
   checkSkuNo,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  insertInspect,
+  selectAllInspect
 } from "../api/index.js";
 
 export const store = new Vuex.Store({
@@ -30,7 +32,11 @@ export const store = new Vuex.Store({
     checkProductDup: {},
     // 제품 삭제 결과값
     deleteProduct:{},
-
+    // 검수 추가하기
+    insertInspect: {},
+    // 전체 검수 조회
+    allInspect:[],
+    
     // vuex를 통한 데이터 저장
     getProduct: {},
   },
@@ -59,8 +65,15 @@ export const store = new Vuex.Store({
     getDeleteProduct(state) {
       return state.deleteProduct;
     },
-    
-    
+
+    // 검수 입력 데이터 확인
+    getInsertInspect(state) {
+      return state.insertInspect;
+    },
+    // 검수 제품 전체 조회
+    getAllInspect(state) {
+      return state.allInspect;
+    },
 
     // 상품 라우터 이동간에 사용된 데이터
     getSkuProduct(state) {
@@ -69,32 +82,47 @@ export const store = new Vuex.Store({
   },
   mutations: {
     // axios 통신결과 조회
+    // 전체 제품 조회 결과 저장
     SET_SELECT_ALL_PRODUCT(state, allProducts) {
       state.allProducts = allProducts;
     },
+    // 일부 제품 조회 결과 저장
     SET_SELECT_PRODUCT(state, selectProduct) {
       state.selectProduct = selectProduct;
     },
+    // 상품 추가 저장
     SET_INSERT_PRODUCT(state, insertProduct) {
       console.log("SET_INSERT_PRODUCT 들어옴");
       state.insertProduct = insertProduct;
     },
+    // 상품 정보 수정 저장
     SET_UPDATE_PRODUCT(state, updateProduct) {
       console.log("SET_INSERT_PRODUCT 들어옴");
     state.updateProduct = updateProduct;
     },
+    // 상품 중복 확인
     SET_CHECK_PRODUCT_RESULT(state, checkProductDup) {
       state.checkProductDup = checkProductDup;
     },
+    // 상품 삭제 확인
     SET_DELETE_PRODUCT(state, deleteProduct) {
       state.deleteProduct = deleteProduct;
     },
+    // 검수 추가하기
+    SET_INSERT_INSPECT(state, insertInspect) {
+      state.insertInspect = insertInspect;
+    },
+    // 검수 전체 제품 조회
+    SET_SELECT_ALL_INSPECT(state, allInspect) {
+      state.allInspect = allInspect;
+    },
 
-    // vuex를 통한 데이터 이동
+    // vuex를 통한 데이터 이동(상품 조회 시 사용)
     SET_PRODUCT(state, getProduct) {
       state.getProduct = getProduct;
     },
   },
+
   actions: {
     // 신규 제품 추가
     INSERT_PRODUCT(context, selectCon) {
@@ -258,5 +286,40 @@ export const store = new Vuex.Store({
           console.log(error.config);
         });
     },
+
+    // 신규 검수 추가
+    INSERT_INSPECT(context, selectCon) {
+      console.log("INSERT_INSPECT actions 접속됨");
+      console.log(context);
+
+      insertInspect(selectCon)
+        .then((response) => {
+          console.log("response");
+          console.log(response);
+          context.commit("SET_INSERT_INSPECT", response.data.data);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    },
+    // 모든 제품 조회
+    SELECT_ALL_INSPECT(context) {
+      console.log("SELECT_ALL_INSPECT actions 접속됨");
+      console.log(context);
+      selectAllInspect(context)
+        .then((response) => {
+          console.log(response);
+          context.commit("SET_SELECT_ALL_INSPECT", response.data.data);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    },
+
+
   },
 });

@@ -3,6 +3,7 @@ import axios from "axios";
 // 1. Http Request & Response와 관련된 기본 설정
 const config = {
   productUrl: "/product/",
+  inspectUrl: "/inspect/"
 };
 
 // 상품 추가하기
@@ -116,7 +117,7 @@ function selectSkuNo(skuNo) {
   return axios.get(config.productUrl + "selectSkuNo", data);
 }
 
-// sku 중복 확인
+// 제품 sku 중복 확인
 function checkSkuNo(skuNo) {
   console.log("api : sku_no");
   console.log(skuNo);
@@ -130,6 +131,42 @@ function checkSkuNo(skuNo) {
   return axios.get(config.productUrl + "checkProduct", data);
 }
 
+// 검수 추가하기
+function insertInspect(newInspect) {
+  console.log("검수 추가하기");
+  // console.log(imgFiles[0]);
+  console.log(newInspect);
+  
+  // console.log(imgFiles[1]);
+
+  // let data = {
+  //   header: { "Content-Type": `multipart/form-data` },
+  //   params: {
+  //     newInspect,
+  //     skuNo : newInspect.skuNo
+  //     // skuNo: newInspect.skuNo,
+  //     // productName: newInspect.productName,
+  //     // inspectDate: newInspect.inspectDate,
+  //     // decideResult: newInspect.decideResult,
+  //     // lotDate: newInspect.lotDate,
+  //     // moisture: newInspect.moisture,
+  //     // inspectContent: newInspect.inspectContent,
+  //     // specialReport: newInspect.specialReport,
+  //     // imgFiles: newInspect.imgFiles,
+  //     // note: newInspect.note
+  //   }
+  // };
+  // console.log(data);
+
+  return axios.post(config.inspectUrl + "insertInspect", newInspect, { headers: { "Content-Type": `multipart/form-data` } });
+}
+
+// 모든 검수 조회
+function selectAllInspect() {
+  return axios.get(config.inspectUrl + "selectAllInspect");
+  //return axios.get(`${config.baseUrl}news/1.json`);
+}
+
 export {
   insertProduct,
   updateProduct,
@@ -138,4 +175,6 @@ export {
   selectProduct,
   selectSkuNo,
   checkSkuNo,
+  insertInspect,
+  selectAllInspect
 };

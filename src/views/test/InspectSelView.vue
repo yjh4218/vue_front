@@ -25,7 +25,7 @@
       <b-table
         striped
         hover
-        :items="getAllProduct"
+        :items="allInspect"
         :fields="fields"
         label-sort-asc=""
         label-sort-desc=""
@@ -38,6 +38,7 @@
 
 <script>
 import SelectProduct from '../../components/select/SelectProduct.vue'
+// import { mapGetters } from "vuex";
 
 export default {
   
@@ -47,10 +48,10 @@ export default {
   data() {
     return {
       message: "testSelView",
-      fields: [
-        
-        { key: "date", label: "날짜", sortable: true, thClass: "w15" },
-        { key: "skuNo", label: "skuNo", sortable: true, thClass: "w15" },
+      allInspect:[],
+      fields: [        
+        { key: "inspectDate", label: "검수날짜", sortable: true, thClass: "w15" },
+        { key: this.getAllInspect.product.skuNo, label: "skuNo", sortable: true, thClass: "w15" },
         { key: "productName", label: "제품명", sortable: true, thClass: "w30" },
         { key: "testCheck", label: "검수결과", sortable: true, thClass: "w15" },
         { key: "testContent", label: "검수내용", sortable: true, thClass: "w15" },
@@ -61,7 +62,30 @@ export default {
   },
   created() {
     console.log("incomeselview");
+    // 처음에 전체 검수 조회 함
+    this.$store.dispatch("SELECT_ALL_INSPECT", this.$route.name);
   },
+  computed:{
+    // ...mapGetters(["getAllInspect"]),
+    // 제품 조회 및 결과값 입력
+    selectAllInspect(){
+      return this.$store.getters.getAllInspect;
+    },
+  },
+   watch: {
+    // 제품 조회 및 결과값 입력
+    selectAllInspect(val){
+      console.log("확인 : ");
+      [].forEach.call(val, element => {
+        element.skuNo = element.product.skuNo;
+        console.log(element);
+      });
+      this.allInspect = val;
+      // this.skuNo = val.skuNo;
+      // this.productName = val.productName;
+    },
+   }
+
 };
 </script>
 
