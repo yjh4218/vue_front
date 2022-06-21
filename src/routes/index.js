@@ -1,10 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import mainpage from "../views/MainPage.vue";
-import testSelView from "../views/test/testSelView.vue";
-import testDelView from "../views/test/testDelView.vue";
-import testUpView from "../views/test/testUpView.vue";
-import testInView from "../views/test/testInView.vue";
+import inspectSelView from "../views/test/InspectSelView.vue";
+import inspectDelView from "../views/test/InspectDelView.vue";
+import inspectUpView from "../views/test/InspectUpView.vue";
+import inspectInView from "../views/test/InspectInView.vue";
 import productSelView from "../views/product/ProductSelView.vue";
 import productDelView from "../views/product/ProductDelView.vue";
 import productUpView from "../views/product/ProductUpView.vue";
@@ -39,27 +39,27 @@ export const router = new VueRouter({
     },
     {
       // 입고검사 조회
-      path: "/testSel",
-      name: testSelView,
-      component: testSelView,
+      path: "/inspectSel",
+      name: "inspectSelView",
+      component: inspectSelView,
     },
     {
       // 입고검사 추가
-      path: "/testIn", 
-      name: testInView,
-      component: testInView,
+      path: "/inspectIn", 
+      name: "inspectInView",
+      component: inspectInView,
     },
     {
       // 입고검사 삭제
-      path: "/testDel",
-      name: testDelView,
-      component: testDelView,
+      path: "/inspectDel",
+      name: "nspectDelView",
+      component: inspectDelView,
     },
     {
       // 입고검사 업데이트
-      path: "/testUp",
-      name: testUpView,
-      component: testUpView,
+      path: "/inspectUp",
+      name: "inspectUpView",
+      component: inspectUpView,
     },
     {
       // 제품 조회

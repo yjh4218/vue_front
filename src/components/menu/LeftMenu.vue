@@ -56,16 +56,16 @@
         <li id = 'catalogue'>
           입고 검수 관리
           <div>
-            <router-link to="/testIn">입고 검수 등록</router-link>
+            <router-link to="/inspectIn">입고 검수 등록</router-link>
           </div> 
           <div>
-            <router-link to="/testSel">입고 검수 조회</router-link>
+            <router-link to="/inspectSel">입고 검수 조회</router-link>
           </div> 
           <div>
-            <router-link to="/testDel">입고 검수 삭제</router-link>     
+            <router-link to="/inspectDel">입고 검수 삭제</router-link>     
           </div>
           <div>
-            <router-link to="/testUp">입고 검수 수정</router-link>
+            <router-link to="/inspectUp">입고 검수 수정</router-link>
           </div>  
         </li>
         <!-- <li id = 'catalogue'>

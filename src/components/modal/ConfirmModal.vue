@@ -42,7 +42,6 @@
   }
 
   &-footer {
-
     padding: 10px;
     text-align: right;
     border: 0px;
