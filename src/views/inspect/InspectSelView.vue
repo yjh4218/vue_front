@@ -25,20 +25,21 @@
       <b-table
         striped
         hover
-        :items="allInspect"
+        :items="getAllInspect"
         :fields="fields"
         label-sort-asc=""
         label-sort-desc=""
         label-sort-clear=""
-        @row-dblclicked="productDetails"
+        @row-dblclicked="inspectDetails"
       ></b-table>
+      
     </div>
   </div>
 </template>
 
 <script>
 import SelectProduct from '../../components/select/SelectProduct.vue'
-// import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   
@@ -51,40 +52,38 @@ export default {
       allInspect:[],
       fields: [        
         { key: "inspectDate", label: "검수날짜", sortable: true, thClass: "w15" },
-        { key: this.getAllInspect.product.skuNo, label: "skuNo", sortable: true, thClass: "w15" },
-        { key: "productName", label: "제품명", sortable: true, thClass: "w30" },
-        { key: "testCheck", label: "검수결과", sortable: true, thClass: "w15" },
-        { key: "testContent", label: "검수내용", sortable: true, thClass: "w15" },
-        { key: "lotNumber", label: "유통기한(LOT)", sortable: true, thClass: "w15" },
-        { key: "note", label: "비고", sortable: true, thClass: "w15" },
+        { key: "product.skuNo", label: "skuNo", sortable: true, thClass: "w15" },
+        { key: "product.productName", label: "제품명", sortable: true, thClass: "w30" },
+        { key: "product.className", label: "제품분류", sortable: true, thClass: "w30" },
+        { key: "decideResult", label: "검수결과", sortable: true, thClass: "w15" },
+        { key: "inspectContent", label: "검수내용", sortable: true, thClass: "w15" },
+        { key: "lotDate", label: "유통기한(LOT)", sortable: true, thClass: "w15" },
+        { key: "moisture", label: "수분율(%)", sortable: true, thClass: "w15" },
       ],
     };
   },
   created() {
-    console.log("incomeselview");
-    // 처음에 전체 검수 조회 함
-    this.$store.dispatch("SELECT_ALL_INSPECT", this.$route.name);
   },
   computed:{
-    // ...mapGetters(["getAllInspect"]),
+    ...mapGetters(["getAllInspect"]),
     // 제품 조회 및 결과값 입력
-    selectAllInspect(){
-      return this.$store.getters.getAllInspect;
-    },
   },
-   watch: {
-    // 제품 조회 및 결과값 입력
-    selectAllInspect(val){
-      console.log("확인 : ");
-      [].forEach.call(val, element => {
-        element.skuNo = element.product.skuNo;
-        console.log(element);
-      });
-      this.allInspect = val;
-      // this.skuNo = val.skuNo;
-      // this.productName = val.productName;
+  methods:{
+    // 더블 클릭 이벤트
+    inspectDetails(item) {
+      console.log("this.$route.name : " + this.$route.name);
+      console.log("row 더블클릭됨");
+      console.log(item);
+      
+      console.log("this.$route.name : " + this.$route.name);
+      this.$store.commit("SET_INSPECT", "");
+
+      // 전체 제품 조회 화면일 경우 제품 상세정보 페이지로 이동
+      this.$store.commit("SET_INSPECT", item);
+      this.$router.push(`/inspectUp/${item.id}`);
     },
-   }
+  }
+  
 
 };
 </script>

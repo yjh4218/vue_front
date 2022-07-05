@@ -115,8 +115,13 @@
           <div class="col-md-12 mb-3" >
             <b-input-group prepend="사진 미리보기">
              <!-- <b-img class="imgSizes" thumbnail fluid :src="item.url" alt="Image 1"></b-img> -->
-             <viewer :images="imgFiles"> 
-              <img class="imgSizes" v-for="item in imgFiles" :src="item.url" :key="item.url" />
+             <viewer :images="this.imgFiles" @inited="inited"> 
+              <div v-if = "imgFlag">
+                <img  class="imgSizes" v-for="item in imgFiles" :src="item.url" :key="item.url" />
+              </div>
+              <div v-else >
+                <img class="imgSizes" v-for="item in imgFiles" :src="require(`@/assets/images${item.url}`)" :key="item.url" />
+              </div>
              </viewer>
             </b-input-group>
           </div>
@@ -152,13 +157,13 @@
         <div class="col-md-12 mb-3" v-if="inputRead">
           <b-button variant="primary" class="rightBox" 
             v-b-modal.update-modal>
-            상품 정보 수정
+            검수 정보 수정
           </b-button>
           <b-button variant="danger" class="rightBox" v-b-modal.delete-modal> 상품 삭제 </b-button>
         </div>
         <div class="col-md-12 mb-3" v-else>
           <b-button variant="primary" class="rightBox" @click="inpuReadMode">
-            상품 수정하기
+            검수 수정하기
           </b-button>
         </div>
       </div>
@@ -216,13 +221,13 @@
 
     <b-modal id="update-modal">
         <!-- <template #modal-title> 신규상품 등록 </template> -->
-        <div class="my-4">상품정보를 수정하시겠습니까?</div>
+        <div class="my-4">검수 정보를 수정하시겠습니까?</div>
         <template #modal-footer>
           <div class="d-block text-center">
             <b-button
               variant="primary"
               class="frightBox"
-              @click="updateProduct(), $bvModal.hide('update-modal')"
+              @click="updateInspect(), $bvModal.hide('update-modal')"
               :disabled="spinnerState"
             >
               수정하기
@@ -245,7 +250,7 @@
             <b-button
               variant="primary"
               class="frightBox"
-              @click="deleteProduct(), $bvModal.hide('delete-modal')"
+              @click="deleteInspect(), $bvModal.hide('delete-modal')"
               :disabled="spinnerState"
             >
               삭제하기
@@ -278,35 +283,26 @@
     <div>
       <confirm-modal @close="closeModal" v-if="modal">
         <div v-if="modalName === 'insertInspect'">
-          <div v-if="insertInspectState === 1">
+          <div v-if="insertState === 1">
             <p>검사 내용이 등록 되었습니다.</p>
           </div>
-          <div v-else-if="insertInspectState === 2">
+          <div v-else-if="insertState === 2">
             <p>하나의 검수 날짜에 2개 제품 등록은 안 됩니다.</p>
           </div>
           <div v-else>
              <p>검사 내용 등록에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
-        <div>
-          <div v-if="modalName === 'checkSkuNo'">
-            <p v-if="skuNoDuplication">기존에 등록된 제품이 있습니다.</p>
-            <p v-else>신규 등록 가능한 코드입니다.</p>
-          </div>
-        </div>
-        <div v-if="modalName === 'reCheckSkuNo'">
-          <p>SKU-NO 중복 확인을 해주세요.</p>
-        </div>
-        <div v-if="modalName === 'updateProduct'">
-          <div v-if="updateState">
-            <p>상품 정보가 수정되었습니다.</p>
+        <div v-if="modalName === 'updateInspect'">
+          <div v-if="updateState === 1">
+            <p>검사 정보가 수정되었습니다.</p>
           </div>
           <div v-else>
-            <p>상품 등록에 실패했습니다. 다시 시도해 주십시오.</p>
+            <p>검사 정보 수정에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
-        <div v-if="modalName === 'deleteProduct'">
-          <div v-if="deleteState">
+        <div v-if="modalName === 'deleteInspect'">
+          <div v-if="deleteState === 1">
             <p>상품 정보가 삭제되었습니다.</p>
           </div>
           <div v-else>
@@ -319,21 +315,21 @@
         </template> -->
         <template
           slot="footer"
-          v-if="modalName === 'insertInspect' && insertState">
-          <button @click="roturInit()">확인</button>
+          v-if="modalName === 'insertInspect' && insertState===1">
+          <b-button variant="primary" @click="roturInit()">확인</b-button>
         </template>
         <template
           slot="footer"
-          v-else-if="modalName === 'updateInspect' && updateState">
-          <button @click="roturInit()">확인</button>
+          v-else-if="modalName === 'updateInspect' && updateState === 1">
+          <b-button variant="primary" @click="roturInit()">확인</b-button>
         </template>
         <template
           slot="footer"
           v-else-if="modalName === 'deleteInspect' && deleteState">
-          <button @click="roturInit()">확인</button>
+          <b-button variant="primary" @click="roturInit()">확인</b-button>
         </template>
-        <template slot="footer" v-else>
-          <button @click="modalText">확인</button>
+        <template slot="footer" v-else-if="insertState !== 3 || updateState !== 3">
+          <b-button variant="primary" @click="modalText">확인</b-button>
         </template>
       </confirm-modal>
     </div>
@@ -345,6 +341,7 @@
 import searchProductModal from "./modal/SearchProductModal.vue";
 import SelectProductTable from '../components/select/SelectProductTable.vue'
 import confirmModal from "./modal/ConfirmModal.vue";
+// import ss from '../'
 
 export default {
   components: {
@@ -355,6 +352,8 @@ export default {
   props: ["propsdata"],
   data() {
     return {
+      inspectId:"",
+      productId:"",
       skuNo: "",
       productName: "",
       inspectDate:"",
@@ -375,16 +374,18 @@ export default {
       skuNoDuplication: true,
       modal: false,
       searchModal: false,
-      updateState: false,
-      insertState: false,
-      insertInspectState : 3,
-      deleteState: false,
+      insertState:3,
+      updateState : 3,
+      deleteState : 3,
       spinnerState: false,
       modalName: "",
       formData : new FormData(),
+      // 이미지 수정 모드에 따라서 viewer로 나타내는 모드가 달라짐
+      imgFlag : true, 
     };
   },
   mounted() {
+    this.updateData();
   },
   computed: {
     // 제품 조회 및 결과값 입력
@@ -396,38 +397,97 @@ export default {
     checkInsertState() {
       return this.$store.getters.getInsertInspect;
     },
+
+    // 제품 검수 완료 확인
+    checkUpdateState() {
+      return this.$store.getters.getUpdateInspect;
+    },
+
+    // 제품 검수 완료 확인
+    checkDeleteState() {
+      return this.$store.getters.getDeleteInspect;
+    },
   },
   watch: {
     // 제품 조회 및 결과값 입력
     selectProdut(val){
-      console.log("확인 : " + val.skuNol + ", " + val.productName);
+      console.log("확인 : " + val.skuNo + ", " + val.productName);
+      console.log(val);
+      this.productId = val.productId;
       this.skuNo = val.skuNo;
       this.productName = val.productName;
     },
 
-    // 제품 추가 완료 확인
+    // 검수 추가 상태 확인
     checkInsertState(val) {
+      
+      this.modalName = "insertInspect";
+
+      // 검수 추가 성공
       if (val === 1) {
         console.log("val 값 1");
-        this.insertInspectState = 1;
-        this.insertState = true;
-      } else if(val === 2){
+        this.insertState = 1;
+        this.openModal();
+        this.closeSpinner();
+      } 
+      // 해당 검수 날짜에 이미 등록된 검수 내용 존재
+      else if(val === 2){
         console.log("val 값 2");
-        this.insertInspectState = 2;
-        this.insertState = false;
-      } else {
+        this.insertState = 2;
+        this.openModal();
+        this.closeSpinner();
+      } 
+      // 검수 등록 실패
+      else if(val === 0){
         console.log("val 값 0");
-        this.insertInspectState = 3;
-        this.insertState = false;
+        this.insertState = 0;
+      } else{
+        console.log("val 값 확인 : " + val);
       }
-      console.log("insertState : " + this.insertState);
-      this.spinnerState = false;
-      this.modalName = "insertInspect";
-      console.log("modalName : " + this.modalName);
-      this.modal = true;
-      // this.$refs['my-modal-2'].show();
     },
-    
+    // 검수 업데이트 상태 확인
+    checkUpdateState(val) {
+      
+      this.modalName = "updateInspect";
+
+      // 검수 업데이트 성공
+      if (val === 1) {
+        console.log("val 값 1");
+        this.updateState = 1;
+        this.openModal();
+        this.closeSpinner();
+      } 
+      // 검수 업데이트 실패
+      else if(val === 0){
+        console.log("val 값 0");
+        this.updateState = 3;
+        this.openModal();
+        this.closeSpinner();
+      }
+      
+      console.log("modalName : " + this.modalName);
+    },
+    // 검수 삭제 상태 확인
+    checkDeleteState(val){
+
+      this.modalName = "deleteInspect";
+      // 검수 삭제 성공
+      if (val === 1) {
+        console.log("val 값 1");
+        this.deleteState =1;
+        this.openModal();
+        this.closeSpinner();
+      } 
+      // 검수 업데이트 실패
+      else if(val === 0){
+        console.log("val 값 0");
+        this.deleteState = 0;
+        this.openModal();
+        this.closeSpinner();
+      } 
+      
+      console.log("modalName : " + this.modalName);
+    }
   },
   methods: {
     // 제품 검색
@@ -435,9 +495,52 @@ export default {
       this.searchModal = true;
       this.modalName = "searchProduct";
     },
+    // 검수 상세 정보 입력
+    updateData() {
+      if (this.propsdata === "updateView") {
+        console.log("setData if 실행 : " + this.propsdata);
+        this.inspectId = this.$store.state.getInspect.id
+        this.productId = this.$store.state.getInspect.product.id;
+        this.skuNo = this.$store.state.getInspect.product.skuNo;
+        this.productName = this.$store.state.getInspect.product.productName;
+        this.inspectDate = this.$store.state.getInspect.inspectDate;
+        this.decideResult = this.$store.state.getInspect.decideResult;
+        this.lotDate = this.$store.state.getInspect.lotDate;
+        this.moisture = this.$store.state.getInspect.moisture;
+        this.inspectContent = this.$store.state.getInspect.inspectContent;
+        this.specialReport = this.$store.state.getInspect.specialReport;
+        this.note = this.$store.state.getInspect.note;
+        this.inputRead = false;
+
+        // 이미지 파일 있는지 확인.
+        if(this.$store.state.getInspect.imageFile.length > 0){
+          this.imgFlag = false
+          this.imgUpdate();
+        }
+      } else {
+        this.imgFlag = true;
+        console.log("setData else 실행 : " + this.propsdata);
+      }
+    },
+    // 검수 상세 정보 이미지 파일 지정
+    imgUpdate(){
+      this.imgFiles = [];
+      this.$store.state.getInspect.imageFile.forEach(x => {
+        console.log("이미지 있음");
+        
+        var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
+
+        this.imgFiles.push({url : tempImg});
+        console.log(tempImg);
+      })
+      console.log(this.imgFiles);
+    },
     // 파일 이미지 추가 될 경우
     imgFileSelected(event){
 
+      console.log("이미지 파일 추가");
+      console.log(event);
+      this.imgFlag = true;
       var files = event.target.files;
       this.imgFiles = [];
 
@@ -446,16 +549,21 @@ export default {
 
       [].forEach.call(files,function(i, item){
         frm.append('image', files[item]);
+        console.log("FileReader 내용 확인중");
+        console.log(files[item]);
 
         var fileReader = new FileReader();
         fileReader.onload = function(e){
-        console.log(files[item]);
+        
         console.log(item);
         console.log(i);
         
           var img = {
             url: e.target.result
           };
+          console.log("url");
+          console.log(img);
+
           // var img = e.target.result;
             
           temp.push(img);
@@ -464,11 +572,21 @@ export default {
       });
       this.imgFiles = temp;
       this.formData = frm;
-      // for(var i =0; i<3; i++){
-        
-      // console.log("frm");
-      // console.log(this.formData.get('image'));
-      // }
+      console.log("이미지 추가.");
+      console.log(this.imgFiles);
+    },
+    // viewer 초기화
+    inited(viewer) {
+      console.log("viewer 초기화");
+      this.$viewer = viewer;
+    },
+    // 스피너 열기
+    openSpinner(){
+      this.spinnerState = true;
+    },
+    // 스피너 닫기
+    closeSpinner(){
+      this.spinnerState = false;
     },
     // 모달 열기
     openModal() {
@@ -493,19 +611,51 @@ export default {
       // this.$router.go();
     },
     modalText() {
-      this.spinnerState = false;
+      this.closeSpinner();
       console.log("모달 메시지 확인 필요함");
       this.modal = false;
     },
-    // 제품 추가
+    // 업데이트 진행 시 수정모드인지 확인
+    inpuReadMode() {
+      this.inputRead = true;
+    },
+    // 검수 추가
     insertInspect(){
-      // this.spinnerState = true;
-      this.$store.commit("SET_INSERT_INSPECT", "3");
-      console.log("제품 추가 진행");
-      console.log("this.formData");
-      console.log(this.formData.get('image0'));
+      this.openSpinner();
+      this.$store.commit("SET_INSERT_INSPECT", 3);
+      console.log("검수 추가 진행");
 
       let data = {
+        id: this.inspectId,
+        skuNo: this.skuNo,
+        productName: this.productName,
+        inspectDate: this.inspectDate,
+        decideResult:this.decideResult,
+        lotDate:this.lotDate,
+        moisture:this.moisture,
+        inspectContent:this.inspectContent,
+        specialReport:this.specialReport,
+        note: this.note,
+      };
+
+      console.log("this.productId : " + this.productId);
+
+      this.formData.append('data',  new Blob([JSON.stringify(data)], { type: "application/json" }));
+      this.formData.append('productId',  new Blob([JSON.stringify(this.productId)], { type: "application/json" }));
+
+      this.$store.dispatch("INSERT_INSPECT",this.formData);
+
+      this.formData = new FormData();
+    },
+    // 검수 수정진행
+    updateInspect() {
+      this.openSpinner();
+      console.log("제품 수정 진행");
+      this.$store.commit("SET_UPDATE_INSPECT", 3);
+      console.log("productId : " + this.productId);
+      
+      let data = {
+        id: this.inspectId,
         skuNo: this.skuNo,
         productName: this.productName,
         inspectDate: this.inspectDate,
@@ -518,11 +668,18 @@ export default {
       };
 
       this.formData.append('data',  new Blob([JSON.stringify(data)], { type: "application/json" }));
-      this.formData.append('skuNo',  new Blob([JSON.stringify(this.skuNo)], { type: "application/json" }));
+      this.formData.append('productId',  new Blob([JSON.stringify(this.productId)], { type: "application/json" }));
 
-      // this.formData.append('note',  new Blob([JSON.stringify(this.note)], { type: "application/json" }));
+      this.$store.dispatch("UPDATE_INSPECT",this.formData);
+     
+    },
+    deleteInspect(){
+      this.openSpinner();
+      console.log("검수 삭제 진행");
+      this.$store.commit("SET_DELETE_INSPECT", 3);
+      
+      this.$store.dispatch("DELETE_INSPECT", {id : this.inspectId})
 
-      this.$store.dispatch("INSERT_INSPECT",this.formData);
     }
   },
 };

@@ -59,7 +59,7 @@
         </div>
       </div>
       <div slot="middle" class="row">
-        <div class="col-md-12 mb-3">
+        <div class="col-md-10 mb-3">
           <b-input-group prepend="제품분류" v-slot="{ ariaDescribedby }">
             <b-form-checkbox-group
               class="chkBoxGroup"
@@ -98,10 +98,27 @@
             </b-form-checkbox-group>
           </b-input-group>
         </div>
+        <div class="col-md-2 mb-3" v-if="this.$route.name !== 'inspectSelView'">
+          <b-button 
+            variant="primary"
+            class="left-box"
+            @click="searchData"
+            v-bind:disabled="
+              sku_no == '' &&
+              productName == '' &&
+              brandName == '' &&
+              maker == '' &&
+              beforeDate == '' &&
+              afterDate == '' &&
+              className == ''
+            "
+            >상품 조회</b-button
+          >
+        </div>
       </div>
       <div
         slot="bottom"
-        v-if="this.$route.name !== 'selectAllProduct' && this.$route.name !== 'inspectInView'"
+        v-if="this.$route.name === 'inspectSelView'"
         class="row"
       >
         <div class="col-md-6 mb-3">
@@ -109,14 +126,10 @@
              <b-form-datepicker
               id="datepicker-dateformat1"
               v-model="beforeDate"
-              :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
-              locale="en"
             ></b-form-datepicker>
             <b-form-datepicker
               id="datepicker-dateformat2"
               v-model="afterDate"
-              :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
-              locale="en"
             ></b-form-datepicker>
           </b-input-group>
         </div>
@@ -125,36 +138,50 @@
           <b-button variant="primary" class="btn_margin" @click="prevMonth">1개월 전</b-button>
           <b-button variant="primary" class="btn_margin" @click="prevThreeMonth">3개월 전</b-button>
         </div>
+        <div class="col-md-2 mb-3">
+          <b-button
+            variant="primary"
+            class="left-box"
+            @click="searchData"
+            v-bind:disabled="
+              sku_no == '' &&
+              productName == '' &&
+              brandName == '' &&
+              maker == '' &&
+              beforeDate == '' &&
+              afterDate == '' &&
+              className == ''
+            "
+            >상품 조회</b-button
+          >
+        </div>
       </div>
-      <div slot="search" class="row">
-        <b-button
-          variant="primary"
-          class="left-box"
-          @click="searchData"
-          v-bind:disabled="
-            sku_no == '' &&
-            productName == '' &&
-            brandName == '' &&
-            maker == '' &&
-            beforeDate == '' &&
-            afterDate == '' &&
-            className == ''
-          "
-          >상품 조회</b-button
-        >
-      </div>
+      
     </select-slot>
 
-    <!-- 검색창(모달) -->
+    <confirm-modal @close="closeModal" v-if="modal">
+        <div v-if="modalName === 'noConfirmDate'">
+          <p>날짜가 형식에 맞지 않습니다. 뒤의 날짜가 앞의 날짜보다 빠릅니다.</p>
+        </div>
+        <template slot="footer" v-else>
+          <button @click="modalText">확인</button>
+        </template>
+      </confirm-modal>
   </div>
 </template>
 
 <script>
 import selectSlot from "../select/SelectProductSlot.vue";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import confirmModal from "../modal/ConfirmModal.vue"
+
+dayjs.extend(isSameOrBefore);
 
 export default {
   components: {
     selectSlot,
+    confirmModal
   },
   data() {
     return {
@@ -164,14 +191,15 @@ export default {
       maker: "",
       beforeDate: "",
       afterDate: "",
-      modal: false,
       header: ["skuNo", "제품명", "브랜드명", "제조사", "출시일자"],
       selectParam: [],
       className: [],
-      year : "",
-      month: "",
-      day : "",
+      modal: false,
+      modalName: "",
     };
+  },
+  created() {
+    
   },
   methods: {
     // 데이터 조회
@@ -180,14 +208,39 @@ export default {
       console.log("this.propsdata : " + this.propsdata );
       console.log("this.$route.name : " + this.$route.name);
       console.log(this.productName);
-      this.$store.dispatch("SELECT_PRODUCT", {
-        name: this.$route.name,
-        sku_no: this.sku_no,
-        productName: this.productName,
-        brandName: this.brandName,
-        maker: this.maker,
-        className: this.className,
-      });
+
+
+      if(this.$route.name === 'selectAllProduct' || this.$route.name === 'inspectInView'){
+        console.log("바로 조회하러 감~~");
+        this.$store.dispatch("SELECT_PRODUCT", {
+          name: this.$route.name,
+          sku_no: this.sku_no,
+          productName: this.productName,
+          brandName: this.brandName,
+          maker: this.maker,
+          className: this.className,
+        });
+      } else{
+        var bfdate = dayjs(this.beforeDate);
+        var afdate = dayjs(this.afterDate);
+        // var afdate = dayjs(this.afterDate);
+        if(bfdate.isSameOrBefore(this.afterDate,"day")){
+          console.log("날짜 확인됨");
+          this.$store.dispatch("SELECT_INSPECT", {
+          name: this.$route.name,
+          sku_no: this.sku_no,
+          productName: this.productName,
+          brandName: this.brandName,
+          maker: this.maker,
+          className: this.className,
+          beforeDate : this.beforeDate,
+          afterDate : afdate.add(1,"day").format("YYYY-MM-DD")
+        });
+        }else{
+          this.modalName = "noConfirmDate"
+          this.modal = true;
+        }
+      }
       
     },
     // 오늘 날짜 확인
@@ -231,10 +284,22 @@ export default {
       var monthOfYear = d.getMonth();
       d.setMonth(monthOfYear - 3);
       this.beforeDate = this.setDate(d);
-    }
+    },
+    // 모달 열기
+    openModal() {
+      this.modal = true;
+    },
+    // 모달 닫기
+    closeModal() {
+      this.modal = false;
+    },
   },
-  created(){
-  }
+  mounted() {
+    // 처음 실행 시 날짜 지정
+    this.prevWeek();
+    // 처음에 전체 검수 조회 함
+    this.searchData();
+  },
 };
 </script>
 
@@ -244,6 +309,7 @@ export default {
 }
 .left-box {
   float: right;
+  width:auto;
 }
 .custom-control custom-control-inline custom-checkbox {
   margin-left: 10px;

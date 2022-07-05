@@ -392,6 +392,7 @@ export default {
   props: ["propsdata"],
   data() {
     return {
+      productId : "",
       skuNo: "",
       productName: "",
       brandName: "",
@@ -564,6 +565,7 @@ export default {
     updateData() {
       if (this.propsdata === "updateView") {
         console.log("setData if 실행 : " + this.propsdata);
+        this.productId = this.$store.state.getProduct.id;
         this.skuNo = this.$store.state.getProduct.skuNo;
         this.productName = this.$store.state.getProduct.productName;
         this.brandName = this.$store.state.getProduct.brandName;
@@ -590,7 +592,9 @@ export default {
       this.spinnerState = true;
       console.log("제품 수정 진행");
       this.$store.commit("SET_UPDATE_PRODUCT", "3");
+      console.log("productId : " + this.productId);
       this.$store.dispatch("UPDATE_PRODUCT", {
+        id : this.productId,
         skuNo: this.skuNo,
         productName: this.productName,
         brandName: this.brandName,
@@ -615,7 +619,7 @@ export default {
       console.log("제품 삭제 진행");
       this.spinnerState = true;
       this.$store.commit("SET_DELETE_PRODUCT", "3");
-      this.$store.dispatch("DELETE_PRODUCT", this.skuNo)
+      this.$store.dispatch("DELETE_PRODUCT", {id : this.productId, skuNo : this.skuNo})
     },
 
     // 업데이트 진행 시 수정모드인지 확인

@@ -77,11 +77,15 @@ export default {
       console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_PRODUCT", "");
 
+      // 전체 제품 조회 화면일 경우 제품 상세정보 페이지로 이동
       if(this.$route.name === "selectAllProduct"){
         this.$store.commit("SET_PRODUCT", item);
         this.$router.push(`/productUp/${item.skuNo}`);
-      } else if(this.$route.name === "inspectInView"){
+      } 
+      // 신규 검수 등록 화면에서 데이터 입력일 경우
+      else if(this.$route.name === "inspectInView"){
         var tempData = {
+          productId : item.id,
           skuNo : item.skuNo,
           productName : item.productName
         }

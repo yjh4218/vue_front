@@ -41,6 +41,7 @@ function updateProduct(newProduct) {
   console.log(newProduct);
 
   let data = {
+    id: newProduct.id,
     skuNo: newProduct.skuNo,
     productName: newProduct.productName,
     brandName: newProduct.brandName,
@@ -65,14 +66,15 @@ function updateProduct(newProduct) {
 }
 
 // 상품 삭제하기
-function deleteProduct(skuNo) {
+function deleteProduct(product) {
   console.log("제품 삭제");
-  console.log(skuNo);
+  console.log(product);
 
   let data = {
     header: { "Content-Type": `application/json` },
     params: {
-      skuNo: skuNo,
+      id: product.id,
+      skuNo : product.skuNo
     },
   };
   return axios.delete(config.productUrl + "deleteProduct", data)
@@ -103,20 +105,6 @@ function selectProduct(selectCon) {
   return axios.get(config.productUrl + "selectProducts", data);
 }
 
-// 특정 상품 1개 조회
-function selectSkuNo(skuNo) {
-  console.log("api : sku_no");
-  console.log(skuNo);
-
-  let data = {
-    params: {
-      skuNo: skuNo,
-    },
-  };
-
-  return axios.get(config.productUrl + "selectSkuNo", data);
-}
-
 // 제품 sku 중복 확인
 function checkSkuNo(skuNo) {
   console.log("api : sku_no");
@@ -135,30 +123,29 @@ function checkSkuNo(skuNo) {
 function insertInspect(newInspect) {
   console.log("검수 추가하기");
   // console.log(imgFiles[0]);
-  console.log(newInspect);
+  console.log(newInspect.get("productId"));
   
-  // console.log(imgFiles[1]);
-
-  // let data = {
-  //   header: { "Content-Type": `multipart/form-data` },
-  //   params: {
-  //     newInspect,
-  //     skuNo : newInspect.skuNo
-  //     // skuNo: newInspect.skuNo,
-  //     // productName: newInspect.productName,
-  //     // inspectDate: newInspect.inspectDate,
-  //     // decideResult: newInspect.decideResult,
-  //     // lotDate: newInspect.lotDate,
-  //     // moisture: newInspect.moisture,
-  //     // inspectContent: newInspect.inspectContent,
-  //     // specialReport: newInspect.specialReport,
-  //     // imgFiles: newInspect.imgFiles,
-  //     // note: newInspect.note
-  //   }
-  // };
-  // console.log(data);
 
   return axios.post(config.inspectUrl + "insertInspect", newInspect, { headers: { "Content-Type": `multipart/form-data` } });
+}
+
+// 검수 수정하기
+function updateInspect(updateInspect) {
+  console.log("검수 수정하기");
+  console.log(updateInspect);
+
+  return axios.put(config.inspectUrl + "updateInspect", updateInspect, { headers: { "Content-Type": `multipart/form-data` } });
+}
+
+// 검수 삭제하기
+function deleteInspect(deleteInspect) {
+  let data = {
+    header: { "Content-Type": `application/json` },
+    params: {
+      id: deleteInspect.id
+    },
+  };
+  return axios.delete(config.inspectUrl + "deleteInspect", data)
 }
 
 // 모든 검수 조회
@@ -167,14 +154,38 @@ function selectAllInspect() {
   //return axios.get(`${config.baseUrl}news/1.json`);
 }
 
+// 일부 검수 조회
+function selectInspect(selectCon) {
+  console.log("api : sku_no, productName, brandName, maker");
+  console.log(selectCon);
+
+  let data = {
+    header: { "Content-Type": `application/json` },
+    params: {
+      skuNo: selectCon.sku_no,
+      productName: selectCon.productName,
+      brandName: selectCon.brandName,
+      maker: selectCon.maker,
+      className: encodeURI(selectCon.className),
+      beforeDate: selectCon.beforeDate,
+      afterDate : selectCon.afterDate
+    },
+  };
+
+  return axios.get(config.inspectUrl + "selectInspects", data);
+}
+
+
 export {
   insertProduct,
   updateProduct,
   deleteProduct,
   selectAllProduct,
   selectProduct,
-  selectSkuNo,
   checkSkuNo,
   insertInspect,
-  selectAllInspect
+  updateInspect,
+  deleteInspect,
+  selectAllInspect,
+  selectInspect
 };
