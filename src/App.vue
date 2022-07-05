@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <left-menu></left-menu>
+    <!-- <left-menu></left-menu> -->
+    <sidebar-menu></sidebar-menu>
     <transition name="page">
       <router-view></router-view>
     </transition>
@@ -8,23 +9,36 @@
 </template>
 
 <script>
-import LeftMenu from "./components/menu/LeftMenu.vue";
+// import LeftMenu from "./components/menu/LeftMenu.vue";
+import SidebarMenu from './components/menu/SidebarMenu.vue'
 
 export default {
   name: "app",
   components: {
-    LeftMenu,
+    // LeftMenu,
+    SidebarMenu
   },
+  data(){
+    return{
+      width:0,
+      height:0
+    }
+  }
 };
 </script>
 <style>
 .body {
   position: fixed;
   margin-top: 20px;
-  margin-left: 220px;
-  width: 82vw;
+  margin-left: 250px;
+  margin-right: 250px;
+  z-index: 1;
+  width: calc(100% - 260px);
   height: 100%;
   overflow: auto;
+   -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;  
+    box-sizing: border-box; 
 }
 .divInsert{
   height: 80%;
@@ -78,4 +92,5 @@ tr:hover {
   text-align: center;
   margin: 8px;
 }
+
 </style>

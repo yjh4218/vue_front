@@ -1,24 +1,19 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import mainpage from "../views/MainPage.vue";
-import inspectSelView from "../views/test/InspectSelView.vue";
-import inspectDelView from "../views/test/InspectDelView.vue";
-import inspectUpView from "../views/test/InspectUpView.vue";
-import inspectInView from "../views/test/InspectInView.vue";
+import inspectSelView from "../views/inspect/InspectSelView.vue";
+import inspectUpView from "../views/inspect/InspectUpView.vue";
+import inspectInView from "../views/inspect/InspectInView.vue";
 import productSelView from "../views/product/ProductSelView.vue";
-import productDelView from "../views/product/ProductDelView.vue";
 import productUpView from "../views/product/ProductUpView.vue";
 import productInView from "../views/product/ProductInView.vue";
 import sellSelView from "../views/sell/SellSelView.vue";
-import sellDelView from "../views/sell/SellDelView.vue";
 import sellInView from "../views/sell/SellInView.vue";
 import sellUpView from "../views/sell/SellUpView.vue";
 import makerSelView from "../views/maker/MakerSelView.vue";
-import makerDelView from "../views/maker/MakerDelView.vue";
 import makerUpView from "../views/maker/MakerUpView.vue";
 import makerInView from "../views/maker/MakerInView.vue";
 import claimSelView from "../views/claim/ClaimSelView.vue";
-import claimDelView from "../views/claim/ClaimDelView.vue";
 import claimInView from "../views/claim/ClaimInView.vue";
 import claimUpView from "../views/claim/ClaimUpView.vue";
 
@@ -50,14 +45,8 @@ export const router = new VueRouter({
       component: inspectInView,
     },
     {
-      // 입고검사 삭제
-      path: "/inspectDel",
-      name: "nspectDelView",
-      component: inspectDelView,
-    },
-    {
       // 입고검사 업데이트
-      path: "/inspectUp",
+      path: "/inspectUp/:id",
       name: "inspectUpView",
       component: inspectUpView,
     },
@@ -66,11 +55,6 @@ export const router = new VueRouter({
       path: "/productSel",
       name: "selectAllProduct",
       component: productSelView,
-    },
-    {
-      // 제품 삭제
-      path: "/productDel",
-      component: productDelView,
     },
     {
       // 제품 업데이트
@@ -90,11 +74,6 @@ export const router = new VueRouter({
       component: sellSelView,
     },
     {
-      // 판매량 삭제
-      path: "/sellDel",
-      component: sellDelView,
-    },
-    {
       // 판매량 업데이트
       path: "/sellUp",
       component: sellUpView,
@@ -110,11 +89,6 @@ export const router = new VueRouter({
       component: makerSelView,
     },
     {
-      // 제조사 삭제
-      path: "/makerDel",
-      component: makerDelView,
-    },
-    {
       // 제조사 업데이트
       path: "/makerUp",
       component: makerUpView,
@@ -128,11 +102,6 @@ export const router = new VueRouter({
       // 클레임 조회
       path: "/claimSel",
       component: claimSelView,
-    },
-    {
-      // 클레임 삭제
-      path: "/claimDel",
-      component: claimDelView,
     },
     {
       // 클레임 업데이트
