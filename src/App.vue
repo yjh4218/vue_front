@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- <left-menu></left-menu> -->
     <sidebar-menu></sidebar-menu>
     <transition name="page">
       <router-view></router-view>
@@ -9,13 +8,11 @@
 </template>
 
 <script>
-// import LeftMenu from "./components/menu/LeftMenu.vue";
 import SidebarMenu from './components/menu/SidebarMenu.vue'
 
 export default {
   name: "app",
   components: {
-    // LeftMenu,
     SidebarMenu
   },
   data(){

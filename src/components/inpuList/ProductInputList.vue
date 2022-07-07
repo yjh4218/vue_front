@@ -383,7 +383,7 @@
 </template>
 
 <script>
-import confirmModal from "./modal/ConfirmModal.vue";
+import confirmModal from "../modal/ConfirmModal.vue";
 
 export default {
   components: {
@@ -458,82 +458,100 @@ export default {
   watch: {
     // 제품 추가 완료 확인
     checkInsertState(val) {
+      this.modalName = "insertProduct";
+
       if (val) {
         console.log("val 값 1");
         this.insertState = true;
+        this.openModal();
+        this.closeSpinner();
       } else {
         console.log("val 값 0");
         this.insertState = false;
+        this.openModal();
+        this.closeSpinner();
       }
       console.log("insertState : " + this.insertState);
-      this.spinnerState = false;
-      this.modalName = "insertProduct";
+      
       console.log("modalName : " + this.modalName);
-      this.modal = true;
+      
       // this.$refs['my-modal-2'].show();
     },
 
     // 제품 중복 검색 확인
     checkProductDup(val) {
+      this.modalName = "checkSkuNo";
+
       if (val === 1) {
         console.log("val 값 1");
         this.skuNoDuplication = true;
         this.insertState = false;
+        this.openModal();
+        this.closeSpinner();
       } else if (val === 0) {
         console.log("val 값 0");
         this.skuNoDuplication = false;
         this.confirmSkuNo = this.skuNo;
         this.insertState = true;
+        this.openModal();
+        this.closeSpinner();
       }
-      this.modalName = "checkSkuNo";
+      this.closeSpinner();
+      
       console.log("중복확인 : " + this.skuNoDuplication);
       console.log("modalName : " + this.modalName);
-      this.modal = true;
       
     },
 
     // 제품 정보 수정
     checkUpdatdState(val){
+      this.modalName = "updateProduct";
+      
       if (val) {
         console.log("val 값 1");
         this.updateState = true;
+        this.openModal();
+        this.closeSpinner();
       } else {
         console.log("val 값 0");
         this.updateState = false;
+        this.openModal();
+        this.closeSpinner();
       }
       console.log("updateProduct : " + this.updateState);
-      this.spinnerState = false;
-      this.modalName = "updateProduct";
       console.log("modalName : " + this.modalName);
-      this.modal = true;
     },
 
     // 제품 삭제 확인
     checkDeleteProduct(val){
+      this.modalName = "deleteProduct";
+
       if (val) {
         console.log("val 값 1");
         this.deleteState = true;
+        this.openModal();
+        this.closeSpinner();
       } else {
         console.log("val 값 0");
         this.deleteState = false;
+        this.openModal();
+        this.closeSpinner();
       }
+
       console.log("updateProduct : " + this.deleteState);
-      this.spinnerState = false;
-      this.modalName = "deleteProduct";
       console.log("modalName : " + this.modalName);
-      this.modal = true;
     }
   },
   methods: {
     // 제품 추가
     insertProduct() {
-      // if (this.confirmSkuNo !== this.skuNo) {
-      //   this.modalName = "reCheckSkuNo";
-      //   this.modal = true;
-      // }
-      this.spinnerState = true;
+     
+      this.openSpinner();
+
       this.$store.commit("SET_INSERT_PRODUCT", "3");
+      
       console.log("제품 추가 진행");
+      
       this.$store.dispatch("INSERT_PRODUCT", {
         skuNo: this.skuNo,
         productName: this.productName,
@@ -555,10 +573,13 @@ export default {
     },
     // sku-no 중복 확인
     searchProductDup() {
-      this.spinnerState = true;
+      this.openSpinner();
+
       console.log("ProductInputList 컴포넌트");
       console.log(this.propsdata);
+
       this.$store.commit("SET_CHECK_PRODUCT_RESULT", "3");
+
       this.$store.dispatch("CHECK_SKU_DUP", this.skuNo);
     },
     // 제품 수정일 경우 데이터 input에 입력
@@ -589,10 +610,14 @@ export default {
     },
     // 제품 수정진행
     updateProduct() {
-      this.spinnerState = true;
+      this.openSpinner();
+
       console.log("제품 수정 진행");
+
       this.$store.commit("SET_UPDATE_PRODUCT", "3");
+
       console.log("productId : " + this.productId);
+
       this.$store.dispatch("UPDATE_PRODUCT", {
         id : this.productId,
         skuNo: this.skuNo,
@@ -617,7 +642,9 @@ export default {
     // 제품 삭제
     deleteProduct(){
       console.log("제품 삭제 진행");
-      this.spinnerState = true;
+
+      this.openSpinner();
+      
       this.$store.commit("SET_DELETE_PRODUCT", "3");
       this.$store.dispatch("DELETE_PRODUCT", {id : this.productId, skuNo : this.skuNo})
     },
@@ -625,6 +652,14 @@ export default {
     // 업데이트 진행 시 수정모드인지 확인
     inpuReadMode() {
       this.inputRead = true;
+    },
+    // 스피너 열기
+    openSpinner(){
+      this.spinnerState = true;
+    },
+    // 스피너 닫기
+    closeSpinner(){
+      this.spinnerState = false;
     },
     openModal() {
       this.modal = true;

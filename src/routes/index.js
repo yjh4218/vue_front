@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import mainpage from "../views/MainPage.vue";
+import userLogin from '../views/login/UserLogin.vue';
 import inspectSelView from "../views/inspect/InspectSelView.vue";
 import inspectUpView from "../views/inspect/InspectUpView.vue";
 import inspectInView from "../views/inspect/InspectInView.vue";
@@ -27,10 +28,15 @@ export const router = new VueRouter({
       redirect: "/main",
     },
     {
-      // 입고검사 조회
-      path: "/main",
+      // 로그인
+      path: "/userLogin",
       //component : url 주소를 갔을 때 표시될 컴포넌트
-      component: mainpage,
+      component: userLogin,
+    },
+    {
+      // 메인페이지
+      path: "/main",
+      component : mainpage
     },
     {
       // 입고검사 조회
@@ -90,7 +96,7 @@ export const router = new VueRouter({
     },
     {
       // 제조사 업데이트
-      path: "/makerUp",
+      path: "/makerUp/:id",
       component: makerUpView,
     },
     {

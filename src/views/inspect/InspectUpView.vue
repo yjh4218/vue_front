@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import inspectInputList from '../../components/InspectInputList.vue'
+import inspectInputList from '../../components/inpuList/InspectInputList.vue'
 
 export default {
   components: {
