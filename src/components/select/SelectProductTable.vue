@@ -1,48 +1,26 @@
 <template>
-  <div>
-    <div class="title">상품 조회</div>
-    <select-product :propsdata="message"></select-product>
-    <div class="tableCss">
-      <!-- <b-table striped hover :product="products"></b-table> -->
-      <!-- <table>
-        <thead>
-          <th v-for="item in header" v-bind:key="item.skuNo">
-            {{ item }}
-          </th>
-        </thead>
-        <tbody>
-          <tr
-            v-for="item in getSelectProduct"
-            v-bind:key="item.skuNo"
-            @dblclick="productDetails"
-          >
-            <td>{{ item.skuNo }}</td>
-            <td>{{ item.productName }}</td>
-            <td>{{ item.brandName }}</td>
-            <td>{{ item.className }}</td>
-            <td>{{ item.expDate }}</td>
-            <td>{{ item.maker }}</td>
-            <td>{{ item.makeDate }}</td>
-          </tr>
-        </tbody>
-      </table> -->
-      <b-table
-        striped
-        hover
-        :items="getAllProduct"
-        :fields="fields"
-        label-sort-asc=""
-        label-sort-desc=""
-        label-sort-clear=""
-        @row-dblclicked="productDetails"
-      ></b-table>
-    </div>
+  <div >
+    <b-overlay :show="spinnerState" rounded="sm">
+      <div class="title">상품 조회</div>
+      <select-product :propsdata="message" @spinnerStart="openSpinner"></select-product>
+      <div class="tableCss">
+        <b-table
+          striped
+          hover
+          :items="getSelectProduct"
+          :fields="fields"
+          label-sort-asc=""
+          label-sort-desc=""
+          label-sort-clear=""
+          @row-dblclicked="productDetails"
+        ></b-table>
+      </div>
+    </b-overlay>
   </div>
 </template>
 
 <script>
 import SelectProduct from "../../components/select/SelectProduct.vue";
-import { mapGetters } from "vuex";
 
 export default {
   
@@ -52,6 +30,7 @@ export default {
   data() {
     return {
       message: "productSelView",
+      getSelectProduct :[],
       fields: [
         { key: "skuNo", label: "skuNo", sortable: true, thClass: "w15" },
         { key: "productName", label: "제품명", sortable: true, thClass: "w30" },
@@ -61,11 +40,12 @@ export default {
         { key: "maker", label: "제조사", sortable: true, thClass: "w15" },
         { key: "makeDate", label: "출시일자", sortable: true, thClass: "w15" },
       ],
+      spinnerState:false,
     };
   },
   created() {
     // 처음에 전 상품 조회 함
-    this.$store.dispatch("SELECT_ALL_PRODUCT", this.$route.name);
+    this.$store.dispatch("SELECT_PRODUCT", this.$route.name);
   },
   methods: {
     // 더블 클릭 이벤트
@@ -94,10 +74,33 @@ export default {
         this.$emit('selectProductCheck');
       }
     },
+    // 스피너 열기
+    openSpinner(){
+      console.log("openSpinner 열림");
+      this.spinnerState = true;
+    },
+    // 스피너 닫기
+    closeSpinner(){
+      console.log("closeSpinner 닫기 ");
+      this.spinnerState = false;
+    },
   },
   computed: {
     // 조회된 데이터 vuex를 통해 저장함.
-    ...mapGetters(["getAllProduct"]),
+    // ...mapGetters(["getSelectProduct"]),
+    SelectProduct(){
+      return this.$store.getters.getSelectProduct;
+    },
+  },
+  mounted(){
+    this.openSpinner();
+  },
+  watch: {
+    // 검수 조회 및 결과값 입력
+    SelectProduct(val){
+      this.getSelectProduct = val;
+      this.closeSpinner();
+    },
   },
 };
 </script>

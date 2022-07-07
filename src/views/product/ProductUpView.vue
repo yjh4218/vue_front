@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import productInputList from "../../components/ProductInputList.vue";
+import productInputList from "../../components/inpuList/ProductInputList.vue";
 
 export default {
   components: {

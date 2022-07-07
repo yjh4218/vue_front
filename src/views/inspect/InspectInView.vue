@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import inspectInputList from '../../components/InspectInputList.vue'
+import inspectInputList from '../../components/inpuList/InspectInputList.vue'
 
 export default {
   components: {
@@ -18,16 +18,6 @@ export default {
     return {
       message: "insertView",
     };
-  },
-  created() {
-  },
-  computed: {
-    skuInfo() {
-      return this.$store.state.selectProduct;
-    },
-  },
-  methods: {
-    
   },
 };
 </script>

@@ -103,15 +103,6 @@
             variant="primary"
             class="left-box"
             @click="searchData"
-            v-bind:disabled="
-              sku_no == '' &&
-              productName == '' &&
-              brandName == '' &&
-              maker == '' &&
-              beforeDate == '' &&
-              afterDate == '' &&
-              className == ''
-            "
             >상품 조회</b-button
           >
         </div>
@@ -142,23 +133,12 @@
           <b-button
             variant="primary"
             class="left-box"
-            @click="searchData"
-            v-bind:disabled="
-              sku_no == '' &&
-              productName == '' &&
-              brandName == '' &&
-              maker == '' &&
-              beforeDate == '' &&
-              afterDate == '' &&
-              className == ''
-            "
+            @click="searchData(); spinnerStart();"
             >상품 조회</b-button
           >
         </div>
       </div>
-      
     </select-slot>
-
     <confirm-modal @close="closeModal" v-if="modal">
         <div v-if="modalName === 'noConfirmDate'">
           <p>날짜가 형식에 맞지 않습니다. 뒤의 날짜가 앞의 날짜보다 빠릅니다.</p>
@@ -166,7 +146,7 @@
         <template slot="footer" v-else>
           <button @click="modalText">확인</button>
         </template>
-      </confirm-modal>
+      </confirm-modal>  
   </div>
 </template>
 
@@ -198,21 +178,16 @@ export default {
       modalName: "",
     };
   },
-  created() {
-    
-  },
+  
   methods: {
     // 데이터 조회
     searchData() {
       console.log("데이터 조회");
-      console.log("this.propsdata : " + this.propsdata );
-      console.log("this.$route.name : " + this.$route.name);
-      console.log(this.productName);
-
+      
+      this.spinnerStart();
 
       if(this.$route.name === 'selectAllProduct' || this.$route.name === 'inspectInView'){
-        console.log("바로 조회하러 감~~");
-        this.$store.dispatch("SELECT_PRODUCT", {
+         this.$store.dispatch("SELECT_PRODUCT", {
           name: this.$route.name,
           sku_no: this.sku_no,
           productName: this.productName,
@@ -223,7 +198,6 @@ export default {
       } else{
         var bfdate = dayjs(this.beforeDate);
         var afdate = dayjs(this.afterDate);
-        // var afdate = dayjs(this.afterDate);
         if(bfdate.isSameOrBefore(this.afterDate,"day")){
           console.log("날짜 확인됨");
           this.$store.dispatch("SELECT_INSPECT", {
@@ -293,6 +267,11 @@ export default {
     closeModal() {
       this.modal = false;
     },
+    // 상위 컴포넌트에 스피너 열기
+    spinnerStart() {
+      console.log("event emit 접속");
+      this.$emit('spinnerStart')
+    }
   },
   mounted() {
     // 처음 실행 시 날짜 지정

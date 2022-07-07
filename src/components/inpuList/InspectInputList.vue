@@ -338,9 +338,9 @@
 </template>
 
 <script>
-import searchProductModal from "./modal/SearchProductModal.vue";
-import SelectProductTable from '../components/select/SelectProductTable.vue'
-import confirmModal from "./modal/ConfirmModal.vue";
+import searchProductModal from "../modal/SearchProductModal.vue";
+import SelectProductTable from '../select/SelectProductTable.vue'
+import confirmModal from "../modal/ConfirmModal.vue";
 // import ss from '../'
 
 export default {
@@ -673,13 +673,13 @@ export default {
       this.$store.dispatch("UPDATE_INSPECT",this.formData);
      
     },
+    // 검수 삭제 진행
     deleteInspect(){
       this.openSpinner();
       console.log("검수 삭제 진행");
       this.$store.commit("SET_DELETE_INSPECT", 3);
       
-      this.$store.dispatch("DELETE_INSPECT", {id : this.inspectId})
-
+      this.$store.dispatch("DELETE_INSPECT", {id : this.inspectId});
     }
   },
 };

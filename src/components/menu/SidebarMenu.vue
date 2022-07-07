@@ -27,6 +27,11 @@ export default {
           title: "QC"
         },
         {
+          href: "/userLogin",
+          title: "로그인",
+          icon: "fa fa-home",
+        },
+        {
           href: "/main",
           title: "메인메뉴",
           icon: "fa fa-home",
@@ -62,10 +67,27 @@ export default {
               icon: "fa fa-list"
             }
           ]
+        },
+        {
+          title: "제조사 관리",
+          icon: "fa fa-industry",
+          child: [
+            {
+              href: "/makerIn",
+              title: "제조사 등록",
+              icon: "fa fa-plus-circle"
+            },
+            {
+              href: "/makerSel",
+              title: "제조사 조회",
+              icon: "fa fa-list"
+            }
+          ]
         }
       ],
       collapsed: false,
-      hideToggle: true
+      hideToggle: true,
+      titleName: 'login'
     };
   },
   methods: {

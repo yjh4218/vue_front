@@ -1,45 +1,26 @@
 <template>
   <div class="body">
-    <div class="title">입고검수 조회</div>
-    <select-product :propsdata="message"></select-product>
-    <div>
-      <!-- <table>
-        <tr>
-          <th>날짜</th>
-          <th>SKU-NO</th>
-          <th>제품명</th>
-          <th>검수결과</th>
-          <th>검수내용</th>
-          <th>비고</th>
-          <th>asdas</th>
-        </tr>
-        <tr v-for="item in items" :key="item.title">
-          <td><span v-html="item.date"></span></td>
-          <td><span v-html="item.skuno"></span></td>
-          <td><span v-html="item.productName"></span></td>
-          <td><span v-html="item.incomeCheck"></span></td>
-          <td><span v-html="item.incomeContent"></span></td>
-          <td><span v-html="item.note"></span></td>
-        </tr>
-      </table> -->
-      <b-table
-        striped
-        hover
-        :items="getAllInspect"
-        :fields="fields"
-        label-sort-asc=""
-        label-sort-desc=""
-        label-sort-clear=""
-        @row-dblclicked="inspectDetails"
-      ></b-table>
-      
-    </div>
+    <b-overlay :show="spinnerState" rounded="sm">
+      <div class="title">입고검수 조회</div>
+      <select-product :propsdata="message" @spinnerStart="openSpinner"></select-product>
+      <div>
+        <b-table
+          striped
+          hover
+          :items="getSelectInspect"
+          :fields="fields"
+          label-sort-asc=""
+          label-sort-desc=""
+          label-sort-clear=""
+          @row-dblclicked="inspectDetails"
+        ></b-table>
+      </div>
+    </b-overlay>
   </div>
 </template>
 
 <script>
 import SelectProduct from '../../components/select/SelectProduct.vue'
-import { mapGetters } from "vuex";
 
 export default {
   
@@ -49,7 +30,7 @@ export default {
   data() {
     return {
       message: "testSelView",
-      allInspect:[],
+      getSelectInspect:[],
       fields: [        
         { key: "inspectDate", label: "검수날짜", sortable: true, thClass: "w15" },
         { key: "product.skuNo", label: "skuNo", sortable: true, thClass: "w15" },
@@ -60,13 +41,26 @@ export default {
         { key: "lotDate", label: "유통기한(LOT)", sortable: true, thClass: "w15" },
         { key: "moisture", label: "수분율(%)", sortable: true, thClass: "w15" },
       ],
+      spinnerState: false,
     };
   },
   created() {
+
+  },
+  mounted(){
+    this.openSpinner();
   },
   computed:{
-    ...mapGetters(["getAllInspect"]),
-    // 제품 조회 및 결과값 입력
+    SelectInspect(){
+      return this.$store.getters.getSelectInspect;
+    },
+  },
+  watch: {
+    // 검수 조회 및 결과값 입력
+    SelectInspect(val){
+      this.getSelectInspect = val;
+      this.closeSpinner();
+    },
   },
   methods:{
     // 더블 클릭 이벤트
@@ -82,9 +76,18 @@ export default {
       this.$store.commit("SET_INSPECT", item);
       this.$router.push(`/inspectUp/${item.id}`);
     },
-  }
+    // 스피너 열기
+    openSpinner(){
+      console.log("openSpinner 열림");
+      this.spinnerState = true;
+    },
+    // 스피너 닫기
+    closeSpinner(){
+      console.log("closeSpinner 닫기 ");
+      this.spinnerState = false;
+    },
+  },
   
-
 };
 </script>
 
