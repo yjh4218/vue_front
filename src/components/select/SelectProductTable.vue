@@ -3,6 +3,7 @@
     <b-overlay :show="spinnerState" rounded="sm">
       <div class="title">상품 조회</div>
       <select-product :propsdata="message" @spinnerStart="openSpinner"></select-product>
+      <b-button variant="primary" class="right-box" v-on:click="download">엑셀다운</b-button>
       <div class="tableCss">
         <b-table
           striped
@@ -21,6 +22,7 @@
 
 <script>
 import SelectProduct from "../../components/select/SelectProduct.vue";
+import * as XLSX from 'xlsx'
 
 export default {
   
@@ -45,9 +47,17 @@ export default {
   },
   created() {
     // 처음에 전 상품 조회 함
+    console.log(this.$route.name);
     this.$store.dispatch("SELECT_PRODUCT", this.$route.name);
   },
   methods: {
+    //엑셀 다운로드
+    download() {
+      const workBook = XLSX.utils.book_new()
+      const workSheet = XLSX.utils.json_to_sheet(this.getSelectProduct)
+      XLSX.utils.book_append_sheet(workBook, workSheet, '상품목록')
+      XLSX.writeFile(workBook, '상품목록.xlsx')
+    },
     // 더블 클릭 이벤트
     productDetails(item) {
       console.log("this.$route.name : " + this.$route.name);
@@ -57,14 +67,16 @@ export default {
       console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_PRODUCT", "");
 
+      var tempData={};
+
       // 전체 제품 조회 화면일 경우 제품 상세정보 페이지로 이동
       if(this.$route.name === "selectAllProduct"){
         this.$store.commit("SET_PRODUCT", item);
         this.$router.push(`/productUp/${item.skuNo}`);
       } 
       // 신규 검수 등록 화면에서 데이터 입력일 경우
-      else if(this.$route.name === "inspectInView"){
-        var tempData = {
+      else if(this.$route.name === "inspectInView" || this.$route.name === "claimInView"){
+        tempData = {
           productId : item.id,
           skuNo : item.skuNo,
           productName : item.productName
@@ -106,6 +118,10 @@ export default {
 </script>
 
 <style scoped>
+.right-box {
+  float: right;
+  width:auto;
+}
 table.b-table thead th.w10 {
   width: 10%;
 }

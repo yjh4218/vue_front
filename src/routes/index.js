@@ -25,12 +25,13 @@ export const router = new VueRouter({
   routes: [
     {
       path: "/",
-      redirect: "/main",
+      redirect: "/userLogin",
     },
     {
       // 로그인
       path: "/userLogin",
       //component : url 주소를 갔을 때 표시될 컴포넌트
+      name: "userLogin",
       component: userLogin,
     },
     {
@@ -92,31 +93,37 @@ export const router = new VueRouter({
     {
       // 제조사 조회
       path: "/makerSel",
+      name : "makerSelView",
       component: makerSelView,
     },
     {
       // 제조사 업데이트
       path: "/makerUp/:id",
+      name : "makerUpView",
       component: makerUpView,
     },
     {
       // 제조사 추가
       path: "/makerIn",
+      name : "makerInView",
       component: makerInView,
     },
     {
       // 클레임 조회
       path: "/claimSel",
+      name : "claimSelView",
       component: claimSelView,
     },
     {
       // 클레임 업데이트
-      path: "/claimUp",
+      path: "/claimUp/:id",
+      name : "claimUpView",
       component: claimUpView,
     },
     {
       // 클레임 추가
       path: "/claimIn",
+      name : "claimInView",
       component: claimInView,
     },
   ],

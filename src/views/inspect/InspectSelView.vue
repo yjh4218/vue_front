@@ -3,6 +3,7 @@
     <b-overlay :show="spinnerState" rounded="sm">
       <div class="title">입고검수 조회</div>
       <select-product :propsdata="message" @spinnerStart="openSpinner"></select-product>
+      <b-button variant="primary" class="right-box" v-on:click="download">엑셀다운</b-button>
       <div>
         <b-table
           striped
@@ -21,6 +22,7 @@
 
 <script>
 import SelectProduct from '../../components/select/SelectProduct.vue'
+import * as XLSX from 'xlsx'
 
 export default {
   
@@ -63,6 +65,14 @@ export default {
     },
   },
   methods:{
+    //엑셀 다운로드
+    download() {
+      console.log("확인");
+      const workBook = XLSX.utils.book_new()
+      const workSheet = XLSX.utils.json_to_sheet(this.getSelectInspect)
+      XLSX.utils.book_append_sheet(workBook, workSheet, '제조사 목록')
+      XLSX.writeFile(workBook, '제조사 목록.xlsx')
+    },
     // 더블 클릭 이벤트
     inspectDetails(item) {
       console.log("this.$route.name : " + this.$route.name);
@@ -91,4 +101,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.right-box {
+  float: right;
+  width:auto;
+}
+</style>

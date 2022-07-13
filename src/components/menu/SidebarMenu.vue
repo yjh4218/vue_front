@@ -26,11 +26,11 @@ export default {
           header: true,
           title: "QC"
         },
-        {
-          href: "/userLogin",
-          title: "로그인",
-          icon: "fa fa-home",
-        },
+        // {
+        //   href: "/userLogin",
+        //   title: "로그인",
+        //   icon: "fa fa-home",
+        // },
         {
           href: "/main",
           title: "메인메뉴",
@@ -80,6 +80,22 @@ export default {
             {
               href: "/makerSel",
               title: "제조사 조회",
+              icon: "fa fa-list"
+            }
+          ]
+        },
+        {
+          title: "클레임 관리",
+          icon: "fa fa-user-plus",
+          child: [
+            {
+              href: "/claimIn",
+              title: "클레임 등록",
+              icon: "fa fa-plus-circle"
+            },
+            {
+              href: "/claimSel",
+              title: "클레임 조회",
               icon: "fa fa-list"
             }
           ]

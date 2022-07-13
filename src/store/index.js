@@ -15,12 +15,16 @@ import {
   insertInspect,
   updateInspect,
   deleteInspect,
-  selectAllInspect,
+  // selectAllInspect,
   selectInspect,
   insertMaker,
   updateMaker,
   deleteMaker,
-  selectMaker
+  selectMaker,
+  insertClaim,
+  updateClaim,
+  deleteClaim,
+  selectClaim
 } from "../api/index.js";
 
 export const store = new Vuex.Store({
@@ -57,12 +61,22 @@ export const store = new Vuex.Store({
     // 제조사 수정하기
     updateMaker: {},
     // 제조사 삭제하기
-    deleteMaker:{},
+    deleteMaker: {},
+    
+    // 클레임 추가하기
+    insertClaim: {},
+    // 전체 클레임 조회
+    selectClaim: [],
+    // 클레임 수정하기
+    updateClaim: {},
+    // 클레임 삭제하기
+    deleteClaim:{},
 
     // vuex를 통한 데이터 저장
     getProduct: {},
     getInspect: [],
-    getMaker : [],
+    getMaker: [],
+    getClaim:[]
   },
   getters: {
     // 유저 로그인 결과
@@ -125,6 +139,23 @@ export const store = new Vuex.Store({
     // 제조사 삭제 데이터 확인
     getDeleteMaker(state) {
       return state.deleteMaker;
+    },
+
+    // 클레임 추가 데이터 확인
+    getInsertClaim(state) {
+      return state.insertClaim;
+    },
+    // 클레임 제품 전체 조회
+    getSelectClaim(state) {
+      return state.selectClaim;
+    },
+    // 클레임 수정 데이터 확인
+    getUpdateClaim(state) {
+      return state.updateClaim;
+    },
+    // 클레임 삭제 데이터 확인
+    getDeleteClaim(state) {
+      return state.deleteClaim;
     },
 
 
@@ -204,6 +235,23 @@ export const store = new Vuex.Store({
       state.deleteMaker = deleteMaker;
     },
 
+    // 클레임 추가하기
+    SET_INSERT_CLAIM(state, insertClaim) {
+      state.insertClaim = insertClaim;
+    },
+    // 클레임 전체 제품 조회
+    SET_SELECT_CLAIM(state, selectClaim) {
+      state.selectClaim = selectClaim;
+    },
+    // 클레임 제품 업데이트
+    SET_UPDATE_CLAIM(state, updateClaim) {
+      state.updateClaim = updateClaim;
+    },
+    //클레임 제품 삭제
+    SET_DELETE_CLAIM(state, deleteClaim) {
+      state.deleteClaim = deleteClaim;
+    },
+
     // vuex를 통한 데이터 이동(상품 상세 조회 시 사용)
     SET_PRODUCT(state, getProduct) {
       state.getProduct = getProduct;
@@ -216,24 +264,31 @@ export const store = new Vuex.Store({
     SET_MAKER(state, getMaker) {
       state.getMaker = getMaker;
     },
+    // vuex를 통한 데이터 이동(제조사 상세 조회 시 사용)
+    SET_CLAIM(state, getClaim) {
+      state.getClaim = getClaim;
+    },
   },
 
   actions: {
     // 유저 로그인
     USER_LOGIN(context, user) {
-      console.log("INSERT_PRODUCT actions 접속됨");
+      console.log("USER_LOGIN actions 접속됨");
       console.log(context);
 
-      userLogin(user)
+      return userLogin(user)
         .then((response) => {
           console.log("response");
           console.log(response);
-          context.commit("SET_INSERT_PRODUCT", response.data.data);
+          context.commit("SET_USER_LOGIN", response);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
+          context.commit("SET_USER_LOGIN", error.response);
+        
         });
     },
 
@@ -242,11 +297,12 @@ export const store = new Vuex.Store({
       console.log("INSERT_PRODUCT actions 접속됨");
       console.log(context);
 
-      insertProduct(selectCon)
+      return insertProduct(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_INSERT_PRODUCT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -260,11 +316,12 @@ export const store = new Vuex.Store({
       console.log("UPDATE_PRODUCT actions 접속됨");
       console.log(context);
 
-      updateProduct(selectCon)
+      return updateProduct(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_UPDATE_PRODUCT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -278,12 +335,13 @@ export const store = new Vuex.Store({
       console.log("DELETE_PRODUCT actions 접속됨");
       console.log(selectCon);
 
-      deleteProduct(selectCon)
+      return deleteProduct(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           console.log(response.data.data);
           context.commit("SET_DELETE_PRODUCT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           if (error.response) {
@@ -309,11 +367,12 @@ export const store = new Vuex.Store({
       console.log("SELECT_PRODUCT actions 접속됨");
       console.log(selectCon);
 
-      selectProduct(selectCon)
+      return selectProduct(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_SELECT_PRODUCT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -327,12 +386,13 @@ export const store = new Vuex.Store({
       console.log("CHECK_SKU_DUP actions 접속됨");
       console.log(selectCon);
 
-      checkSkuNo(selectCon)
+      return checkSkuNo(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           console.log(response.data.data);
           context.commit("SET_CHECK_PRODUCT_RESULT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           if (error.response) {
@@ -358,11 +418,12 @@ export const store = new Vuex.Store({
       console.log("INSERT_INSPECT actions 접속됨");
       console.log(context);
 
-      insertInspect(selectCon)
+      return insertInspect(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_INSERT_INSPECT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -376,11 +437,12 @@ export const store = new Vuex.Store({
       console.log("UPDATE_INSPECT actions 접속됨");
       console.log(context);
 
-      updateInspect(selectCon)
+      return updateInspect(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_UPDATE_INSPECT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -394,12 +456,13 @@ export const store = new Vuex.Store({
       console.log("DELETE_INSPECT actions 접속됨");
       console.log(selectCon);
 
-      deleteInspect(selectCon)
+      return deleteInspect(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           console.log(response.data.data);
           context.commit("SET_DELETE_INSPECT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           if (error.response) {
@@ -420,33 +483,34 @@ export const store = new Vuex.Store({
         });
     },
 
-    // 모든 검수 조회
-    SELECT_ALL_INSPECT(context) {
-      console.log("SELECT_ALL_INSPECT actions 접속됨");
-      console.log(context);
-      selectAllInspect(context)
-        .then((response) => {
-          console.log(response);
-          console.log(response.data);
-          console.log(response.data.data);
-          context.commit("SET_SELECT_INSPECT", response.data.data);
-        })
-        .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        });
-    },
+    // // 모든 검수 조회
+    // SELECT_ALL_INSPECT(context) {
+    //   console.log("SELECT_ALL_INSPECT actions 접속됨");
+    //   console.log(context);
+    //   selectAllInspect(context)
+    //     .then((response) => {
+    //       console.log(response);
+    //       console.log(response.data);
+    //       console.log(response.data.data);
+    //       context.commit("SET_SELECT_INSPECT", response.data.data);
+    //     })
+    //     .catch((error) => {
+    //       console.log(error.response.data);
+    //       console.log(error.response.status);
+    //       console.log(error.response.headers);
+    //     });
+    // },
     // 일부 검수 조회
     SELECT_INSPECT(context, selectCon) {
       console.log("SELECT_INSPECT actions 접속됨");
       console.log(selectCon);
 
-      selectInspect(selectCon)
+      return selectInspect(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_SELECT_INSPECT", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -460,11 +524,12 @@ export const store = new Vuex.Store({
       console.log("INSERT_MAKER actions 접속됨");
       console.log(context);
 
-      insertMaker(selectCon)
+      return insertMaker(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_INSERT_MAKER", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -478,11 +543,12 @@ export const store = new Vuex.Store({
       console.log("UPDATE_MAKER actions 접속됨");
       console.log(context);
 
-      updateMaker(selectCon)
+      return updateMaker(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_UPDATE_MAKER", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -496,12 +562,13 @@ export const store = new Vuex.Store({
       console.log("DELETE_MAKER actions 접속됨");
       console.log(selectCon);
 
-      deleteMaker(selectCon)
+      return deleteMaker(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           console.log(response.data.data);
           context.commit("SET_DELETE_MAKER", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           if (error.response) {
@@ -527,11 +594,101 @@ export const store = new Vuex.Store({
       console.log("SELECT_MAKER actions 접속됨");
       console.log(selectCon);
 
-      selectMaker(selectCon)
+      return selectMaker(selectCon)
         .then((response) => {
           console.log("response");
           console.log(response);
           context.commit("SET_SELECT_MAKER", response.data.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    },
+
+    // 클레임 추가
+    INSERT_CLAIM(context, selectCon) {
+      console.log("INSERT_CLAIM actions 접속됨");
+      console.log(context);
+
+      return insertClaim(selectCon)
+        .then((response) => {
+          console.log("response");
+          console.log(response);
+          context.commit("SET_INSERT_CLAIM", response.data.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    },
+
+    // 클레임 수정 추가
+    UPDATE_CLAIM(context, selectCon) {
+      console.log("UPDATE_CLAIM actions 접속됨");
+      console.log(context);
+
+      return updateClaim(selectCon)
+        .then((response) => {
+          console.log("response");
+          console.log(response);
+          context.commit("SET_UPDATE_CLAIM", response.data.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    },
+
+    // 클레임 삭제
+    DELETE_CLAIM(context, selectCon) {
+      console.log("DELETE_CLAIM actions 접속됨");
+      console.log(selectCon);
+
+      return deleteClaim(selectCon)
+        .then((response) => {
+          console.log("response");
+          console.log(response);
+          console.log(response.data.data);
+          context.commit("SET_DELETE_CLAIM", response.data.data);
+          return response.data;
+        })
+        .catch((error) => {
+          if (error.response) {
+            // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+          } else if (error.request) {
+            // 요청이 이루어 졌으나 응답을 받지 못했습니다.
+            // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
+            // Node.js의 http.ClientRequest 인스턴스입니다.
+            console.log(error.request);
+          } else {
+            // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
+            console.log("Error", error.message);
+          }
+          console.log(error.config);
+        });
+    },
+
+    // 일부 클레임 조회
+    SELECT_CLAIM(context, selectCon) {
+      console.log("SELECT_CLAIM actions 접속됨");
+      console.log(selectCon);
+
+      return selectClaim(selectCon)
+        .then((response) => {
+          console.log("response");
+          console.log(response);
+          context.commit("SET_SELECT_CLAIM", response.data.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error.response.data);

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <sidebar-menu></sidebar-menu>
+    <sidebar-menu v-if="$route.name !== 'userLogin'"></sidebar-menu>
     <transition name="page">
       <router-view></router-view>
     </transition>

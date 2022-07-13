@@ -7,15 +7,12 @@
           <b-input-group prepend="SKU-NO">
             <b-form-input
               type="text"
-              v-model="sku_no"
+              v-model="skuNo"
               placeholder=""
               value=""
               maxlength="12"
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
             ></b-form-input>
-            <!-- <b-input-group-prepend>
-                            <b-button variant="primary" @click="searchData">검색</b-button>
-                        </b-input-group-prepend> -->
           </b-input-group>
         </div>
         <div class="col-md-3 mb-3">
@@ -26,9 +23,6 @@
               placeholder=""
               value=""
             ></b-form-input>
-            <!-- <b-input-group-prepend>
-                            <b-button variant="primary" @click="openModal">검색</b-button>
-                        </b-input-group-prepend> -->
           </b-input-group>
         </div>
         <div class="col-md-3 mb-3">
@@ -39,9 +33,6 @@
               placeholder=""
               value=""
             ></b-form-input>
-            <!-- <b-input-group-prepend>
-                            <b-button variant="primary" @click="openModal">검색</b-button>
-                        </b-input-group-prepend> -->
           </b-input-group>
         </div>
         <div class="col-md-3 mb-3">
@@ -52,9 +43,6 @@
               placeholder=""
               value=""
             ></b-form-input>
-            <!-- <b-input-group-prepend>
-                            <b-button variant="primary" @click="openModal">검색</b-button>
-                        </b-input-group-prepend> -->
           </b-input-group>
         </div>
       </div>
@@ -98,23 +86,30 @@
             </b-form-checkbox-group>
           </b-input-group>
         </div>
-        <div class="col-md-2 mb-3" v-if="this.$route.name !== 'inspectSelView'">
-          <b-button 
-            variant="primary"
-            class="left-box"
-            @click="searchData"
+        <div
+          class="col-md-2 mb-3"
+          v-if="
+            this.$route.name === 'selectAllProduct' ||
+            this.$route.name === 'inspectInView' ||
+            this.$route.name === 'claimInView'
+          "
+        >
+          <b-button variant="primary" class="left-box" @click="searchData"
             >상품 조회</b-button
           >
         </div>
       </div>
       <div
         slot="bottom"
-        v-if="this.$route.name === 'inspectSelView'"
+        v-if="
+          this.$route.name === 'inspectSelView' ||
+          this.$route.name === 'claimSelView'
+        "
         class="row"
       >
         <div class="col-md-6 mb-3">
           <b-input-group prepend="날짜">
-             <b-form-datepicker
+            <b-form-datepicker
               id="datepicker-dateformat1"
               v-model="beforeDate"
             ></b-form-datepicker>
@@ -125,28 +120,48 @@
           </b-input-group>
         </div>
         <div class="col-md-4 mb-3">
-          <b-button variant="primary" class="btn_margin" @click="prevWeek">1주일 전</b-button>
-          <b-button variant="primary" class="btn_margin" @click="prevMonth">1개월 전</b-button>
-          <b-button variant="primary" class="btn_margin" @click="prevThreeMonth">3개월 전</b-button>
+          <b-button variant="primary" class="btn_margin" @click="prevWeek"
+            >1주일 전</b-button
+          >
+          <b-button variant="primary" class="btn_margin" @click="prevMonth"
+            >1개월 전</b-button
+          >
+          <b-button variant="primary" class="btn_margin" @click="prevThreeMonth"
+            >3개월 전</b-button
+          >
         </div>
-        <div class="col-md-2 mb-3">
+        <div class="col-md-2 mb-3" v-if="this.$route.name === 'inspectSelView'">
           <b-button
             variant="primary"
             class="left-box"
-            @click="searchData(); spinnerStart();"
-            >상품 조회</b-button
+            @click="
+              searchData();
+              spinnerStart();
+            "
+            >검수 조회</b-button
+          >
+        </div>
+        <div class="col-md-2 mb-3" v-else>
+          <b-button
+            variant="primary"
+            class="left-box"
+            @click="
+              searchData();
+              spinnerStart();
+            "
+            >클레임 조회</b-button
           >
         </div>
       </div>
     </select-slot>
     <confirm-modal @close="closeModal" v-if="modal">
-        <div v-if="modalName === 'noConfirmDate'">
-          <p>날짜가 형식에 맞지 않습니다. 뒤의 날짜가 앞의 날짜보다 빠릅니다.</p>
-        </div>
-        <template slot="footer" v-else>
-          <button @click="modalText">확인</button>
-        </template>
-      </confirm-modal>  
+      <div v-if="modalName === 'noConfirmDate'">
+        <p>날짜가 형식에 맞지 않습니다. 뒤의 날짜가 앞의 날짜보다 빠릅니다.</p>
+      </div>
+      <template slot="footer" v-else>
+        <button @click="modalText">확인</button>
+      </template>
+    </confirm-modal>
   </div>
 </template>
 
@@ -154,18 +169,18 @@
 import selectSlot from "../select/SelectProductSlot.vue";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import confirmModal from "../modal/ConfirmModal.vue"
+import confirmModal from "../modal/ConfirmModal.vue";
 
 dayjs.extend(isSameOrBefore);
 
 export default {
   components: {
     selectSlot,
-    confirmModal
+    confirmModal,
   },
   data() {
     return {
-      sku_no: "",
+      skuNo: "",
       productName: "",
       brandName: "",
       maker: "",
@@ -178,60 +193,71 @@ export default {
       modalName: "",
     };
   },
-  
+
   methods: {
     // 데이터 조회
     searchData() {
       console.log("데이터 조회");
-      
+      console.log(this.$route.name);
+
       this.spinnerStart();
 
-      if(this.$route.name === 'selectAllProduct' || this.$route.name === 'inspectInView'){
-         this.$store.dispatch("SELECT_PRODUCT", {
+      if (
+        this.$route.name === "selectAllProduct" ||
+        this.$route.name === "inspectInView" ||
+        this.$route.name === "claimInView"
+      ) {
+        this.$store.dispatch("SELECT_PRODUCT", {
           name: this.$route.name,
-          sku_no: this.sku_no,
+          skuNo: this.skuNo,
           productName: this.productName,
           brandName: this.brandName,
           maker: this.maker,
           className: this.className,
         });
-      } else{
+      } else {
         var bfdate = dayjs(this.beforeDate);
         var afdate = dayjs(this.afterDate);
-        if(bfdate.isSameOrBefore(this.afterDate,"day")){
+
+        if (bfdate.isSameOrBefore(this.afterDate, "day")) {
           console.log("날짜 확인됨");
-          this.$store.dispatch("SELECT_INSPECT", {
-          name: this.$route.name,
-          sku_no: this.sku_no,
-          productName: this.productName,
-          brandName: this.brandName,
-          maker: this.maker,
-          className: this.className,
-          beforeDate : this.beforeDate,
-          afterDate : afdate.add(1,"day").format("YYYY-MM-DD")
-        });
-        }else{
-          this.modalName = "noConfirmDate"
+
+          let data = {
+            name: this.$route.name,
+            skuNo: this.skuNo,
+            productName: this.productName,
+            brandName: this.brandName,
+            maker: this.maker,
+            className: this.className,
+            beforeDate: this.beforeDate,
+            afterDate: afdate.add(1, "day").format("YYYY-MM-DD"),
+          };
+
+          if (this.$route.name === "inspectSelView") {
+            this.$store.dispatch("SELECT_INSPECT", data);
+          } else {
+            this.$store.dispatch("SELECT_CLAIM", data);
+          }
+        } else {
+          this.modalName = "noConfirmDate";
           this.modal = true;
         }
       }
-      
     },
     // 오늘 날짜 확인
-    setDate(searchDate){
+    setDate(searchDate) {
       var thisday = new Date(searchDate);
 
       // 연도, 월, 일 추출
       var year = thisday.getFullYear();
-      var month = ('0' + (thisday.getMonth() + 1)).slice(-2);
-      var day = ('0' + thisday.getDate()).slice(-2);
+      var month = ("0" + (thisday.getMonth() + 1)).slice(-2);
+      var day = ("0" + thisday.getDate()).slice(-2);
 
       // 최종 포맷 (ex - '2021-10-08')
-      return year + '-' + month + '-' + day; 
-      
+      return year + "-" + month + "-" + day;
     },
     // 일주일 전 날짜 구하기
-    prevWeek(){
+    prevWeek() {
       var d = new Date();
       this.afterDate = this.setDate(d);
       console.log("d : " + d);
@@ -241,17 +267,16 @@ export default {
       this.beforeDate = this.setDate(d);
     },
     // 한달 전 날짜 구하기
-    prevMonth(){
+    prevMonth() {
       var d = new Date();
       this.afterDate = this.setDate(d);
-      
 
       var monthOfYear = d.getMonth();
       d.setMonth(monthOfYear - 1);
       this.beforeDate = this.setDate(d);
     },
     // 3개월 전 날짜 구하기
-    prevThreeMonth(){
+    prevThreeMonth() {
       var d = new Date();
       this.afterDate = this.setDate(d);
 
@@ -270,8 +295,8 @@ export default {
     // 상위 컴포넌트에 스피너 열기
     spinnerStart() {
       console.log("event emit 접속");
-      this.$emit('spinnerStart')
-    }
+      this.$emit("spinnerStart");
+    },
   },
   mounted() {
     // 처음 실행 시 날짜 지정
@@ -288,7 +313,7 @@ export default {
 }
 .left-box {
   float: right;
-  width:auto;
+  width: auto;
 }
 .custom-control custom-control-inline custom-checkbox {
   margin-left: 10px;

@@ -17,8 +17,6 @@
               ></b-form-input>
               <b-input-group-prepend>
                 <b-button variant="primary" @click="searchProduct">
-                  <!-- 
-                  v-b-modal.search-product-modal -->
                   제품검색
                 </b-button>
               </b-input-group-prepend>
@@ -37,26 +35,48 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3 mb-3">
-            <b-input-group prepend="검수날짜">
+          <div class="col-md-6 mb-3">
+            <b-input-group prepend="주문번호">
               <b-form-input
-                type="date"
-                v-model="inspectDate"
+                type="text"
+                v-model="orderNum"
                 placeholder=""
                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
               ></b-form-input>
             </b-input-group>
           </div>
-          <div class="col-md-3 mb-3">
-            <b-input-group prepend="검수결과">
+          <div class="col-md-6 mb-3">
+            <b-input-group prepend="젠데크스 티켓ID">
+              <b-form-input
+                type="text"
+                v-model="zenDeskID"
+                placeholder=""
+                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              ></b-form-input>
+            </b-input-group>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <b-input-group prepend="클레임 발생일자">
+              <b-form-input
+                type="date"
+                v-model="claimDate"
+                placeholder=""
+                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              ></b-form-input>
+            </b-input-group>
+          </div>
+          <div class="col-md-4 mb-3">
+            <b-input-group prepend="클레임 분류">
               <b-form-select
-                v-model="decideResult"
+                v-model="claimDecide"
                 :options="options"
               ></b-form-select>
             </b-input-group>
           </div>
-          <div class="col-md-3 mb-3">
-            <b-input-group prepend="유통기한">
+          <div class="col-md-4 mb-3">
+            <b-input-group prepend="제품 유통기한">
               <b-form-input
                 type="date"
                 v-model="lotDate"
@@ -65,23 +85,32 @@
               ></b-form-input>
             </b-input-group>
           </div>
+        </div>
+        <div class="row">
           <div class="col-md-3 mb-3">
-            <b-input-group prepend="수분도">
+            <b-input-group prepend="회수 여부">
+              <b-form-select
+                v-model="recall"
+                :options="options"
+              ></b-form-select>
+            </b-input-group>
+          </div>
+          <div class="col-md-9 mb-3">
+            <b-input-group prepend="아사나 링크">
               <b-form-input
                 type="text"
-                v-model="moisture"
+                v-model="asanaLink"
                 placeholder=""
-                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
               ></b-form-input>
             </b-input-group>
           </div>
         </div>
         <div class="row">
           <div class="col-md-12 mb-3">
-            <b-input-group prepend="검수내용">
+            <b-input-group prepend="클레임내용">
               <b-form-textarea
                 id="textarea-default"
-                v-model="inspectContent"
+                v-model="claimContent"
                 rows="3"
                 max-rows="5"
               ></b-form-textarea>
@@ -159,39 +188,37 @@
             variant="primary"
             class="rightBox"
             v-b-modal.insert-modal
-            v-bind:disabled="
-              skuNo === '' || decideResult === '' || inspectDate === ''
-            "
+            v-bind:disabled="skuNo === '' || claimDate === ''"
           >
-            신규 검수 등록
+            신규 클레임 등록
           </b-button>
         </div>
       </div>
       <div class="row" v-else>
         <div class="col-md-12 mb-3" v-if="inputRead">
           <b-button variant="primary" class="rightBox" v-b-modal.update-modal>
-            검수 정보 수정
+            클레임 정보 수정
           </b-button>
           <b-button variant="danger" class="rightBox" v-b-modal.delete-modal>
-            검사 정보 삭제
+            클레임 삭제
           </b-button>
         </div>
         <div class="col-md-12 mb-3" v-else>
           <b-button variant="primary" class="rightBox" @click="inpuReadMode">
-            검수 수정하기
+            클레임 수정하기
           </b-button>
         </div>
       </div>
 
       <b-modal id="insert-modal">
-        <!-- <template #modal-title> 신규검수 등록 </template> -->
-        <div class="my-4">신규 검수를 등록하시겠습니까?</div>
+        <!-- <template #modal-title> 신규클레임 등록 </template> -->
+        <div class="my-4">신규 클레임를 등록하시겠습니까?</div>
         <template #modal-footer>
           <div class="d-block text-center">
             <b-button
               variant="primary"
               class="frightBox"
-              @click="insertInspect(), $bvModal.hide('insert-modal')"
+              @click="insertClaim(), $bvModal.hide('insert-modal')"
               :disabled="spinnerState"
             >
               등록하기
@@ -209,7 +236,7 @@
 
       <!-- 제품 검색 모달 -->
       <b-modal id="search-product-modal">
-        <!-- <template #modal-title> 신규검수 등록 </template> -->
+        <!-- <template #modal-title> 신규클레임 등록 </template> -->
         <div class="my-4">
           <select-product-table></select-product-table>
         </div>
@@ -235,14 +262,14 @@
       </b-modal>
 
       <b-modal id="update-modal">
-        <!-- <template #modal-title> 신규검수 등록 </template> -->
-        <div class="my-4">검수 정보를 수정하시겠습니까?</div>
+        <!-- <template #modal-title> 신규클레임 등록 </template> -->
+        <div class="my-4">클레임 정보를 수정하시겠습니까?</div>
         <template #modal-footer>
           <div class="d-block text-center">
             <b-button
               variant="primary"
               class="frightBox"
-              @click="updateInspect(), $bvModal.hide('update-modal')"
+              @click="updateClaim(), $bvModal.hide('update-modal')"
               :disabled="spinnerState"
             >
               수정하기
@@ -258,14 +285,14 @@
         </template>
       </b-modal>
       <b-modal id="delete-modal">
-        <!-- <template #modal-title> 신규검수 등록 </template> -->
-        <div class="my-4">해당 검수 내용을 삭제하시겠습니까?</div>
+        <!-- <template #modal-title> 신규클레임 등록 </template> -->
+        <div class="my-4">해당 클레임 내용을 삭제하시겠습니까?</div>
         <template #modal-footer>
           <div class="d-block text-center">
             <b-button
               variant="primary"
               class="frightBox"
-              @click="deleteInspect(), $bvModal.hide('delete-modal')"
+              @click="deleteClaim(), $bvModal.hide('delete-modal')"
               :disabled="spinnerState"
             >
               삭제하기
@@ -299,61 +326,52 @@
     <!-- 통신 완료 모달 -->
     <div>
       <confirm-modal @close="closeModal" v-if="modal">
-        <div v-if="modalName === 'insertInspect'">
+        <div v-if="modalName === 'insertClaim'">
           <div v-if="insertState === 1">
-            <p>검사 내용이 등록 되었습니다.</p>
-          </div>
-          <div v-else-if="insertState === 2">
-            <p>하나의 검수 날짜에 2개 제품 등록은 안 됩니다.</p>
+            <p>클레임이 등록 되었습니다.</p>
           </div>
           <div v-else>
-            <p>검사 내용 등록에 실패했습니다. 다시 시도해 주십시오.</p>
+            <p>클레임 등록에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
-        <div v-if="modalName === 'updateInspect'">
+        <div v-if="modalName === 'updateClaim'">
           <div v-if="updateState === 1">
-            <p>검사 정보가 수정되었습니다.</p>
+            <p>클레임 정보가 수정되었습니다.</p>
           </div>
           <div v-else>
-            <p>검사 정보 수정에 실패했습니다. 다시 시도해 주십시오.</p>
+            <p>클레임 정보 수정에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
-        <div v-if="modalName === 'deleteInspect'">
+        <div v-if="modalName === 'deleteClaim'">
           <div v-if="deleteState === 1">
-            <p>검수 정보가 삭제되었습니다.</p>
+            <p>클레임이 삭제되었습니다.</p>
           </div>
           <div v-else>
-            <p>검수 삭제에 실패했습니다. 다시 시도해 주십시오.</p>
+            <p>클레임 삭제에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
         <div v-if="modalName === 'noAdmin'">
           <p>관리자가 아니기 때문에 추가, 수정, 삭제할 수 없습니다.</p>
         </div>
 
-        <!-- <template slot="footer">
-          <button @click="modalText">확인</button>
-        </template> -->
         <template
           slot="footer"
-          v-if="modalName === 'insertInspect' && insertState === 1"
+          v-if="modalName === 'insertClaim' && insertState === 1"
         >
           <b-button variant="primary" @click="roturInit()">확인</b-button>
         </template>
         <template
           slot="footer"
-          v-else-if="modalName === 'updateInspect' && updateState === 1"
+          v-else-if="modalName === 'updateClaim' && updateState === 1"
         >
           <b-button variant="primary" @click="roturInit()">확인</b-button>
         </template>
         <template
           slot="footer"
-          v-else-if="modalName === 'deleteInspect' && deleteState"
+          v-else-if="modalName === 'deleteClaim' && deleteState"
         >
           <b-button variant="primary" @click="roturInit()">확인</b-button>
         </template>
-        <!-- <template slot="footer" v-else-if="insertState !== 3 || updateState !== 3">
-          <b-button variant="primary" @click="modalText">확인</b-button>
-        </template> -->
         <template slot="footer" v-else>
           <b-button variant="primary" @click="modalText">확인</b-button>
         </template>
@@ -377,15 +395,18 @@ export default {
   props: ["propsdata"],
   data() {
     return {
-      inspectId: "",
+      claimId: "",
       productId: "",
       skuNo: "",
       productName: "",
-      inspectDate: "",
-      decideResult: "",
+      orderNum: "",
+      zenDeskID: "",
+      claimDate: "",
+      claimDecide: "",
       lotDate: "",
-      moisture: "",
-      inspectContent: "",
+      recall: "",
+      asanaLink: "",
+      claimContent: "",
       specialReport: "",
       imgFiles: [],
       note: "",
@@ -434,25 +455,29 @@ export default {
       this.searchModal = true;
       this.modalName = "searchProduct";
     },
-    // 검수 상세 정보 입력
+    // 클레임 상세 정보 입력
     updateData() {
       if (this.propsdata === "updateView") {
         console.log("setData if 실행 : " + this.propsdata);
-        this.inspectId = this.$store.state.getInspect.id;
-        this.productId = this.$store.state.getInspect.product.id;
-        this.skuNo = this.$store.state.getInspect.product.skuNo;
-        this.productName = this.$store.state.getInspect.product.productName;
-        this.inspectDate = this.$store.state.getInspect.inspectDate;
-        this.decideResult = this.$store.state.getInspect.decideResult;
-        this.lotDate = this.$store.state.getInspect.lotDate;
-        this.moisture = this.$store.state.getInspect.moisture;
-        this.inspectContent = this.$store.state.getInspect.inspectContent;
-        this.specialReport = this.$store.state.getInspect.specialReport;
-        this.note = this.$store.state.getInspect.note;
+
+        this.claimId = this.$store.state.getClaim.id;
+        this.productId = this.$store.state.getClaim.product.id;
+        this.skuNo = this.$store.state.getClaim.product.skuNo;
+        this.productName = this.$store.state.getClaim.product.productName;
+        this.orderNum = this.$store.state.getClaim.orderNum;
+        this.zenDeskID = this.$store.state.getClaim.zenDeskID;
+        this.claimDate = this.$store.state.getClaim.claimDate;
+        this.claimDecide = this.$store.state.getClaim.claimDecide;
+        this.lotDate = this.$store.state.getClaim.lotDate;
+        this.recall = this.$store.state.getClaim.recall;
+        this.asanaLink = this.$store.state.getClaim.asanaLink;
+        this.claimContent = this.$store.state.getClaim.claimContent;
+        this.specialReport = this.$store.state.getClaim.specialReport;
+        this.note = this.$store.state.getClaim.note;
         this.inputRead = false;
 
         // 이미지 파일 있는지 확인.
-        if (this.$store.state.getInspect.imageFile.length > 0) {
+        if (this.$store.state.getClaim.imageFile.length > 0) {
           this.imgFlag = false;
           this.imgUpdate();
         }
@@ -461,10 +486,10 @@ export default {
         console.log("setData else 실행 : " + this.propsdata);
       }
     },
-    // 검수 상세 정보 이미지 파일 지정
+    // 클레임 상세 정보 이미지 파일 지정
     imgUpdate() {
       this.imgFiles = [];
-      this.$store.state.getInspect.imageFile.forEach((x) => {
+      this.$store.state.getClaim.imageFile.forEach((x) => {
         console.log("이미지 있음");
 
         var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
@@ -544,7 +569,7 @@ export default {
     // 등록 완료 되었을 경우 초기화
     roturInit() {
       console.log("routerInit 접속. 새로고침 진행");
-      this.$router.push("/inspectSel");
+      this.$router.push("/claimSel");
       // this.$router.go();
     },
     modalText() {
@@ -556,8 +581,8 @@ export default {
     inpuReadMode() {
       this.inputRead = true;
     },
-    // 검수 추가
-    insertInspect() {
+    // 클레임 추가
+    insertClaim() {
       // 관리자가 아닐 경우 추가 불가능
       if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
         this.modalName = "noAdmin";
@@ -567,23 +592,24 @@ export default {
       // 관리자일 경우 추가 가능
       else {
         this.openSpinner();
-        this.$store.commit("SET_INSERT_INSPECT", 3);
-        console.log("검수 추가 진행");
+        this.$store.commit("SET_INSERT_CLAIM", 3);
+        console.log("클레임 추가 진행");
 
         let data = {
-          id: this.inspectId,
+          productId: this.productId,
           skuNo: this.skuNo,
           productName: this.productName,
-          inspectDate: this.inspectDate,
-          decideResult: this.decideResult,
+          orderNum: this.orderNum,
+          zenDeskID: this.zenDeskID,
+          claimDate: this.claimDate,
+          claimDecide: this.claimDecide,
           lotDate: this.lotDate,
-          moisture: this.moisture,
-          inspectContent: this.inspectContent,
+          recall: this.recall,
+          asanaLink: this.asanaLink,
+          claimContent: this.claimContent,
           specialReport: this.specialReport,
           note: this.note,
         };
-
-        console.log("this.productId : " + this.productId);
 
         this.formData.append(
           "data",
@@ -597,27 +623,18 @@ export default {
         );
 
         this.$store
-          .dispatch("INSERT_INSPECT", this.formData)
+          .dispatch("INSERT_CLAIM", this.formData)
           .then((response) => {
-            this.modalName = "insertInspect";
-            console.log("response 응답 옴");
-            console.log(response);
+            this.modalName = "insertClaim";
 
-            // 검수 추가 성공
+            // 클레임 추가 성공
             if (response.data === 1) {
               console.log("response 값 1");
               this.insertState = 1;
               this.openModal();
               this.closeSpinner();
             }
-            // 해당 검수 날짜에 이미 등록된 검수 내용 존재
-            else if (response.data === 2) {
-              console.log("response 값 2");
-              this.insertState = 2;
-              this.openModal();
-              this.closeSpinner();
-            }
-            // 검수 등록 실패
+            // 클레임 등록 실패
             else if (response.data === 0) {
               console.log("response 값 0");
               this.insertState = 0;
@@ -631,8 +648,8 @@ export default {
         this.formData = new FormData();
       }
     },
-    // 검수 수정진행
-    updateInspect() {
+    // 클레임 수정진행
+    updateClaim() {
       // 관리자가 아닐 경우 수정 불가능
       if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
         this.modalName = "noAdmin";
@@ -643,18 +660,22 @@ export default {
       else {
         this.openSpinner();
         console.log("제품 수정 진행");
-        this.$store.commit("SET_UPDATE_INSPECT", 3);
+        this.$store.commit("SET_UPDATE_CLAIM", 3);
         console.log("productId : " + this.productId);
 
         let data = {
-          id: this.inspectId,
+          id: this.claimId,
+          productId: this.productId,
           skuNo: this.skuNo,
           productName: this.productName,
-          inspectDate: this.inspectDate,
-          decideResult: this.decideResult,
+          orderNum: this.orderNum,
+          zenDeskID: this.zenDeskID,
+          claimDate: this.claimDate,
+          claimDecide: this.claimDecide,
           lotDate: this.lotDate,
-          moisture: this.moisture,
-          inspectContent: this.inspectContent,
+          recall: this.recall,
+          asanaLink: this.asanaLink,
+          claimContent: this.claimContent,
           specialReport: this.specialReport,
           note: this.note,
         };
@@ -671,18 +692,18 @@ export default {
         );
 
         this.$store
-          .dispatch("UPDATE_INSPECT", this.formData)
+          .dispatch("UPDATE_CLAIM", this.formData)
           .then((response) => {
-            this.modalName = "updateInspect";
+            this.modalName = "updateClaim";
 
-            // 검수 업데이트 성공
+            // 클레임 업데이트 성공
             if (response.data === 1) {
               console.log("response 값 1");
               this.updateState = 1;
               this.openModal();
               this.closeSpinner();
             }
-            // 검수 업데이트 실패
+            // 클레임 업데이트 실패
             else if (response.data === 0) {
               console.log("response 값 0");
               this.updateState = 3;
@@ -698,8 +719,8 @@ export default {
           });
       }
     },
-    // 검수 삭제 진행
-    deleteInspect() {
+    // 클레임 삭제 진행
+    deleteClaim() {
       // 관리자가 아닐 삭제 추가 불가능
       if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
         this.modalName = "noAdmin";
@@ -709,21 +730,21 @@ export default {
       // 관리자일 경우 삭제 가능
       else {
         this.openSpinner();
-        console.log("검수 삭제 진행");
-        this.$store.commit("SET_DELETE_INSPECT", 3);
+        console.log("클레임 삭제 진행");
+        this.$store.commit("SET_DELETE_CLAIM", 3);
 
         this.$store
-          .dispatch("DELETE_INSPECT", { id: this.inspectId })
+          .dispatch("DELETE_CLAIM", { id: this.claimId })
           .then((response) => {
-            this.modalName = "deleteInspect";
-            // 검수 삭제 성공
+            this.modalName = "deleteClaim";
+            // 클레임 삭제 성공
             if (response.data === 1) {
               console.log("response 값 1");
               this.deleteState = 1;
               this.openModal();
               this.closeSpinner();
             }
-            // 검수 업데이트 실패
+            // 클레임 업데이트 실패
             else if (response.data === 0) {
               console.log("response 값 0");
               this.deleteState = 0;

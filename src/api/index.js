@@ -2,26 +2,27 @@ import axios from "axios";
 
 // 1. Http Request & Response와 관련된 기본 설정
 const config = {
-  userUrl : "/user/",
+  authUrl : "/auth/",
   productUrl: "/product/",
   inspectUrl: "/inspect/",
   makerUrl: "/maker/",
+  claimUrl: "/claim/",
 };
 
 // 유저 로그인
 function userLogin(user) {
   console.log("유저 로그인 api 접근");
+
+  console.log(user);
+
   let data = {
-    header: { "Content-Type": `application/json` },
-    params: {
-      userId: user.userId,
-      userPassword : user.userPassword
-    },
+    email: user.userId,
+    password: user.userPassword
   }
 
   console.log(data);
 
-  return axios.post(config.userUrl + "login", data);
+return axios.post(config.authUrl + "login", data, {header: { "Content-Type": `application/json` }});
 }
 
 // 상품 추가하기
@@ -29,58 +30,16 @@ function insertProduct(newProduct) {
   console.log("상품추가하기");
   console.log(newProduct);
 
-  let data = {
-    skuNo: newProduct.skuNo,
-    productName: newProduct.productName,
-    brandName: newProduct.brandName,
-    maker: newProduct.maker,
-    className: newProduct.className,
-    expDate: newProduct.expDate,
-    makeDate: newProduct.makeDate,
-    purchasePrice: newProduct.purchasePrice,
-    sellingPrice: newProduct.sellingPrice,
-    productCondition: newProduct.productCondition,
-    productStandard: newProduct.productStandard,
-    calorie: newProduct.calorie,
-    sodium: newProduct.sodium,
-    productColor: newProduct.productColor,
-    productShape: newProduct.productShape,
-    note: newProduct.note,
-  };
-
-  console.log(data);
-
-  return axios.post(config.productUrl + "insertProduct", data);
+  return axios.post(config.productUrl + "insertProduct", newProduct, { headers: { "Content-Type": `multipart/form-data` } });
+ 
 }
 
 // 상품 수정하기
-function updateProduct(newProduct) {
+function updateProduct(updateProduct) {
   console.log("상품 수정하기");
-  console.log(newProduct);
+  console.log(updateProduct);
 
-  let data = {
-    id: newProduct.id,
-    skuNo: newProduct.skuNo,
-    productName: newProduct.productName,
-    brandName: newProduct.brandName,
-    maker: newProduct.maker,
-    className: newProduct.className,
-    expDate: newProduct.expDate,
-    makeDate: newProduct.makeDate,
-    purchasePrice: newProduct.purchasePrice,
-    sellingPrice: newProduct.sellingPrice,
-    productCondition: newProduct.productCondition,
-    productStandard: newProduct.productStandard,
-    calorie: newProduct.calorie,
-    sodium: newProduct.sodium,
-    productColor: newProduct.productColor,
-    productShape: newProduct.productShape,
-    note: newProduct.note,
-  };
-
-  console.log(data);
-
-  return axios.put(config.productUrl + "updateProduct", data);
+  return axios.put(config.productUrl + "updateProduct", updateProduct, { headers: { "Content-Type": `multipart/form-data` } });
 }
 
 // 상품 삭제하기
@@ -108,7 +67,7 @@ function selectProduct(selectCon) {
   let data = {
     header: { "Content-Type": `application/json` },
     params: {
-      skuNo: selectCon.sku_no,
+      skuNo: selectCon.skuNo,
       productName: selectCon.productName,
       brandName: selectCon.brandName,
       maker: selectCon.maker,
@@ -241,6 +200,61 @@ function selectMaker(selectCon) {
   return axios.get(config.makerUrl + "selectMakers", data);
 }
 
+// 클레임 추가하기
+function insertClaim(newClaim) {
+  console.log("클레임 추가하기");
+  // console.log(imgFiles[0]);
+  console.log(newClaim.get("productId"));
+
+  return axios.post(config.claimUrl + "insertClaim", newClaim, { headers: { "Content-Type": `multipart/form-data` } });
+}
+
+// 클레임 수정하기
+function updateClaim(updateClaim) {
+  console.log("클레임 수정하기");
+  console.log(updateClaim);
+
+  return axios.put(config.claimUrl + "updateClaim", updateClaim, { headers: { "Content-Type": `multipart/form-data` } });
+}
+
+// 클레임 삭제하기
+function deleteClaim(deleteClaim) {
+  let data = {
+    header: { "Content-Type": `application/json` },
+    params: {
+      id: deleteClaim.id
+    },
+  };
+  return axios.delete(config.claimUrl + "deleteClaim", data)
+}
+
+// 모든 클레임 조회
+// function selectAllClaim() {
+//   return axios.get(config.ClaimUrl + "selectAllClaim");
+//   //return axios.get(`${config.baseUrl}news/1.json`);
+// }
+
+// 일부 클레임 조회
+function selectClaim(selectCon) {
+  console.log("api : sku_no, productName, brandName, maker");
+  console.log(selectCon);
+
+  let data = {
+    header: { "Content-Type": `application/json` },
+    params: {
+      skuNo: selectCon.sku_no,
+      productName: selectCon.productName,
+      brandName: selectCon.brandName,
+      maker: selectCon.maker,
+      className: encodeURI(selectCon.className),
+      beforeDate: selectCon.beforeDate,
+      afterDate : selectCon.afterDate
+    },
+  };
+
+  return axios.get(config.claimUrl + "selectClaims", data);
+}
+
 export {
   userLogin,
   insertProduct,
@@ -257,5 +271,9 @@ export {
   updateMaker,
   deleteMaker,
   selectAllMaker,
-  selectMaker
+  selectMaker,
+  insertClaim,
+  updateClaim,
+  deleteClaim,
+  selectClaim
 };

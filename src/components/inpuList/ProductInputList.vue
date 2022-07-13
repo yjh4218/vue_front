@@ -94,7 +94,46 @@
           </div>
         </div>
         <div class="row">
-          
+          <div class="col-md-12 mb-3">
+            <b-input-group prepend="사진 첨부하기">
+              <b-form-file
+                class="imgup"
+                id="file-default"
+                v-model="imgFiles"
+                multiple
+                @change="imgFileSelected"
+                plain
+                size="lg"
+              ></b-form-file>
+            </b-input-group>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <b-input-group prepend="사진 미리보기">
+              <!-- <b-img class="imgSizes" thumbnail fluid :src="item.url" alt="Image 1"></b-img> -->
+              <viewer :images="this.imgFiles" @inited="inited">
+                <div v-if="imgFlag">
+                  <img
+                    class="imgSizes"
+                    v-for="item in imgFiles"
+                    :src="item.url"
+                    :key="item.url"
+                  />
+                </div>
+                <div v-else>
+                  <img
+                    class="imgSizes"
+                    v-for="item in imgFiles"
+                    :src="require(`@/assets/images${item.url}`)"
+                    :key="item.url"
+                  />
+                </div>
+              </viewer>
+            </b-input-group>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-6 mb-3">
             <b-input-group prepend="매입가격(부가세포함)">
               <b-form-input
@@ -106,7 +145,7 @@
               ></b-form-input>
             </b-input-group>
           </div>
-          
+
           <div class="col-md-6 mb-3">
             <b-input-group prepend="판매가격(부가서포함)">
               <b-form-input
@@ -211,8 +250,7 @@
               brandName === '' ||
               maker === '' ||
               makeDate === '' ||
-              className === '' ||
-              insertState === false
+              className === ''
             "
           >
             신규 상품 등록
@@ -221,11 +259,12 @@
       </div>
       <div class="row" v-else>
         <div class="col-md-12 mb-3" v-if="inputRead">
-          <b-button variant="primary" class="rightBox" 
-            v-b-modal.update-modal>
+          <b-button variant="primary" class="rightBox" v-b-modal.update-modal>
             상품 정보 수정
           </b-button>
-          <b-button variant="danger" class="rightBox" v-b-modal.delete-modal> 상품 삭제 </b-button>
+          <b-button variant="danger" class="rightBox" v-b-modal.delete-modal>
+            상품 삭제
+          </b-button>
         </div>
         <div class="col-md-12 mb-3" v-else>
           <b-button variant="primary" class="rightBox" @click="inpuReadMode">
@@ -258,7 +297,7 @@
         </template>
       </b-modal>
 
-    <b-modal id="update-modal">
+      <b-modal id="update-modal">
         <!-- <template #modal-title> 신규상품 등록 </template> -->
         <div class="my-4">상품정보를 수정하시겠습니까?</div>
         <template #modal-footer>
@@ -283,7 +322,10 @@
       </b-modal>
       <b-modal id="delete-modal">
         <!-- <template #modal-title> 신규상품 등록 </template> -->
-        <div class="my-4">해당상품을 삭제하시겠습니까?</div>
+        <div class="my-4">
+          해당상품을 삭제하시겠습니까? 해당 상품에 해당하는 검수내용이 모두
+          삭제됩니다.
+        </div>
         <template #modal-footer>
           <div class="d-block text-center">
             <b-button
@@ -355,23 +397,29 @@
             <p>상품 삭제에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
-        
+        <div v-if="modalName === 'noAdmin'">
+          <p>관리자가 아니기 때문에 추가, 수정, 삭제할 수 없습니다.</p>
+        </div>
+
         <!-- <template slot="footer">
           <button @click="modalText">확인</button>
         </template> -->
         <template
           slot="footer"
-          v-if="modalName === 'insertProduct' && insertState">
+          v-if="modalName === 'insertProduct' && insertState"
+        >
           <button @click="roturInit()">확인</button>
         </template>
         <template
           slot="footer"
-          v-else-if="modalName === 'updateProduct' && updateState">
+          v-else-if="modalName === 'updateProduct' && updateState"
+        >
           <button @click="roturInit()">확인</button>
         </template>
         <template
           slot="footer"
-          v-else-if="modalName === 'deleteProduct' && deleteState">
+          v-else-if="modalName === 'deleteProduct' && deleteState"
+        >
           <button @click="roturInit()">확인</button>
         </template>
         <template slot="footer" v-else>
@@ -392,14 +440,15 @@ export default {
   props: ["propsdata"],
   data() {
     return {
-      productId : "",
+      productId: "",
       skuNo: "",
       productName: "",
       brandName: "",
       maker: "",
       makeDate: "",
       className: "",
-      expDate:"",
+      expDate: "",
+      imgFiles: [],
       purchasePrice: "",
       sellingPrice: "",
       productCondition: "",
@@ -429,6 +478,9 @@ export default {
       deleteState: false,
       spinnerState: false,
       modalName: "",
+      formData: new FormData(),
+      // 이미지 수정 모드에 따라서 viewer로 나타내는 모드가 달라짐
+      imgFlag: true,
     };
   },
   mounted() {
@@ -447,37 +499,15 @@ export default {
       return this.$store.getters.getCheckProductDup;
     },
     // 제품 수정 확인
-    checkUpdatdState(){
+    checkUpdatdState() {
       return this.$store.getters.getUpdateProduct;
     },
     // 제품 삭제 확인
-    checkDeleteProduct(){
+    checkDeleteProduct() {
       return this.$store.getters.getDeleteProduct;
-    }
+    },
   },
   watch: {
-    // 제품 추가 완료 확인
-    checkInsertState(val) {
-      this.modalName = "insertProduct";
-
-      if (val) {
-        console.log("val 값 1");
-        this.insertState = true;
-        this.openModal();
-        this.closeSpinner();
-      } else {
-        console.log("val 값 0");
-        this.insertState = false;
-        this.openModal();
-        this.closeSpinner();
-      }
-      console.log("insertState : " + this.insertState);
-      
-      console.log("modalName : " + this.modalName);
-      
-      // this.$refs['my-modal-2'].show();
-    },
-
     // 제품 중복 검색 확인
     checkProductDup(val) {
       this.modalName = "checkSkuNo";
@@ -497,79 +527,49 @@ export default {
         this.closeSpinner();
       }
       this.closeSpinner();
-      
+
       console.log("중복확인 : " + this.skuNoDuplication);
       console.log("modalName : " + this.modalName);
-      
     },
-
-    // 제품 정보 수정
-    checkUpdatdState(val){
-      this.modalName = "updateProduct";
-      
-      if (val) {
-        console.log("val 값 1");
-        this.updateState = true;
-        this.openModal();
-        this.closeSpinner();
-      } else {
-        console.log("val 값 0");
-        this.updateState = false;
-        this.openModal();
-        this.closeSpinner();
-      }
-      console.log("updateProduct : " + this.updateState);
-      console.log("modalName : " + this.modalName);
-    },
-
-    // 제품 삭제 확인
-    checkDeleteProduct(val){
-      this.modalName = "deleteProduct";
-
-      if (val) {
-        console.log("val 값 1");
-        this.deleteState = true;
-        this.openModal();
-        this.closeSpinner();
-      } else {
-        console.log("val 값 0");
-        this.deleteState = false;
-        this.openModal();
-        this.closeSpinner();
-      }
-
-      console.log("updateProduct : " + this.deleteState);
-      console.log("modalName : " + this.modalName);
-    }
   },
   methods: {
-    // 제품 추가
-    insertProduct() {
-     
-      this.openSpinner();
+    // 파일 이미지 추가 될 경우
+    imgFileSelected(event) {
+      console.log("이미지 파일 추가");
+      console.log(event);
+      this.imgFlag = true;
+      var files = event.target.files;
+      this.imgFiles = [];
 
-      this.$store.commit("SET_INSERT_PRODUCT", "3");
-      
-      console.log("제품 추가 진행");
-      
-      this.$store.dispatch("INSERT_PRODUCT", {
-        skuNo: this.skuNo,
-        productName: this.productName,
-        brandName: this.brandName,
-        maker: this.maker,
-        makeDate: this.makeDate,
-        className: this.className,
-        expDate: this.expDate,
-        purchasePrice: this.purchasePrice,
-        sellingPrice: this.sellingPrice,
-        productCondition: this.productCondition,
-        productStandard: this.productStandard,
-        calorie: this.calorie,
-        sodium: this.sodium,
-        productColor: this.productColor,
-        productShape: this.productShape,
-        note: this.note,
+      var temp = [];
+      var frm = new FormData();
+
+      [].forEach.call(files, function (i, item) {
+        frm.append("image", files[item]);
+        console.log("FileReader 내용 확인중");
+        console.log(files[item]);
+
+        var fileReader = new FileReader();
+        fileReader.onload = function (e) {
+          console.log(item);
+          console.log(i);
+
+          var img = {
+            url: e.target.result,
+          };
+          console.log("url");
+          console.log(img);
+
+          // var img = e.target.result;
+
+          temp.push(img);
+        };
+        fileReader.readAsDataURL(files[item]);
       });
+      this.imgFiles = temp;
+      this.formData = frm;
+      console.log("이미지 추가.");
+      console.log(this.imgFiles);
     },
     // sku-no 중복 확인
     searchProductDup() {
@@ -604,49 +604,216 @@ export default {
         this.productShape = this.$store.state.getProduct.productShape;
         this.note = this.$store.state.getProduct.note;
         this.inputRead = false;
+
+        // 이미지 파일 있는지 확인.
+        if (this.$store.state.getProduct.imageFile.length > 0) {
+          this.imgFlag = false;
+          this.imgUpdate();
+        }
       } else {
         console.log("setData else 실행 : " + this.propsdata);
       }
     },
+    // 검수 상세 정보 이미지 파일 지정
+    imgUpdate() {
+      console.log("이미지 있음123123");
+      this.imgFiles = [];
+      this.$store.state.getProduct.imageFile.forEach((x) => {
+        console.log("이미지 있음");
+
+        var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
+
+        this.imgFiles.push({ url: tempImg });
+        console.log(tempImg);
+      });
+      console.log(this.imgFiles);
+    },
+    // 제품 추가
+    insertProduct() {
+      // 관리자가 아닐 경우 추가 불가능
+      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+        this.modalName = "noAdmin";
+
+        this.openModal();
+      }
+      // 관리자일 경우 추가 가능
+      else {
+        this.openSpinner();
+
+        this.$store.commit("SET_INSERT_PRODUCT", "3");
+
+        console.log("제품 추가 진행");
+
+        let data = {
+          skuNo: this.skuNo,
+          productName: this.productName,
+          brandName: this.brandName,
+          maker: this.maker,
+          makeDate: this.makeDate,
+          className: this.className,
+          expDate: this.expDate,
+          purchasePrice: this.purchasePrice,
+          sellingPrice: this.sellingPrice,
+          productCondition: this.productCondition,
+          productStandard: this.productStandard,
+          calorie: this.calorie,
+          sodium: this.sodium,
+          productColor: this.productColor,
+          productShape: this.productShape,
+          note: this.note,
+        };
+
+        this.formData.append(
+          "data",
+          new Blob([JSON.stringify(data)], { type: "application/json" })
+        );
+
+        this.$store
+          .dispatch("INSERT_PRODUCT", this.formData)
+          .then((response) => {
+            this.modalName = "insertProduct";
+
+            if (response.data === 1) {
+              console.log("response 값 1");
+              this.insertState = true;
+              this.openModal();
+              this.closeSpinner();
+            } else if (response.data === 0) {
+              console.log("response 값 0");
+              this.insertState = false;
+              this.openModal();
+              this.closeSpinner();
+            }
+            console.log("insertState : " + this.insertState);
+
+            console.log("modalName : " + this.modalName);
+          })
+          .catch((error) => {
+            console.log("error 발생");
+            console.log(error);
+          });
+
+        this.formData = new FormData();
+      }
+    },
     // 제품 수정진행
     updateProduct() {
-      this.openSpinner();
+      // 관리자가 아닐 경우 수정 불가능
+      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+        this.modalName = "noAdmin";
 
-      console.log("제품 수정 진행");
+        this.openModal();
+      }
+      // 관리자일 경우 수정 가능
+      else {
+        this.openSpinner();
 
-      this.$store.commit("SET_UPDATE_PRODUCT", "3");
+        console.log("제품 수정 진행");
 
-      console.log("productId : " + this.productId);
+        this.$store.commit("SET_UPDATE_PRODUCT", "3");
 
-      this.$store.dispatch("UPDATE_PRODUCT", {
-        id : this.productId,
-        skuNo: this.skuNo,
-        productName: this.productName,
-        brandName: this.brandName,
-        maker: this.maker,
-        makeDate: this.makeDate,
-        className: this.className,
-        expDate: this.expDate,
-        purchasePrice: this.purchasePrice,
-        sellingPrice: this.sellingPrice,
-        productCondition: this.productCondition,
-        productStandard: this.productStandard,
-        calorie: this.calorie,
-        sodium: this.sodium,
-        productColor: this.productColor,
-        productShape: this.productShape,
-        note: this.note,
-      })
+        console.log("productId : " + this.productId);
+
+        let data = {
+          id: this.productId,
+          skuNo: this.skuNo,
+          productName: this.productName,
+          brandName: this.brandName,
+          maker: this.maker,
+          makeDate: this.makeDate,
+          className: this.className,
+          expDate: this.expDate,
+          purchasePrice: this.purchasePrice,
+          sellingPrice: this.sellingPrice,
+          productCondition: this.productCondition,
+          productStandard: this.productStandard,
+          calorie: this.calorie,
+          sodium: this.sodium,
+          productColor: this.productColor,
+          productShape: this.productShape,
+          note: this.note,
+        };
+
+        this.formData.append(
+          "data",
+          new Blob([JSON.stringify(data)], { type: "application/json" })
+        );
+        this.formData.append(
+          "productId",
+          new Blob([JSON.stringify(this.productId)], {
+            type: "application/json",
+          })
+        );
+
+        this.$store
+          .dispatch("UPDATE_PRODUCT", this.formData)
+          .then((response) => {
+            this.modalName = "updateProduct";
+
+            if (response.data === 1) {
+              console.log("response 값 1");
+              this.updateState = true;
+              this.openModal();
+              this.closeSpinner();
+            } else if (response.data === 0) {
+              console.log("response 값 0");
+              this.updateState = false;
+              this.openModal();
+              this.closeSpinner();
+            }
+            console.log("updateProduct : " + this.updateState);
+            console.log("modalName : " + this.modalName);
+          })
+          .catch((error) => {
+            console.log("error 발생");
+            console.log(error);
+          });
+      }
     },
 
     // 제품 삭제
-    deleteProduct(){
+    deleteProduct() {
       console.log("제품 삭제 진행");
 
-      this.openSpinner();
-      
-      this.$store.commit("SET_DELETE_PRODUCT", "3");
-      this.$store.dispatch("DELETE_PRODUCT", {id : this.productId, skuNo : this.skuNo})
+      // 관리자가 아닐 경우 삭제 불가능
+      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+        this.modalName = "noAdmin";
+
+        this.openModal();
+      }
+      // 관리자일 경우 삭제 가능
+      else {
+        this.openSpinner();
+
+        this.$store.commit("SET_DELETE_PRODUCT", "3");
+        this.$store
+          .dispatch("DELETE_PRODUCT", {
+            id: this.productId,
+            skuNo: this.skuNo,
+          })
+          .then((response) => {
+            this.modalName = "deleteProduct";
+
+            if (response.data === 1) {
+              console.log("response 값 1");
+              this.deleteState = true;
+              this.openModal();
+              this.closeSpinner();
+            } else if (response.data === 0) {
+              console.log("response 값 0");
+              this.deleteState = false;
+              this.openModal();
+              this.closeSpinner();
+            }
+
+            console.log("updateProduct : " + this.deleteState);
+            console.log("modalName : " + this.modalName);
+          })
+          .catch((error) => {
+            console.log("error 발생");
+            console.log(error);
+          });
+      }
     },
 
     // 업데이트 진행 시 수정모드인지 확인
@@ -654,11 +821,11 @@ export default {
       this.inputRead = true;
     },
     // 스피너 열기
-    openSpinner(){
+    openSpinner() {
       this.spinnerState = true;
     },
     // 스피너 닫기
-    closeSpinner(){
+    closeSpinner() {
       this.spinnerState = false;
     },
     openModal() {
@@ -667,10 +834,15 @@ export default {
     closeModal() {
       this.modal = false;
     },
+    // viewer 초기화
+    inited(viewer) {
+      console.log("viewer 초기화");
+      this.$viewer = viewer;
+    },
     // 등록 완료 되었을 경우 초기화
     roturInit() {
       console.log("routerInit 접속. 새로고침 진행");
-      this.$router.push('/productSel');
+      this.$router.push("/productSel");
       // this.$router.go();
     },
     modalText() {
@@ -692,5 +864,10 @@ export default {
 }
 .divEnable {
   pointer-events: auto;
+}
+.imgSizes {
+  width: 100px;
+  height: 100px;
+  margin-left: 10px;
 }
 </style>

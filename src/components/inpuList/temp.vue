@@ -335,214 +335,290 @@ export default {
   mounted() {
     this.updateData();
   },
-
-  methods: {
-    // 제조사 상세 정보 입력
-    updateData() {
-      if (this.propsdata === "updateView") {
-        console.log("setData if 실행 : " + this.propsdata);
-
-        this.makerId = this.$store.state.getMaker.id;
-        this.makerName = this.$store.state.getMaker.makerName;
-        this.businessType = this.$store.state.getMaker.businessType;
-        this.makerAddress = this.$store.state.getMaker.makerAddress;
-        this.process = this.$store.state.getMaker.process;
-        this.importProduct = this.$store.state.getMaker.importProduct;
-        this.sales = this.$store.state.getMaker.sales;
-        this.makerPerson = this.$store.state.getMaker.makerPerson;
-        this.makerPhone = this.$store.state.getMaker.makerPhone;
-        this.makerEmail = this.$store.state.getMaker.makerEmail;
-        this.note = this.$store.state.getMaker.note;
-
-        this.inputRead = false;
-      } else {
-        this.imgFlag = true;
-        console.log("setData else 실행 : " + this.propsdata);
-      }
+  computed: {
+    // 제품 추가 완료 확인
+    checkInsertState() {
+      return this.$store.getters.getInsertMaker;
     },
 
-    // 스피너 열기
-    openSpinner() {
-      this.spinnerState = true;
+    // 제품 제조사 완료 확인
+    checkUpdateState() {
+      return this.$store.getters.getUpdateMaker;
     },
-    // 스피너 닫기
-    closeSpinner() {
-      this.spinnerState = false;
-    },
-    // 모달 열기
-    openModal() {
-      this.modal = true;
-    },
-    // 모달 닫기
-    closeModal() {
-      this.modal = false;
-    },
-    // 등록 완료 되었을 경우 초기화
-    roturInit() {
-      console.log("routerInit 접속. 새로고침 진행");
-      this.$router.push("/makerSel");
-      // this.$router.go();
-    },
-    modalText() {
-      this.closeSpinner();
-      console.log("모달 메시지 확인 필요함");
-      this.modal = false;
-    },
-    // 업데이트 진행 시 수정모드인지 확인
-    inpuReadMode() {
-      this.inputRead = true;
-    },
-    // 제조사 추가
-    insertMaker() {
-      // 관리자가 아닐 경우 추가 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
-        this.modalName = "noAdmin";
 
-        this.openModal();
-      }
-      // 관리자일 경우 추가 가능
-      else {
-        this.openSpinner();
-        this.$store.commit("SET_INSERT_MAKER", 3);
-        console.log("제조사 추가 진행");
-
-        let data = {
-          id: this.makerId,
-          makerName: this.makerName,
-          businessType: this.businessType,
-          makerAddress: this.makerAddress,
-          process: this.process,
-          importProduct: this.importProduct,
-          sales: this.sales,
-          makerPerson: this.makerPerson,
-          makerPhone: this.makerPhone,
-          makerEmail: this.makerEmail,
-          note: this.note,
-        };
-        this.$store
-          .dispatch("INSERT_MAKER", data)
-          .then((response) => {
-            this.modalName = "insertMaker";
-
-            // 제조사 추가 성공
-            if (response.data === 1) {
-              console.log("response 값 1");
-              this.insertState = 1;
-              this.openModal();
-              this.closeSpinner();
-            }
-            // 제조사 등록 실패
-            else if (response.data === 0) {
-              console.log("response 값 0");
-              this.insertState = 0;
-              this.openModal();
-              this.closeSpinner();
-            }
-          })
-          .catch((error) => {
-            console.log("error 발생");
-            console.log(error);
-          });
-      }
-    },
-    // 제조사 수정진행
-    updateMaker() {
-      // 관리자가 아닐 경우 수정 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
-        this.modalName = "noAdmin";
-
-        this.openModal();
-      }
-      // 관리자일 경우 수정 가능
-      else {
-        this.openSpinner();
-        console.log("제품 수정 진행");
-        this.$store.commit("SET_UPDATE_MAKER", 3);
-        console.log("productId : " + this.productId);
-
-        let data = {
-          id: this.makerId,
-          makerName: this.makerName,
-          businessType: this.businessType,
-          makerAddress: this.makerAddress,
-          process: this.process,
-          importProduct: this.importProduct,
-          sales: this.sales,
-          makerPerson: this.makerPerson,
-          makerPhone: this.makerPhone,
-          makerEmail: this.makerEmail,
-          note: this.note,
-        };
-        this.$store
-          .dispatch("UPDATE_MAKER", data)
-          .then((response) => {
-            this.modalName = "updateMaker";
-
-            // 제조사 업데이트 성공
-            if (response.data === 1) {
-              console.log("response 값 1");
-              this.updateState = 1;
-              this.openModal();
-              this.closeSpinner();
-            }
-            // 제조사 업데이트 실패
-            else if (response.data === 0) {
-              console.log("response 값 0");
-              this.updateState = 3;
-              this.openModal();
-              this.closeSpinner();
-            }
-
-            console.log("modalName : " + this.modalName);
-          })
-          .catch((error) => {
-            console.log("error 발생");
-            console.log(error);
-          });
-      }
-    },
-    // 제조사 삭제
-    deleteMaker() {
-      // 관리자가 아닐 경우 삭제 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
-        this.modalName = "noAdmin";
-
-        this.openModal();
-      }
-      // 관리자일 경우 삭제 가능
-      else {
-        this.openSpinner();
-        console.log("제조사 삭제 진행");
-        this.$store.commit("SET_DELETE_MAKER", 3);
-
-        this.$store
-          .dispatch("DELETE_MAKER", { id: this.makerId })
-          .then((response) => {
-            this.modalName = "deleteMaker";
-            // 제조사 삭제 성공
-            if (response.data === 1) {
-              console.log("response 값 1");
-              this.deleteState = 1;
-              this.openModal();
-              this.closeSpinner();
-            }
-            // 제조사 업데이트 실패
-            else if (response.data === 0) {
-              console.log("response 값 0");
-              this.deleteState = 0;
-              this.openModal();
-              this.closeSpinner();
-            }
-
-            console.log("modalName : " + this.modalName);
-          })
-          .catch((error) => {
-            console.log("error 발생");
-            console.log(error);
-          });
-      }
+    // 제품 제조사 완료 확인
+    checkDeleteState() {
+      return this.$store.getters.getDeleteMaker;
     },
   },
+  watch: {
+    // 제조사 추가 상태 확인
+    checkInsertState() {
+      // this.modalName = "insertMaker";
+      // // 제조사 추가 성공
+      // if (val === 1) {
+      //   console.log("val 값 1");
+      //   this.insertState = 1;
+      //   this.openModal();
+      //   this.closeSpinner();
+      // }
+      // // 제조사 등록 실패
+      // else if(val === 0){
+      //   console.log("val 값 0");
+      //   this.insertState = 0;
+      //   this.openModal();
+      //   this.closeSpinner();
+      // } else{
+      //   console.log("val 값 확인 : " + val);
+      // }
+    },
+    // 제조사 업데이트 상태 확인
+    checkUpdateState() {
+      // this.modalName = "updateMaker";
+      // // 제조사 업데이트 성공
+      // if (val === 1) {
+      //   console.log("val 값 1");
+      //   this.updateState = 1;
+      //   this.openModal();
+      //   this.closeSpinner();
+      // }
+      // // 제조사 업데이트 실패
+      // else if(val === 0){
+      //   console.log("val 값 0");
+      //   this.updateState = 3;
+      //   this.openModal();
+      //   this.closeSpinner();
+      // }
+      // console.log("modalName : " + this.modalName);
+    },
+    // 제조사 삭제 상태 확인
+    checkDeleteState() {
+      //   this.modalName = "deleteMaker";
+      //   // 제조사 삭제 성공
+      //   if (val === 1) {
+      //     console.log("val 값 1");
+      //     this.deleteState =1;
+      //     this.openModal();
+      //     this.closeSpinner();
+      //   }
+      //   // 제조사 업데이트 실패
+      //   else if(val === 0){
+      //     console.log("val 값 0");
+      //     this.deleteState = 0;
+      //     this.openModal();
+      //     this.closeSpinner();
+      //   }
+      //   console.log("modalName : " + this.modalName);
+      // }
+    },
+  }
+  methods: {
+      // 제조사 상세 정보 입력
+      updateData() {
+        if (this.propsdata === "updateView") {
+          console.log("setData if 실행 : " + this.propsdata);
+
+          this.makerId = this.$store.state.getMaker.id;
+          this.makerName = this.$store.state.getMaker.makerName;
+          this.businessType = this.$store.state.getMaker.businessType;
+          this.makerAddress = this.$store.state.getMaker.makerAddress;
+          this.process = this.$store.state.getMaker.process;
+          this.importProduct = this.$store.state.getMaker.importProduct;
+          this.sales = this.$store.state.getMaker.sales;
+          this.makerPerson = this.$store.state.getMaker.makerPerson;
+          this.makerPhone = this.$store.state.getMaker.makerPhone;
+          this.makerEmail = this.$store.state.getMaker.makerEmail;
+          this.note = this.$store.state.getMaker.note;
+
+          this.inputRead = false;
+        } else {
+          this.imgFlag = true;
+          console.log("setData else 실행 : " + this.propsdata);
+        }
+      },
+
+      // 스피너 열기
+      openSpinner() {
+        this.spinnerState = true;
+      },
+      // 스피너 닫기
+      closeSpinner() {
+        this.spinnerState = false;
+      },
+      // 모달 열기
+      openModal() {
+        this.modal = true;
+      },
+      // 모달 닫기
+      closeModal() {
+        this.modal = false;
+      },
+      // 등록 완료 되었을 경우 초기화
+      roturInit() {
+        console.log("routerInit 접속. 새로고침 진행");
+        this.$router.push("/makerSel");
+        // this.$router.go();
+      },
+      modalText() {
+        this.closeSpinner();
+        console.log("모달 메시지 확인 필요함");
+        this.modal = false;
+      },
+      // 업데이트 진행 시 수정모드인지 확인
+      inpuReadMode() {
+        this.inputRead = true;
+      },
+      // 제조사 추가
+      insertMaker() {
+        // 관리자가 아닐 경우 추가 불가능
+        if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+          this.modalName = "noAdmin";
+
+          this.openModal();
+        }
+        // 관리자일 경우 추가 가능
+        else {
+          this.openSpinner();
+          this.$store.commit("SET_INSERT_MAKER", 3);
+          console.log("제조사 추가 진행");
+
+          let data = {
+            id: this.makerId,
+            makerName: this.makerName,
+            businessType: this.businessType,
+            makerAddress: this.makerAddress,
+            process: this.process,
+            importProduct: this.importProduct,
+            sales: this.sales,
+            makerPerson: this.makerPerson,
+            makerPhone: this.makerPhone,
+            makerEmail: this.makerEmail,
+            note: this.note,
+          };
+          this.$store
+            .dispatch("INSERT_MAKER", data)
+            .then((response) => {
+              this.modalName = "insertMaker";
+
+              // 제조사 추가 성공
+              if (response.data === 1) {
+                console.log("response 값 1");
+                this.insertState = 1;
+                this.openModal();
+                this.closeSpinner();
+              }
+              // 제조사 등록 실패
+              else if (response.data === 0) {
+                console.log("response 값 0");
+                this.insertState = 0;
+                this.openModal();
+                this.closeSpinner();
+              }
+            })
+            .catch((error) => {
+              console.log("error 발생");
+              console.log(error);
+            });
+        }
+      },
+      // 제조사 수정진행
+      updateMaker() {
+        // 관리자가 아닐 경우 수정 불가능
+        if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+          this.modalName = "noAdmin";
+
+          this.openModal();
+        }
+        // 관리자일 경우 수정 가능
+        else {
+          this.openSpinner();
+          console.log("제품 수정 진행");
+          this.$store.commit("SET_UPDATE_MAKER", 3);
+          console.log("productId : " + this.productId);
+
+          let data = {
+            id: this.makerId,
+            makerName: this.makerName,
+            businessType: this.businessType,
+            makerAddress: this.makerAddress,
+            process: this.process,
+            importProduct: this.importProduct,
+            sales: this.sales,
+            makerPerson: this.makerPerson,
+            makerPhone: this.makerPhone,
+            makerEmail: this.makerEmail,
+            note: this.note,
+          };
+          this.$store
+            .dispatch("UPDATE_MAKER", data)
+            .then((response) => {
+              this.modalName = "updateMaker";
+
+              // 제조사 업데이트 성공
+              if (response.data === 1) {
+                console.log("response 값 1");
+                this.updateState = 1;
+                this.openModal();
+                this.closeSpinner();
+              }
+              // 제조사 업데이트 실패
+              else if (response.data === 0) {
+                console.log("response 값 0");
+                this.updateState = 3;
+                this.openModal();
+                this.closeSpinner();
+              }
+
+              console.log("modalName : " + this.modalName);
+            })
+            .catch((error) => {
+              console.log("error 발생");
+              console.log(error);
+            });
+        }
+      },
+      // 제조사 삭제
+      deleteMaker() {
+        // 관리자가 아닐 경우 삭제 불가능
+        if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+          this.modalName = "noAdmin";
+
+          this.openModal();
+        }
+        // 관리자일 경우 삭제 가능
+        else {
+          this.openSpinner();
+          console.log("제조사 삭제 진행");
+          this.$store.commit("SET_DELETE_MAKER", 3);
+
+          this.$store
+            .dispatch("DELETE_MAKER", { id: this.makerId })
+            .then((response) => {
+              this.modalName = "deleteMaker";
+              // 제조사 삭제 성공
+              if (response.data === 1) {
+                console.log("response 값 1");
+                this.deleteState = 1;
+                this.openModal();
+                this.closeSpinner();
+              }
+              // 제조사 업데이트 실패
+              else if (response.data === 0) {
+                console.log("response 값 0");
+                this.deleteState = 0;
+                this.openModal();
+                this.closeSpinner();
+              }
+
+              console.log("modalName : " + this.modalName);
+            })
+            .catch((error) => {
+              console.log("error 발생");
+              console.log(error);
+            });
+        }
+      },
+    },
 };
 </script>
 
