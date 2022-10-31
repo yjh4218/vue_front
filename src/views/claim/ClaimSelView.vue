@@ -6,11 +6,17 @@
         :propsdata="message"
         @spinnerStart="openSpinner"
       ></select-product>
-      <b-button variant="primary" class="right-box" v-on:click="download"
-        >엑셀다운</b-button
-      >
+      <div class="row">
+        <div class="col-md-12">
+          <b-button variant="primary" class="right-box" v-on:click="download"
+            >엑셀다운</b-button
+          >
+        </div>
+      </div>
       <div>
         <b-table
+          sticky-header="72vh"
+          responsive
           striped
           hover
           :items="getSelectClaim"
@@ -42,45 +48,45 @@ export default {
           key: "claimDate",
           label: "클레임 발생 일자",
           sortable: true,
-          thClass: "w15",
+          thClass: "w10",
         },
         {
           key: "product.skuNo",
           label: "skuNo",
           sortable: true,
-          thClass: "w15",
+          thClass: "w10",
         },
         {
           key: "product.productName",
           label: "제품명",
           sortable: true,
-          thClass: "w30",
+          thClass: "w20",
         },
         {
           key: "product.className",
           label: "제품분류",
           sortable: true,
-          thClass: "w30",
+          thClass: "w10",
         },
         {
           key: "claimDecide",
           label: "클레임 분류",
           sortable: true,
-          thClass: "w15",
+          thClass: "w10",
         },
         {
           key: "claimContent",
           label: "클레임 내용",
           sortable: true,
-          thClass: "w15",
+          thClass: "w20",
         },
         {
           key: "lotDate",
           label: "유통기한(LOT)",
           sortable: true,
-          thClass: "w15",
+          thClass: "w10",
         },
-        { key: "recall", label: "회수여부", sortable: true, thClass: "w15" },
+        { key: "recall", label: "회수여부", sortable: true, thClass: "w10" },
       ],
       spinnerState: false,
     };
@@ -91,7 +97,7 @@ export default {
   },
   computed: {
     Selectclaim() {
-      return this.$store.getters.getSelectClaim;
+      return this.$store.getters["claimStore/getSelectClaim"];
     },
   },
   watch: {

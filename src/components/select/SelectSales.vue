@@ -31,21 +31,19 @@
             ></b-form-datepicker>
           </b-input-group>
         </div>
-        <div class="col-md-2 mb-3">
+        <div class="col-md-4 mb-3">
           <b-button
             variant="primary"
-            class="left-box"
+            class="rightBox"
             @click="
               allSalesSerach();
               spinnerStart();
             "
             >판매상품 조회</b-button
           >
-        </div>
-        <div class="col-md-2 mb-3">
           <b-button
             variant="primary"
-            class="left-box"
+            class="rightBox"
             @click="
               comSalesSerach();
               spinnerStart();
@@ -56,14 +54,6 @@
       </div>
       <div slot="bottom" class="row"></div>
     </select-slot>
-    <confirm-modal @close="closeModal" v-if="modal">
-      <div v-if="modalName === 'noConfirmDate'">
-        <p>날짜가 형식에 맞지 않습니다. 뒤의 날짜가 앞의 날짜보다 빠릅니다.</p>
-      </div>
-      <template slot="footer" v-else>
-        <button @click="modalText">확인</button>
-      </template>
-    </confirm-modal>
   </div>
 </template>
 
@@ -71,15 +61,10 @@
 import selectSlot from "./SelectProductSlot.vue";
 import { modalMixin } from "../../mixins/modalMixin.js";
 import dayjs from "dayjs";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import confirmModal from "../modal/ConfirmModal.vue";
-
-dayjs.extend(isSameOrBefore);
 
 export default {
   components: {
     selectSlot,
-    confirmModal,
   },
   mixins: [modalMixin],
   data() {
@@ -148,9 +133,9 @@ export default {
 .btn_margin {
   margin-right: 5px;
 }
-.left-box {
+.rightBox {
   float: right;
-  width: auto;
+  margin-left: 10px;
 }
 .custom-control custom-control-inline custom-checkbox {
   margin-left: 10px;

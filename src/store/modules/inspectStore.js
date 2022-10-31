@@ -3,59 +3,70 @@ import {
   updateInspect,
   deleteInspect,
   selectInspect,
+  selectPageInspect,
+  selectInspectExcel,
 } from "../../api/index";
 
 const inspectStore = {
-    namespaced: true,
-    state: {
-        // 검수 추가하기
-        insertInspect: {},
-        // 전체 검수 조회
-        selectInspect: [],
-        // 검수 수정하기
-        updateInspect: {},
-        // 검수 삭제하기
-        deleteInspect:{},
+  namespaced: true,
+  state: {
+    // 검수 추가하기
+    insertInspect: {},
+    // 전체 검수 조회
+    selectInspect: [],
+    // 검수 수정하기
+    updateInspect: {},
+    // 검수 삭제하기
+    deleteInspect: {},
+    // 제품 검색 내역 저장
+    searchData: {},
+  },
+  getters: {
+    // 검수 입력 데이터 확인
+    getInsertInspect(state) {
+      return state.insertInspect;
     },
-    getters: {
-        // 검수 입력 데이터 확인
-        getInsertInspect(state) {
-        return state.insertInspect;
-        },
-        // 검수 제품 전체 조회
-        getSelectInspect(state) {
-        return state.selectInspect;
-        },
-        // 검수 수정 데이터 확인
-        getUpdateInspect(state) {
-        return state.updateInspect;
-        },
-        // 검수 삭제 데이터 확인
-        getDeleteInspect(state) {
-        return state.deleteInspect;
-        },
+    // 검수 제품 전체 조회
+    getSelectInspect(state) {
+      return state.selectInspect;
     },
-    mutations: {
-        // 검수 추가하기
-        SET_INSERT_INSPECT(state, insertInspect) {
-        state.insertInspect = insertInspect;
-        },
-        // 검수 전체 제품 조회
-        SET_SELECT_INSPECT(state, selectInspect) {
-        state.selectInspect = selectInspect;
-        },
-        // 검수 제품 업데이트
-        SET_UPDATE_INSPECT(state, updateInspect) {
-        state.updateInspect = updateInspect;
-        },
-        //검수 제품 삭제
-        SET_DELETE_INSPECT(state, deleteInspect) {
-        state.deleteInspect = deleteInspect;
-        },
-
+    // 검수 수정 데이터 확인
+    getUpdateInspect(state) {
+      return state.updateInspect;
     },
-    actions: {
-        // 신규 검수 추가
+    // 검수 삭제 데이터 확인
+    getDeleteInspect(state) {
+      return state.deleteInspect;
+    },
+    // 제품 검색 내역 저장
+    getSearchData(state) {
+      return state.searchData;
+    },
+  },
+  mutations: {
+    // 검수 추가하기
+    SET_INSERT_INSPECT(state, insertInspect) {
+      state.insertInspect = insertInspect;
+    },
+    // 검수 전체 제품 조회
+    SET_SELECT_INSPECT(state, selectInspect) {
+      state.selectInspect = selectInspect;
+    },
+    // 검수 제품 업데이트
+    SET_UPDATE_INSPECT(state, updateInspect) {
+      state.updateInspect = updateInspect;
+    },
+    //검수 제품 삭제
+    SET_DELETE_INSPECT(state, deleteInspect) {
+      state.deleteInspect = deleteInspect;
+    },
+    // 제품 검색 내역 저장
+    SET_SEARCH_DATA(state, searchData) {
+      state.searchData = searchData;
+    },
+  },
+  actions: {
+    // 신규 검수 추가
     INSERT_INSPECT(context, selectCon) {
       console.log("INSERT_INSPECT actions 접속됨");
       console.log(context);
@@ -124,7 +135,7 @@ const inspectStore = {
           console.log(error.config);
         });
     },
-    // 일부 검수 조회
+    // 검수 조회(처음)
     SELECT_INSPECT(context, selectCon) {
       console.log("SELECT_INSPECT actions 접속됨");
       console.log(selectCon);
@@ -133,7 +144,7 @@ const inspectStore = {
         .then((response) => {
           console.log("response");
           console.log(response);
-          context.commit("SET_SELECT_INSPECT", response.data.data);
+          context.commit("SET_SELECT_INSPECT", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -142,7 +153,45 @@ const inspectStore = {
           console.log(error.response.headers);
         });
     },
-    }
-}
 
-export default inspectStore
+    // 검수 엑셀 다운
+    SELECT_INSPECT_EXCEL(context, selectCon) {
+      console.log("SELECT_INSPECT_EXCEL actions 접속됨");
+      console.log(selectCon);
+
+      return selectInspectExcel(selectCon)
+        .then((response) => {
+          console.log("response");
+          console.log(response);
+          context.commit("SET_SELECT_INSPECT", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    },
+
+    // 페이지에 맞는 검색
+    SELECT_PAGE_INSPECT(context, selectCon) {
+      console.log("SELECT_PAGE_INSPECT actions 접속됨");
+      console.log(selectCon);
+
+      return selectPageInspect(selectCon)
+        .then((response) => {
+          console.log("response");
+          console.log(response);
+          context.commit("SET_SELECT_INSPECT", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    },
+  },
+};
+
+export default inspectStore;

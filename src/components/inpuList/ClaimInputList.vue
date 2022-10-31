@@ -57,7 +57,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4 mb-3">
+          <div class="col-md-3 mb-3">
             <b-input-group prepend="클레임 발생일자">
               <b-form-input
                 type="date"
@@ -67,15 +67,59 @@
               ></b-form-input>
             </b-input-group>
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="col-md-3 mb-3">
             <b-input-group prepend="클레임 분류">
               <b-form-select
                 v-model="claimDecide"
-                :options="options"
+                :options="claimDecideOptions"
               ></b-form-select>
             </b-input-group>
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="col-md-3 mb-3">
+            <b-input-group prepend="상세 분류">
+              <b-form-select
+                v-if="claimDecide === '1. 제조불량'"
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions1"
+              ></b-form-select>
+              <b-form-select
+                v-else-if="claimDecide === '2. 이물질'"
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions2"
+              ></b-form-select>
+              <b-form-select
+                v-else-if="claimDecide === '3. 포장불량'"
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions3"
+              ></b-form-select>
+              <b-form-select
+                v-else-if="claimDecide === '4. 고객과실'"
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions4"
+              ></b-form-select>
+              <b-form-select
+                v-else-if="claimDecide === '5. 원료유래'"
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions5"
+              ></b-form-select>
+              <b-form-select
+                v-else-if="claimDecide === '6. 배송불량'"
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions6"
+              ></b-form-select>
+              <b-form-select
+                v-else-if="claimDecide === '7. 그 외 기타'"
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions7"
+              ></b-form-select>
+              <b-form-select
+                v-else
+                v-model="claimDecideSideOptions"
+                :options="claimDecideSideOptions8"
+              ></b-form-select>
+            </b-input-group>
+          </div>
+          <div class="col-md-3 mb-3">
             <b-input-group prepend="제품 유통기한">
               <b-form-input
                 type="date"
@@ -91,7 +135,7 @@
             <b-input-group prepend="회수 여부">
               <b-form-select
                 v-model="recall"
-                :options="options"
+                :options="recallOptions"
               ></b-form-select>
             </b-input-group>
           </div>
@@ -119,7 +163,7 @@
         </div>
         <div class="row">
           <div class="col-md-12 mb-3">
-            <b-input-group prepend="특이사항">
+            <b-input-group prepend="조치사항">
               <b-form-textarea
                 id="textarea-default"
                 v-model="specialReport"
@@ -135,7 +179,6 @@
               <b-form-file
                 class="imgup"
                 id="file-default"
-                v-model="imgFiles"
                 multiple
                 @change="imgFileSelected"
                 plain
@@ -147,24 +190,26 @@
         <div class="row">
           <div class="col-md-12 mb-3">
             <b-input-group prepend="사진 미리보기">
-              <!-- <b-img class="imgSizes" thumbnail fluid :src="item.url" alt="Image 1"></b-img> -->
-              <viewer :images="this.imgFiles" @inited="inited">
-                <div v-if="imgFlag">
-                  <img
-                    class="imgSizes"
-                    v-for="item in imgFiles"
-                    :src="item.url"
-                    :key="item.url"
-                  />
-                </div>
-                <div v-else>
-                  <img
-                    class="imgSizes"
-                    v-for="item in imgFiles"
-                    :src="require(`@/assets/images${item.url}`)"
-                    :key="item.url"
-                  />
-                </div>
+              <viewer
+                :images="imgFiles"
+                @inited="inited"
+                v-for="(item, index) in imgFiles"
+                :key="index"
+              >
+                <span
+                  class="imgSizes"
+                  v-for="(img, index2) in item"
+                  :key="index2"
+                >
+                  <button
+                    class="xBox"
+                    v-b-modal.xBox-modal
+                    @click="imgElementSave(index, index2)"
+                  >
+                    x
+                  </button>
+                  <img :src="img.url" />
+                </span>
               </viewer>
             </b-input-group>
           </div>
@@ -307,11 +352,35 @@
           </div>
         </template>
       </b-modal>
+
+      <b-modal id="xBox-modal">
+        <!-- <template #modal-title> 신규상품 등록 </template> -->
+        <div class="my-4">해당 사진을 삭제하시겠습니까?</div>
+        <template #modal-footer>
+          <div class="d-block text-center">
+            <b-button
+              variant="primary"
+              class="frightBox"
+              @click="xBoxClick(), $bvModal.hide('xBox-modal')"
+              :disabled="spinnerState"
+            >
+              삭제하기
+            </b-button>
+            <b-button
+              variant="primary"
+              class="rightBox"
+              @click="$bvModal.hide('xBox-modal')"
+            >
+              취소하기
+            </b-button>
+          </div>
+        </template>
+      </b-modal>
     </b-overlay>
 
     <!-- 제품검색 팝업창. -->
     <div>
-      <search-product-modal @close="closeSearchModal" v-if="searchModal">
+      <common-modal @close="closeSearchModal" v-if="searchModal">
         <div v-if="modalName === 'searchProduct'">
           <select-product-table
             v-on:selectProductCheck="closeSearchModal"
@@ -320,7 +389,7 @@
             <button @click="modalText">확인</button>
           </template>
         </div>
-      </search-product-modal>
+      </common-modal>
     </div>
 
     <!-- 통신 완료 모달 -->
@@ -358,19 +427,25 @@
           slot="footer"
           v-if="modalName === 'insertClaim' && insertState === 1"
         >
-          <b-button variant="primary" @click="roturInit()">확인</b-button>
+          <b-button variant="primary" @click="roturInit('claimSel')"
+            >확인</b-button
+          >
         </template>
         <template
           slot="footer"
           v-else-if="modalName === 'updateClaim' && updateState === 1"
         >
-          <b-button variant="primary" @click="roturInit()">확인</b-button>
+          <b-button variant="primary" @click="roturInit('claimSel')"
+            >확인</b-button
+          >
         </template>
         <template
           slot="footer"
           v-else-if="modalName === 'deleteClaim' && deleteState"
         >
-          <b-button variant="primary" @click="roturInit()">확인</b-button>
+          <b-button variant="primary" @click="roturInit('claimSel')"
+            >확인</b-button
+          >
         </template>
         <template slot="footer" v-else>
           <b-button variant="primary" @click="modalText">확인</b-button>
@@ -381,17 +456,21 @@
 </template>
 
 <script>
-import searchProductModal from "../modal/SearchProductModal.vue";
+import commonModal from "../modal/commonModal.vue";
 import SelectProductTable from "../select/SelectProductTable.vue";
 import confirmModal from "../modal/ConfirmModal.vue";
-// import ss from '../'
+import { modalMixin } from "../../mixins/modalMixin.js";
+import { spinnerMixin } from "../../mixins/spinnerMixin.js";
+import { imageMixin } from "../../mixins/imageMixin.js";
+import { adminChkMixin } from "../../mixins/adminChkMixin.js";
 
 export default {
   components: {
-    searchProductModal,
+    commonModal,
     SelectProductTable,
     confirmModal,
   },
+  mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin],
   props: ["propsdata"],
   data() {
     return {
@@ -403,31 +482,67 @@ export default {
       zenDeskID: "",
       claimDate: "",
       claimDecide: "",
+      claimDecideSideOptions: "",
       lotDate: "",
       recall: "",
       asanaLink: "",
       claimContent: "",
       specialReport: "",
-      imgFiles: [],
       note: "",
-      options: [
-        { value: "적합", text: "적합" },
-        { value: "부적합", text: "부적합" },
-        { value: "판단보류", text: "판단보류" },
+      claimDecideOptions: [
+        { value: "1. 제조불량", text: "1. 제조불량" },
+        { value: "2. 이물질", text: "2. 이물질" },
+        { value: "3. 포장불량", text: "3. 포장불량" },
+        { value: "4. 고객과실", text: "4. 고객과실" },
+        { value: "5. 원료유래", text: "5. 원료유래" },
+        { value: "6. 배송불량", text: "6. 배송불량" },
+        { value: "7. 그 외 기타", text: "7. 그 외 기타" },
+      ],
+      claimDecideSideOptions1: [
+        { value: "1) 생산불량", text: "1) 생산불량" },
+        { value: "2) 제품변질", text: "2) 제품변질" },
+      ],
+      claimDecideSideOptions2: [
+        { value: "1) 머리카락", text: "1) 머리카락" },
+        { value: "2) 벌레", text: "2) 벌레" },
+        { value: "3) 고체이물", text: "3) 고체이물" },
+        { value: "4) 그 외", text: "4) 그 외" },
+      ],
+      claimDecideSideOptions3: [
+        { value: "1) 포장불량", text: "1) 포장불량" },
+        { value: "2) 제품 수량(중량) 부족", text: "2) 제품 수량(중량) 부족" },
+        { value: "3) 유통기한 불량", text: "3) 유통기한 불량" },
+        { value: "4) 그 외", text: "4) 그 외" },
+      ],
+      claimDecideSideOptions4: [
+        { value: "1) 급여방법 미준수", text: "1) 급여방법 미준수" },
+        { value: "2) 부작용", text: "2) 부작용" },
+        { value: "3) 그 외", text: "3) 그 외" },
+      ],
+      claimDecideSideOptions5: [
+        { value: "1) 원료유래", text: "1) 원료유래" },
+        { value: "2) 성상유래", text: "2) 성상유래" },
+        { value: "3) 그 외", text: "3) 그 외" },
+      ],
+      claimDecideSideOptions6: [
+        { value: "1) 상품파손", text: "1) 상품파손" },
+        { value: "2) 제품누락", text: "2) 제품누락" },
+        { value: "3) 그 외", text: "3) 그 외" },
+      ],
+      claimDecideSideOptions7: [{ value: "1) 기타", text: "1) 기타" }],
+      claimDecideSideOptions8: [{ value: "", text: "클레임을 선택해주세요." }],
+      recallOptions: [
+        { value: "완료", text: "완료" },
+        { value: "대기", text: "대기" },
+        { value: "불필요", text: "불필요" },
       ],
       confirmSkuNo: "",
       inputRead: true,
       skuNoDuplication: true,
-      modal: false,
       searchModal: false,
       insertState: 3,
       updateState: 3,
       deleteState: 3,
-      spinnerState: false,
-      modalName: "",
-      formData: new FormData(),
-      // 이미지 수정 모드에 따라서 viewer로 나타내는 모드가 달라짐
-      imgFlag: true,
     };
   },
   mounted() {
@@ -468,6 +583,8 @@ export default {
         this.zenDeskID = this.$store.state.getClaim.zenDeskID;
         this.claimDate = this.$store.state.getClaim.claimDate;
         this.claimDecide = this.$store.state.getClaim.claimDecide;
+        this.claimDecideSideOptions =
+          this.$store.state.getClaim.claimDecideSideOptions;
         this.lotDate = this.$store.state.getClaim.lotDate;
         this.recall = this.$store.state.getClaim.recall;
         this.asanaLink = this.$store.state.getClaim.asanaLink;
@@ -478,104 +595,16 @@ export default {
 
         // 이미지 파일 있는지 확인.
         if (this.$store.state.getClaim.imageFile.length > 0) {
-          this.imgFlag = false;
-          this.imgUpdate();
+          this.imgUpdate(this.$store.state.getClaim.imageFile);
         }
       } else {
-        this.imgFlag = true;
         console.log("setData else 실행 : " + this.propsdata);
       }
     },
-    // 클레임 상세 정보 이미지 파일 지정
-    imgUpdate() {
-      this.imgFiles = [];
-      this.$store.state.getClaim.imageFile.forEach((x) => {
-        console.log("이미지 있음");
-
-        var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
-
-        this.imgFiles.push({ url: tempImg });
-        console.log(tempImg);
-      });
-      console.log(this.imgFiles);
-    },
-    // 파일 이미지 추가 될 경우
-    imgFileSelected(event) {
-      console.log("이미지 파일 추가");
-      console.log(event);
-      this.imgFlag = true;
-      var files = event.target.files;
-      this.imgFiles = [];
-
-      var temp = [];
-      var frm = new FormData();
-
-      [].forEach.call(files, function (i, item) {
-        frm.append("image", files[item]);
-        console.log("FileReader 내용 확인중");
-        console.log(files[item]);
-
-        var fileReader = new FileReader();
-        fileReader.onload = function (e) {
-          console.log(item);
-          console.log(i);
-
-          var img = {
-            url: e.target.result,
-          };
-          console.log("url");
-          console.log(img);
-
-          // var img = e.target.result;
-
-          temp.push(img);
-        };
-        fileReader.readAsDataURL(files[item]);
-      });
-      this.imgFiles = temp;
-      this.formData = frm;
-      console.log("이미지 추가.");
-      console.log(this.imgFiles);
-    },
-    // viewer 초기화
-    inited(viewer) {
-      console.log("viewer 초기화");
-      this.$viewer = viewer;
-    },
-    // 스피너 열기
-    openSpinner() {
-      this.spinnerState = true;
-    },
-    // 스피너 닫기
-    closeSpinner() {
-      this.spinnerState = false;
-    },
-    // 모달 열기
-    openModal() {
-      this.modal = true;
-    },
-    // 모달 닫기
-    closeModal() {
-      this.modal = false;
-    },
-    // 제품 검색 모달 열기
-    openSearchModal() {
-      this.searchModal = true;
-    },
-    // 제품 검색 모달 닫기
-    closeSearchModal() {
-      this.searchModal = false;
-    },
-    // 등록 완료 되었을 경우 초기화
     roturInit() {
       console.log("routerInit 접속. 새로고침 진행");
       this.$router.push("/claimSel");
       // this.$router.go();
-    },
-    modalText() {
-      this.closeSpinner();
-      console.log("모달 메시지 확인 필요함");
-      this.modal = false;
     },
     // 업데이트 진행 시 수정모드인지 확인
     inpuReadMode() {
@@ -584,7 +613,9 @@ export default {
     // 클레임 추가
     insertClaim() {
       // 관리자가 아닐 경우 추가 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
         this.modalName = "noAdmin";
 
         this.openModal();
@@ -592,8 +623,15 @@ export default {
       // 관리자일 경우 추가 가능
       else {
         this.openSpinner();
-        this.$store.commit("SET_INSERT_CLAIM", 3);
+        this.$store.commit("claimStore/SET_INSERT_CLAIM", 3);
         console.log("클레임 추가 진행");
+
+        this.imgFiles.forEach((element) => {
+          // console.log(element);
+          element.forEach((e) => {
+            this.formData.append("image", e["file"]);
+          });
+        });
 
         let data = {
           productId: this.productId,
@@ -603,6 +641,7 @@ export default {
           zenDeskID: this.zenDeskID,
           claimDate: this.claimDate,
           claimDecide: this.claimDecide,
+          claimDecideSideOptions: this.claimDecideSideOptions,
           lotDate: this.lotDate,
           recall: this.recall,
           asanaLink: this.asanaLink,
@@ -623,7 +662,7 @@ export default {
         );
 
         this.$store
-          .dispatch("INSERT_CLAIM", this.formData)
+          .dispatch("claimStore/INSERT_CLAIM", this.formData)
           .then((response) => {
             this.modalName = "insertClaim";
 
@@ -651,7 +690,9 @@ export default {
     // 클레임 수정진행
     updateClaim() {
       // 관리자가 아닐 경우 수정 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
         this.modalName = "noAdmin";
 
         this.openModal();
@@ -660,8 +701,21 @@ export default {
       else {
         this.openSpinner();
         console.log("제품 수정 진행");
-        this.$store.commit("SET_UPDATE_CLAIM", 3);
+        this.$store.commit("claimStore/SET_UPDATE_CLAIM", 3);
         console.log("productId : " + this.productId);
+
+        this.imgFiles.forEach((element) => {
+          // console.log(element);
+          element.forEach((e) => {
+            if (e["file"]) {
+              console.log("신규 이미지 존재");
+              this.formData.append("image", e["file"]);
+            } else if (e["imgId"]) {
+              console.log("기존 이미지 존재");
+              this.formData.append("imgId", e["imgId"]);
+            }
+          });
+        });
 
         let data = {
           id: this.claimId,
@@ -672,6 +726,7 @@ export default {
           zenDeskID: this.zenDeskID,
           claimDate: this.claimDate,
           claimDecide: this.claimDecide,
+          claimDecideSideOptions: this.claimDecideSideOptions,
           lotDate: this.lotDate,
           recall: this.recall,
           asanaLink: this.asanaLink,
@@ -692,7 +747,7 @@ export default {
         );
 
         this.$store
-          .dispatch("UPDATE_CLAIM", this.formData)
+          .dispatch("claimStore/UPDATE_CLAIM", this.formData)
           .then((response) => {
             this.modalName = "updateClaim";
 
@@ -722,7 +777,9 @@ export default {
     // 클레임 삭제 진행
     deleteClaim() {
       // 관리자가 아닐 삭제 추가 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
         this.modalName = "noAdmin";
 
         this.openModal();
@@ -731,10 +788,10 @@ export default {
       else {
         this.openSpinner();
         console.log("클레임 삭제 진행");
-        this.$store.commit("SET_DELETE_CLAIM", 3);
+        this.$store.commit("claimStore/SET_DELETE_CLAIM", 3);
 
         this.$store
-          .dispatch("DELETE_CLAIM", { id: this.claimId })
+          .dispatch("claimStore/DELETE_CLAIM", { id: this.claimId })
           .then((response) => {
             this.modalName = "deleteClaim";
             // 클레임 삭제 성공

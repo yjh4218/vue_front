@@ -1,11 +1,19 @@
 <template>
-  <div>
-      제품 판매량 수정
-  </div>
+    <sales-input-list :propsdata="message"></sales-input-list>
 </template>
 
 <script>
+import salesInputList from "../../components/inpuList/SalesInputList.vue";
+
 export default {
+  components:{
+    salesInputList
+  },
+  data() {
+    return {
+      message: "updateSales",
+    };
+  },
 
 }
 </script>

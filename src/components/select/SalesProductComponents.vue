@@ -68,7 +68,7 @@
 
         <!-- 제품검색 팝업창. -->
         <div>
-          <search-product-modal @close="closeSearchModal" v-if="searchModal">
+          <common-modal @close="closeSearchModal" v-if="searchModal">
             <div v-if="modalName === 'searchProduct'">
               <select-product-table
                 v-on:selectProductCheck="closeSearchModal"
@@ -78,7 +78,7 @@
                 <button @click="modalText">확인</button>
               </template>
             </div>
-          </search-product-modal>
+          </common-modal>
         </div>
       </div>
     </b-overlay>
@@ -87,7 +87,7 @@
 
 <script>
 // import confirmModal from "../modal/ConfirmModal.vue";
-import searchProductModal from "../modal/SearchProductModal.vue";
+import commonModal from "../modal/commonModal.vue";
 import SelectProductTable from "./SelectProductTable.vue";
 import { modalMixin } from "../../mixins/modalMixin.js";
 import { spinnerMixin } from "../../mixins/spinnerMixin.js";
@@ -95,7 +95,7 @@ import { spinnerMixin } from "../../mixins/spinnerMixin.js";
 export default {
   components: {
     // confirmModal,
-    searchProductModal,
+    commonModal,
     SelectProductTable,
   },
   mixins: [modalMixin, spinnerMixin],

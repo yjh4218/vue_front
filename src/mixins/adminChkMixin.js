@@ -9,7 +9,7 @@ export const adminChkMixin = {
         adminChk() {
             // 관리자가 아닐 경우 추가 불가능
             let checkUser = this.$store.getters["loginStore/getUserLogin"];
-            console.log(checkUser.length);
+            console.log(checkUser);
             if (checkUser.length === 0 || checkUser.data.body.data.role !== "ADMIN") {
                 this.adminChkFlag = true;
             }

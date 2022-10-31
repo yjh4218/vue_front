@@ -6,12 +6,17 @@
         :propsdata="message"
         @spinnerStart="openSpinner"
       ></select-sales-product-component>
-      <b-button variant="primary" class="right-box" v-on:click="download"
-        >엑셀다운</b-button
-      >
+      <div class="row">
+        <div class="col-md-12">
+          <b-button variant="primary" class="right-box" v-on:click="download"
+            >엑셀다운</b-button
+          >
+        </div>
+      </div>
       <div>
         <b-table
-          class="customTable"
+          sticky-header="72vh"
+          responsive
           striped
           hover
           :items="getSelectProductComponent"
@@ -68,25 +73,25 @@ export default {
       message: "testSelView",
       getSelectProductComponent: [],
       fields: [
-        { key: "skuNo", label: "sku-no", sortable: true, thClass: "w15" },
-        { key: "productName", label: "제품명", sortable: true, thClass: "w15" },
+        { key: "skuNo", label: "sku-no", sortable: true, thClass: "w10" },
+        { key: "productName", label: "제품명", sortable: true, thClass: "w20" },
         {
           key: "componentSkuNo",
           label: "구성품 sku-no",
           sortable: true,
-          thClass: "w30",
+          thClass: "w10",
         },
         {
           key: "componentProductName",
           label: "구성품 제품명",
           sortable: true,
-          thClass: "w30",
+          thClass: "w20",
         },
         {
           key: "componentQuantity",
           label: "구성품 수량",
           sortable: true,
-          thClass: "w15",
+          thClass: "w10",
         },
       ],
     };
@@ -141,7 +146,7 @@ export default {
 
       for (var cnt = 0; cnt < size; cnt++) {
         temp.push(this.getSelectProductComponent[i]);
-        i++
+        i++;
       }
 
       console.log("구성품 목록");

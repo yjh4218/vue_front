@@ -6,11 +6,17 @@
         :propsdata="message"
         @spinnerStart="openSpinner"
       ></select-sales>
-      <b-button variant="primary" class="right-box" v-on:click="download"
-        >엑셀다운</b-button
-      >
+      <div class="row">
+        <div class="col-md-12">
+          <b-button variant="primary" class="right-box" v-on:click="download"
+            >엑셀다운</b-button
+          >
+        </div>
+      </div>
       <div>
         <b-table
+          sticky-header="72vh"
+          responsive
           striped
           hover
           :items="getSelectSales"
@@ -39,21 +45,20 @@ export default {
       message: "testSelView",
       getSelectSales: [],
       fields: [
-        { key: "skuNo", label: "SKU-NO", sortable: true, thClass: "w15" },
-        { key: "productName", label: "제품명", sortable: true, thClass: "w15" },
-        { key: "jan", label: "1월", sortable: true, thClass: "w15" },
-        { key: "feb", label: "2월", sortable: true, thClass: "w15" },
-        { key: "mar", label: "3월", sortable: true, thClass: "w15" },
-        { key: "apr", label: "4월", sortable: true, thClass: "w15" },
-        { key: "may", label: "5월", sortable: true, thClass: "w15" },
-        { key: "jun", label: "6월", sortable: true, thClass: "w15" },
-        { key: "jul", label: "7월", sortable: true, thClass: "w15" },
-        { key: "aug", label: "8월", sortable: true, thClass: "w15" },
-        { key: "sep", label: "9월", sortable: true, thClass: "w15" },
-        { key: "oct", label: "10월", sortable: true, thClass: "w15" },
-        { key: "nov", label: "11월", sortable: true, thClass: "w15" },
-        { key: "december", label: "12월", sortable: true, thClass: "w15" },
-
+        { key: "skuNo", label: "SKU-NO", sortable: true },
+        { key: "productName", label: "제품명", sortable: true },
+        { key: "jan", label: "1월", sortable: true },
+        { key: "feb", label: "2월", sortable: true },
+        { key: "mar", label: "3월", sortable: true },
+        { key: "apr", label: "4월", sortable: true },
+        { key: "may", label: "5월", sortable: true },
+        { key: "jun", label: "6월", sortable: true },
+        { key: "jul", label: "7월", sortable: true },
+        { key: "aug", label: "8월", sortable: true },
+        { key: "sep", label: "9월", sortable: true },
+        { key: "oct", label: "10월", sortable: true },
+        { key: "nov", label: "11월", sortable: true },
+        { key: "december", label: "12월", sortable: true },
       ],
       spinnerState: false,
     };

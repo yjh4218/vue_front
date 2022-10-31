@@ -27,9 +27,9 @@
         </div>
         <div class="row">
           <div class="col-md-3 mb-3">
-            <b-input-group prepend="업종">
+            <b-input-group prepend="제조업종">
               <b-form-select
-                v-model="businessType"
+                v-model="className"
                 :options="options"
               ></b-form-select>
             </b-input-group>
@@ -106,6 +106,18 @@
             </b-input-group>
           </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+              <b-input-group prepend="제조사 히스토리">
+                <b-form-textarea
+                  id="textarea-default"
+                  v-model="makerChangeContent"
+                  rows="3"
+                  max-rows="5"
+                ></b-form-textarea>
+              </b-input-group>
+            </div>
+          </div>
       </div>
       <div class="row" v-if="propsdata === 'insertView'">
         <div class="col-md-12 mb-3">
@@ -113,7 +125,7 @@
             variant="primary"
             class="rightBox"
             v-b-modal.insert-modal
-            v-bind:disabled="makerName === '' || businessType === ''"
+            v-bind:disabled="makerName === '' || className === ''"
           >
             신규 제조사 등록
           </b-button>
@@ -132,6 +144,89 @@
           <b-button variant="primary" class="rightBox" @click="inpuReadMode">
             제조사 수정하기
           </b-button>
+        </div>
+      </div>
+<!-- v-if="propsdata === 'updateView'" -->
+      <div class="leftTable">
+        <div class="row">
+          <div class="col-md-6">
+            <p>※ 제조사 히스토리(수정 시 체크 박스 선택 필요)</p>
+          </div>
+          <div class="col-md-6">
+            <b-button
+              variant="primary"
+              class="rightBox"
+              v-b-modal.reply-update-modal
+            >
+              제조사 정보 수정
+            </b-button>
+            <b-button
+              variant="danger"
+              class="rightBox"
+              v-b-modal.reply-delete-modal
+            >
+              제조사 정보 삭제
+            </b-button>
+          </div>
+        </div>
+        <div class="replytable">
+          <b-table
+            sticky-header
+            responsive
+            striped
+            hover
+            :items="makerReply"
+            :fields="histioryFields"
+            label-sort-asc=""
+            label-sort-desc=""
+            label-sort-clear=""
+          >
+            <template v-slot:head(selected)>
+              <b-form-checkbox></b-form-checkbox>
+            </template>
+            <template v-slot:cell(selected)="row">
+              <b-form-checkbox
+                v-model="row.item.selected"
+                @change="selectReplyData(row.item)"
+              ></b-form-checkbox>
+            </template>
+
+            <!-- 수정 권한 내용 -->
+            <template v-slot:cell(makerChangeReply)="row">
+              <b-form-input v-model="row.item.makerChangeReply" />
+            </template>
+          </b-table>
+        </div>
+      </div>
+
+      <div class="rightTable">
+        <div class="row">
+          <div class="col-md-6">
+            <p>※ 제조사 점검내역(수정, 삭제 시 더블클릭)</p>
+          </div>
+          <div class="col-md-6">
+            <b-button
+              variant="primary"
+              class="rightBox"
+              @click="addAudit()"
+            >
+              점검 내역 추가
+            </b-button>
+          </div>
+        </div>
+        <div>
+          <b-table
+            sticky-header
+            responsive
+            striped
+            hover
+            :items="makerAudit"
+            :fields="auditFields"
+            label-sort-asc=""
+            label-sort-desc=""
+            label-sort-clear=""
+          >
+          </b-table>
         </div>
       </div>
 
@@ -159,7 +254,57 @@
         </template>
       </b-modal>
 
-      <!-- 제품 검색 모달 -->
+      <b-modal id="reply-update-modal">
+        <!-- <template #modal-title> 신규상품 등록 </template> -->
+        <div class="my-4">제조사 정보를 수정하시겠습니까?</div>
+        <div>체크박스에 선택 된 내용만 수정됩니다.</div>
+        <template #modal-footer>
+          <div class="d-block text-center">
+            <b-button
+              variant="primary"
+              class="frightBox"
+              @click="updateMakerReply(), $bvModal.hide('reply-update-modal')"
+              :disabled="spinnerState"
+            >
+              수정하기
+            </b-button>
+            <b-button
+              variant="primary"
+              class="rightBox"
+              @click="$bvModal.hide('reply-update-modal')"
+            >
+              취소하기
+            </b-button>
+          </div>
+        </template>
+      </b-modal>
+      <b-modal id="reply-delete-modal">
+        <!-- <template #modal-title> 신규상품 등록 </template> -->
+
+        <div class="my-4">제조사 정보를 삭제하시겠습니까?</div>
+        <div>체크박스에 선택 된 내용만 삭제됩니다.</div>
+        <template #modal-footer>
+          <div class="d-block text-center">
+            <b-button
+              variant="primary"
+              class="frightBox"
+              @click="deleteMakerReply(), $bvModal.hide('reply-delete-modal')"
+              :disabled="spinnerState"
+            >
+              삭제하기
+            </b-button>
+            <b-button
+              variant="primary"
+              class="rightBox"
+              @click="$bvModal.hide('reply-delete-modal')"
+            >
+              취소하기
+            </b-button>
+          </div>
+        </template>
+      </b-modal>
+
+      <!-- 제조사 모달 -->
       <b-modal id="search-product-modal">
         <!-- <template #modal-title> 신규제조사 등록 </template> -->
         <div class="my-4">
@@ -234,6 +379,19 @@
       </b-modal>
     </b-overlay>
 
+    <!-- 점검내역 오픈 모달. -->
+    <div>
+      <common-modal @close="closeSearchModal" v-if="searchModal">
+        <div v-if="modalName === 'addAudit'">
+          <maker-audit-input-list :propsdata="[messageId, messageMode]"></maker-audit-input-list>
+          <template slot="footer">
+            <button @click="modalText">확인</button>
+          </template>
+        </div>
+      </common-modal>
+    </div>
+
+
     <!-- 통신 완료 모달 -->
     <div>
       <confirm-modal @close="closeModal" v-if="modal">
@@ -261,6 +419,22 @@
             <p>제조사 삭제에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
+        <div v-if="modalName === 'updateMakerReply'">
+          <div v-if="updateState">
+            <p>제조사 정보가 수정되었습니다.</p>
+          </div>
+          <div v-else>
+            <p>제조사 정보 수정에 실패했습니다. 다시 시도해 주십시오.</p>
+          </div>
+        </div>
+        <div v-if="modalName === 'deleteMakerReply'">
+          <div v-if="deleteState">
+            <p>제조사 정보가 삭제되었습니다.</p>
+          </div>
+          <div v-else>
+            <p>제조사 정보 삭제에 실패했습니다. 다시 시도해 주십시오.</p>
+          </div>
+        </div>
         <div v-if="modalName === 'noAdmin'">
           <p>관리자가 아니기 때문에 추가, 수정, 삭제할 수 없습니다.</p>
         </div>
@@ -272,19 +446,37 @@
           slot="footer"
           v-if="modalName === 'insertMaker' && insertState === 1"
         >
-          <b-button variant="primary" @click="roturInit()">확인</b-button>
+          <b-button variant="primary" @click="roturInit('makerSel')"
+            >확인</b-button
+          >
         </template>
         <template
           slot="footer"
           v-else-if="modalName === 'updateMaker' && updateState === 1"
         >
-          <b-button variant="primary" @click="roturInit()">확인</b-button>
+          <b-button variant="primary" @click="roturInit('makerSel')"
+            >확인</b-button
+          >
         </template>
         <template
           slot="footer"
           v-else-if="modalName === 'deleteMaker' && deleteState"
         >
-          <b-button variant="primary" @click="roturInit()">확인</b-button>
+          <b-button variant="primary" @click="roturInit('makerSel')"
+            >확인</b-button
+          >
+        </template>
+        <template
+          slot="footer"
+          v-else-if="modalName === 'updateMakerReply' && updateState"
+        >
+          <button @click="roturInit('makerSel')">확인</button>
+        </template>
+        <template
+          slot="footer"
+          v-else-if="modalName === 'deleteMakerReply' && deleteState"
+        >
+          <button @click="roturInit('makerSel')">확인</button>
         </template>
         <template slot="footer" v-else>
           <b-button variant="primary" @click="modalText">확인</b-button>
@@ -295,20 +487,26 @@
 </template>
 
 <script>
-import SelectProductTable from "../select/SelectProductTable.vue";
+import commonModal from "../modal/commonModal.vue"
+import makerAuditInputList from "../inpuList/makerAuditInputList.vue"
 import confirmModal from "../modal/ConfirmModal.vue";
+import { modalMixin } from "../../mixins/modalMixin.js";
+import { spinnerMixin } from "../../mixins/spinnerMixin.js";
+import { adminChkMixin } from "../../mixins/adminChkMixin.js";
 // import ss from '../'
 
 export default {
-  components: {
-    SelectProductTable,
+  components: {    
+    commonModal,
     confirmModal,
+    makerAuditInputList
   },
+  mixins: [modalMixin, spinnerMixin, adminChkMixin],
   props: ["propsdata"],
   data() {
     return {
       makerId: "",
-      businessType: "",
+      className: "",
       makerName: "",
       makerAddress: "",
       process: "",
@@ -318,18 +516,47 @@ export default {
       makerPhone: "",
       makerEmail: "",
       note: "",
+      makerChangeContent: "",
+      makerReply: [],
+      selectReply: [],
+      makerAudit:[],
       options: [
-        { value: "사료", text: "사료" },
-        { value: "화장품/의약외품", text: "화장품/의약외품" },
-        { value: "공산품", text: "공산품" },
+        { value: "사료", text: "1. 사료" },
+        { value: "동물용 의료기기", text: "2. 동물용 의료기기" },
+        { value: "동물용 의약외품", text: "3. 동물용 의약외품" },
+        { value: "공산품", text: "4. 공산품" },
+        { value: "생활화학제품", text: "5. 생활화학제품" },
+        { value: "화장품", text: "6. 화장품" },
+        { value: "기타", text: "7. 기타" },
+      ],
+      histioryFields: [
+        { key: "selected", thClass: "w2" },
+        {
+          key: "makerChangeReply",
+          label: "제조사 히스토리",
+          sortable: true,
+          thClass: "w50",
+        },
+        { key: "replyDate", label: "작성날짜", sortable: true, thClass: "w15" },
+      ],
+      auditFields: [
+        {
+          key: "auditDate",
+          label: "점검일자",
+          sortable: true,
+          thClass: "w15",
+        },
+        { key: "auditPurpose", label: "점검목적", sortable: true, thClass: "w40" },
+        { key: "auditScore", label: "점검점수", sortable: true, thClass: "w20" },
       ],
       inputRead: true,
-      modal: false,
+      searchModal: false,
       insertState: 3,
       updateState: 3,
       deleteState: 3,
-      spinnerState: false,
       modalName: "",
+      messageId: "",
+      messageMode:""
     };
   },
   mounted() {
@@ -344,7 +571,7 @@ export default {
 
         this.makerId = this.$store.state.getMaker.id;
         this.makerName = this.$store.state.getMaker.makerName;
-        this.businessType = this.$store.state.getMaker.businessType;
+        this.className = this.$store.state.getMaker.className;
         this.makerAddress = this.$store.state.getMaker.makerAddress;
         this.process = this.$store.state.getMaker.process;
         this.importProduct = this.$store.state.getMaker.importProduct;
@@ -353,49 +580,64 @@ export default {
         this.makerPhone = this.$store.state.getMaker.makerPhone;
         this.makerEmail = this.$store.state.getMaker.makerEmail;
         this.note = this.$store.state.getMaker.note;
-
+        this.makerReply = this.$store.state.getMaker.makerChangeReplies;
         this.inputRead = false;
+        this.messageId = this.$store.state.getMaker.id;
+
+        this.makerReply.forEach((e) => {
+          let tmpData = {
+            id: e.id,
+            makerChangeReply: e.makerChangeReply,
+            replyDate: e.replyDate,
+            selected: false,
+            createDate: e.createDate,
+          };
+          this.selectReply.push(tmpData);
+        });
       } else {
         this.imgFlag = true;
         console.log("setData else 실행 : " + this.propsdata);
       }
     },
+    // 제품 검색
+    addAudit() {
+      // 관리자가 아닐 경우 추가 불가능
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
+        this.modalName = "noAdmin";
 
-    // 스피너 열기
-    openSpinner() {
-      this.spinnerState = true;
+        this.openModal();
+      } else{
+        this.messageMode="insertView"
+        this.searchModal = true;
+        this.modalName = "addAudit";
+      }
     },
-    // 스피너 닫기
-    closeSpinner() {
-      this.spinnerState = false;
+    // 상품정보 변경
+    selectReplyData(item) {
+      console.log("체크 선택됨");
+      console.log(this.selectReply);
+
+      console.log(item);
+      this.selectReply.forEach((element, index) => {
+        if (element.id === item.id) {
+          this.selectReply[index].selected = item.selected;
+        }
+      });
+      console.log("체크 끝남");
+      console.log(this.selectReply);
     },
-    // 모달 열기
-    openModal() {
-      this.modal = true;
-    },
-    // 모달 닫기
-    closeModal() {
-      this.modal = false;
-    },
-    // 등록 완료 되었을 경우 초기화
-    roturInit() {
-      console.log("routerInit 접속. 새로고침 진행");
-      this.$router.push("/makerSel");
-      // this.$router.go();
-    },
-    modalText() {
-      this.closeSpinner();
-      console.log("모달 메시지 확인 필요함");
-      this.modal = false;
-    },
-    // 업데이트 진행 시 수정모드인지 확인
+    // 수정인지, 신규 등록인지 확인
     inpuReadMode() {
       this.inputRead = true;
     },
     // 제조사 추가
     insertMaker() {
       // 관리자가 아닐 경우 추가 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
         this.modalName = "noAdmin";
 
         this.openModal();
@@ -403,13 +645,14 @@ export default {
       // 관리자일 경우 추가 가능
       else {
         this.openSpinner();
-        this.$store.commit("SET_INSERT_MAKER", 3);
+
+        this.$store.commit("makerStore/SET_INSERT_MAKER", 3);
         console.log("제조사 추가 진행");
 
         let data = {
           id: this.makerId,
           makerName: this.makerName,
-          businessType: this.businessType,
+          className: this.className,
           makerAddress: this.makerAddress,
           process: this.process,
           importProduct: this.importProduct,
@@ -418,9 +661,10 @@ export default {
           makerPhone: this.makerPhone,
           makerEmail: this.makerEmail,
           note: this.note,
+          makerChangeContent : this.makerChangeContent
         };
         this.$store
-          .dispatch("INSERT_MAKER", data)
+          .dispatch("makerStore/INSERT_MAKER", data)
           .then((response) => {
             this.modalName = "insertMaker";
 
@@ -448,7 +692,9 @@ export default {
     // 제조사 수정진행
     updateMaker() {
       // 관리자가 아닐 경우 수정 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
         this.modalName = "noAdmin";
 
         this.openModal();
@@ -457,13 +703,13 @@ export default {
       else {
         this.openSpinner();
         console.log("제품 수정 진행");
-        this.$store.commit("SET_UPDATE_MAKER", 3);
-        console.log("productId : " + this.productId);
+        this.$store.commit("makerStore/SET_UPDATE_MAKER", 3);
+        console.log("makerId : " + this.makerId);
 
         let data = {
           id: this.makerId,
           makerName: this.makerName,
-          businessType: this.businessType,
+          className: this.className,
           makerAddress: this.makerAddress,
           process: this.process,
           importProduct: this.importProduct,
@@ -471,10 +717,14 @@ export default {
           makerPerson: this.makerPerson,
           makerPhone: this.makerPhone,
           makerEmail: this.makerEmail,
+          makerChangeContent : this.makerChangeContent,
           note: this.note,
         };
+
+        console.log("데이터 들어옴");
+
         this.$store
-          .dispatch("UPDATE_MAKER", data)
+          .dispatch("makerStore/UPDATE_MAKER", data)
           .then((response) => {
             this.modalName = "updateMaker";
 
@@ -504,7 +754,9 @@ export default {
     // 제조사 삭제
     deleteMaker() {
       // 관리자가 아닐 경우 삭제 불가능
-      if (this.$store.getters.getUserLogin.data.body.data.role !== "ADMIN") {
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
         this.modalName = "noAdmin";
 
         this.openModal();
@@ -513,10 +765,10 @@ export default {
       else {
         this.openSpinner();
         console.log("제조사 삭제 진행");
-        this.$store.commit("SET_DELETE_MAKER", 3);
+        this.$store.commit("makerStore/SET_DELETE_MAKER", 3);
 
         this.$store
-          .dispatch("DELETE_MAKER", { id: this.makerId })
+          .dispatch("makerStore/DELETE_MAKER", { id: this.makerId })
           .then((response) => {
             this.modalName = "deleteMaker";
             // 제조사 삭제 성공
@@ -534,6 +786,126 @@ export default {
               this.closeSpinner();
             }
 
+            console.log("modalName : " + this.modalName);
+          })
+          .catch((error) => {
+            console.log("error 발생");
+            console.log(error);
+          });
+      }
+    },
+
+    // 리플 수정진행
+    updateMakerReply() {
+      // 관리자가 아닐 경우 수정 불가능
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
+        this.modalName = "noAdmin";
+
+        this.openModal();
+      }
+      // 관리자일 경우 수정 가능
+      else {
+        this.openSpinner();
+
+        console.log("리플 수정 진행");
+
+        this.$store.commit("makerStore/SET_UPDATE_MAKER_REPLY", "3");
+
+        // console.log("makerId : " + this.makerId);
+
+         var tmpReply = [];
+        this.makerReply.forEach((element) => {
+          if (element.selected) {
+            tmpReply.push({replyId : element.id, changeReplyData : element.makerChangeReply});
+          }
+        });
+
+        let data = {
+          id: this.makerId,
+          replyDataList: tmpReply,
+        };
+
+        console.log("수정 진행 전 데이터 확인");
+        console.log("makerReply");
+        console.log(this.makerReply);
+        console.log("data");
+        console.log(data);
+
+        this.$store
+          .dispatch("makerStore/UPDATE_MAKER_REPLY", data)
+          .then((response) => {
+            this.modalName = "updateMakerReply";
+
+            if (response.data === 1) {
+              console.log("response 값 1");
+              this.updateState = true;
+              this.openModal();
+              this.closeSpinner();
+            } else if (response.data === 0) {
+              console.log("response 값 0");
+              this.updateState = false;
+              this.openModal();
+              this.closeSpinner();
+            }
+            console.log("updateProduct : " + this.updateState);
+            console.log("modalName : " + this.modalName);
+          })
+          .catch((error) => {
+            console.log("error 발생");
+            console.log(error);
+          });
+      }
+    },
+
+    // 제품 리플 삭제
+    deleteMakerReply() {
+      console.log("제품 변경 리플 삭제 진행");
+
+      // 관리자가 아닐 경우 삭제 불가능
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
+        this.modalName = "noAdmin";
+
+        this.openModal();
+      }
+      // 관리자일 경우 삭제 가능
+      else {
+        this.openSpinner();
+
+        var tmpReply = [];
+        this.makerReply.forEach((element) => {
+          if (element.selected) {
+            tmpReply.push(element.id);
+          }
+        });
+
+        let data = {
+          makerId: this.makerId,
+          makerReplyId: tmpReply,
+        };
+
+        this.$store.commit("makerStore/SET_DELETE_MAKER_REPLY", "3");
+        this.$store
+          .dispatch("makerStore/DELETE_MAKER_REPLY", data)
+          .then((response) => {
+            this.modalName = "deleteMakerReply";
+
+            if (response.data === 1) {
+              console.log("response 값 1");
+              this.deleteState = true;
+              this.openModal();
+              this.closeSpinner();
+            } else if (response.data === 0) {
+              console.log("response 값 0");
+              this.deleteState = false;
+              this.openModal();
+              this.closeSpinner();
+            }
+
+            console.log("updateProduct : " + this.deleteState);
             console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
@@ -564,5 +936,13 @@ export default {
 }
 .imgup {
   margin-left: 10px;
+}
+.leftTable{
+  width: 49%;
+  float:left;
+}
+.rightTable{
+  width: 49%;
+  float:right;
 }
 </style>

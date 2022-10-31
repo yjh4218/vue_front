@@ -56,9 +56,6 @@
               :aria-describedby="ariaDescribedby"
               name="flavour-1"
             >
-              <b-form-checkbox class="chkBox" value="간식"
-                >간식</b-form-checkbox
-              >
               <b-form-checkbox class="chkBox" value="사료"
                 >사료</b-form-checkbox
               >
@@ -68,11 +65,8 @@
               <b-form-checkbox class="chkBox" value="동물용 의약외품">
                 동물용 의약외품
               </b-form-checkbox>
-              <b-form-checkbox class="chkBox" value="의류"
-                >의류</b-form-checkbox
-              >
-              <b-form-checkbox class="chkBox" value="장난감"
-                >장난감</b-form-checkbox
+              <b-form-checkbox class="chkBox" value="공산품"
+                >공산품</b-form-checkbox
               >
               <b-form-checkbox class="chkBox" value="생활화학제품">
                 생활화학제품
@@ -91,10 +85,18 @@
           v-if="
             this.$route.name === 'selectAllProduct' ||
             this.$route.name === 'inspectInView' ||
-            this.$route.name === 'claimInView'
+            this.$route.name === 'claimInView' ||
+            this.$route.name === 'salesProductInView' ||
+            this.$route.name === 'salesProductUp'
           "
         >
-          <b-button variant="primary" class="left-box" @click="searchData"
+          <b-button
+            variant="primary"
+            class="left-box"
+            @click="
+              spinnerStart();
+              searchData();
+            "
             >상품 조회</b-button
           >
         </div>
@@ -135,8 +137,8 @@
             variant="primary"
             class="left-box"
             @click="
-              searchData();
               spinnerStart();
+              searchData();
             "
             >검수 조회</b-button
           >
@@ -146,8 +148,8 @@
             variant="primary"
             class="left-box"
             @click="
-              searchData();
               spinnerStart();
+              searchData();
             "
             >클레임 조회</b-button
           >
@@ -170,6 +172,7 @@ import selectSlot from "../select/SelectProductSlot.vue";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import confirmModal from "../modal/ConfirmModal.vue";
+import { dateSearchMixin } from "../../mixins/dateSearchMixin";
 
 dayjs.extend(isSameOrBefore);
 
@@ -178,14 +181,13 @@ export default {
     selectSlot,
     confirmModal,
   },
+  mixins: [dateSearchMixin],
   data() {
     return {
       skuNo: "",
       productName: "",
       brandName: "",
       maker: "",
-      beforeDate: "",
-      afterDate: "",
       header: ["skuNo", "제품명", "브랜드명", "제조사", "출시일자"],
       selectParam: [],
       className: [],
@@ -201,20 +203,27 @@ export default {
       console.log(this.$route.name);
 
       this.spinnerStart();
-
       if (
         this.$route.name === "selectAllProduct" ||
         this.$route.name === "inspectInView" ||
-        this.$route.name === "claimInView"
+        this.$route.name === "claimInView" ||
+        this.$route.name === "salesProductInView" ||
+        this.$route.name === "salesProductUp"
       ) {
-        this.$store.dispatch("SELECT_PRODUCT", {
+        // 검색 데이터 저장
+        let data = {
+          page: 0,
           name: this.$route.name,
           skuNo: this.skuNo,
           productName: this.productName,
           brandName: this.brandName,
           maker: this.maker,
           className: this.className,
-        });
+        };
+        // 검색 데이터 저장
+        this.$store.commit("productStore/SET_SEARCH_DATA", data);
+
+        this.$store.dispatch("productStore/SELECT_PRODUCT", data);
       } else {
         var bfdate = dayjs(this.beforeDate);
         var afdate = dayjs(this.afterDate);
@@ -222,7 +231,11 @@ export default {
         if (bfdate.isSameOrBefore(this.afterDate, "day")) {
           console.log("날짜 확인됨");
 
+          console.log(afdate);
+          console.log(bfdate);
+
           let data = {
+            page: 0,
             name: this.$route.name,
             skuNo: this.skuNo,
             productName: this.productName,
@@ -234,55 +247,17 @@ export default {
           };
 
           if (this.$route.name === "inspectSelView") {
-            this.$store.dispatch("SELECT_INSPECT", data);
+            // 검색 데이터 저장
+            this.$store.commit("inspectStore/SET_SEARCH_DATA", data);
+            this.$store.dispatch("inspectStore/SELECT_INSPECT", data);
           } else {
-            this.$store.dispatch("SELECT_CLAIM", data);
+            this.$store.dispatch("claimStore/SELECT_CLAIM", data);
           }
         } else {
           this.modalName = "noConfirmDate";
           this.modal = true;
         }
       }
-    },
-    // 오늘 날짜 확인
-    setDate(searchDate) {
-      var thisday = new Date(searchDate);
-
-      // 연도, 월, 일 추출
-      var year = thisday.getFullYear();
-      var month = ("0" + (thisday.getMonth() + 1)).slice(-2);
-      var day = ("0" + thisday.getDate()).slice(-2);
-
-      // 최종 포맷 (ex - '2021-10-08')
-      return year + "-" + month + "-" + day;
-    },
-    // 일주일 전 날짜 구하기
-    prevWeek() {
-      var d = new Date();
-      this.afterDate = this.setDate(d);
-      console.log("d : " + d);
-
-      var dayOfMonth = d.getDate();
-      d.setDate(dayOfMonth - 7);
-      this.beforeDate = this.setDate(d);
-    },
-    // 한달 전 날짜 구하기
-    prevMonth() {
-      var d = new Date();
-      this.afterDate = this.setDate(d);
-
-      var monthOfYear = d.getMonth();
-      d.setMonth(monthOfYear - 1);
-      this.beforeDate = this.setDate(d);
-    },
-    // 3개월 전 날짜 구하기
-    prevThreeMonth() {
-      var d = new Date();
-      this.afterDate = this.setDate(d);
-
-      var monthOfYear = d.getMonth();
-      d.setMonth(monthOfYear - 3);
-      this.beforeDate = this.setDate(d);
     },
     // 모달 열기
     openModal() {
@@ -299,6 +274,7 @@ export default {
     },
   },
   mounted() {
+    console.log("selectProduct Mount 실행");
     // 처음 실행 시 날짜 지정
     this.prevWeek();
     // 처음에 전체 검수 조회 함

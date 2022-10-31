@@ -1,28 +1,26 @@
-import {
-  userLogin,
-} from "../../api/index.js";
+import { userLogin } from "../../api/index.js";
 
 const loginStore = {
-    namespaced: true,
-    state: {
-        // axios 통신
-        // 유저 로그인
-        userLogin: [],
+  namespaced: true,
+  state: {
+    // axios 통신
+    // 유저 로그인
+    userLogin: [],
+  },
+  getters: {
+    // 유저 로그인 결과
+    getUserLogin(state) {
+      return state.userLogin;
     },
-    getters: {
-        // 유저 로그인 결과
-        getUserLogin(state) {
-            return state.userLogin;
-        },
+  },
+  mutations: {
+    // axios 통신결과 조회
+    // 유저 로그인 결과 저장
+    SET_USER_LOGIN(state, userLogin) {
+      state.userLogin = userLogin;
     },
-    mutations: {
-        // axios 통신결과 조회
-        // 유저 로그인 결과 저장
-        SET_USER_LOGIN(state, userLogin) {
-            state.userLogin = userLogin;
-        },
-    },
-    actions: {
+  },
+  actions: {
     // 유저 로그인
     USER_LOGIN(context, user) {
       console.log("USER_LOGIN actions 접속됨");
@@ -36,15 +34,15 @@ const loginStore = {
           return response;
         })
         .catch((error) => {
+          console.log(error.response);
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
           context.commit("SET_USER_LOGIN", error.response);
-        
+          return error.response;
         });
     },
-
   },
-}
+};
 
-export default loginStore
+export default loginStore;

@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  runtimeCompiler: true,
   outputDir: "../src/main/resources/static",
   devServer: {
     port: 3030,
@@ -10,6 +11,12 @@ module.exports = defineConfig({
   },
   chainWebpack: (config) => {
     config.module.rules.delete("eslint");
+    config
+      .plugin('html')
+      .tap(args => {
+          args[0].title = "품질관리 페이지";
+          return args;
+      })
   },
   css: {
     loaderOptions: {

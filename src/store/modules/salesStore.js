@@ -1,9 +1,10 @@
 
 import {
-    insertSales,
-    updateSales,
-    deleteSales,
+    insertMonthSales,
     selectSales,
+    updateMonthSales,
+    deleteMonthSales,
+    selectMonthSales,
     insertSalesProductComponent,
     updateSalesProductComponent,
     deleteSalesProductComponent,
@@ -14,14 +15,16 @@ import {
 const salesStore = {
     namespaced: true,
     state: {
-        // 판매량 추가하기
-        insertSales: {},
+        // 월별 판매량 추가하기
+        insertMonthSales: {},
         // 전체 판매량 조회
         selectSales: [],
-        // 판매량 수정하기
-        updateSales: {},
-        // 판매량 삭제하기
-        deleteSales: {},
+        // 월별 판매량 조회
+        selectMonthSales: [],
+        // 월별 판매량 수정하기
+        updateMonthSales: {},
+        // 월별 판매량 삭제하기
+        deleteMonthSales: {},
         // 제품 구성품 추가하기
         insertSalesProductComponent: {},
         // 제품 구성품 수정하기
@@ -35,20 +38,24 @@ const salesStore = {
     },
     getters: {
         // 판매량 추가 데이터 확인
-        getInsertSales(state) {
+        getInsertMonthSales(state) {
         return state.insertSales;
         },
         // 판매량 제품 전체 조회
         getSelectSales(state) {
         return state.selectSales;
         },
-        // 판매량 수정 데이터 확인
-        getUpdateSales(state) {
-        return state.updateSales;
+        // 월별 판매량 조회
+        getSelectMonthSales(state) {
+        return state.selectMonthSales;
         },
-        // 판매량 삭제 데이터 확인
-        getDeleteSales(state) {
-        return state.deleteSales;
+        // 월별 판매량 수정 데이터 확인
+        getUpdateMonthSales(state) {
+        return state.updatMontheSales;
+        },
+        // 월별 판매량 삭제 데이터 확인
+        getDeleteMonthSales(state) {
+        return state.deleteMonthSales;
         },
         // 제품 구성품 추가 데이터 확인
         getInsertSalesProductComponet(state) {
@@ -73,20 +80,25 @@ const salesStore = {
     },
     mutations: {
         // 판매량 추가하기
-        SET_INSERT_SALES(state, insertSales) {
-            state.insertSales = insertSales;
+        SET_INSERT_MONTH_SALES(state, insertMonthSales) {
+            state.insertMonthSales = insertMonthSales;
         },
         // 판매량 전체 제품 조회
         SET_SELECT_SALES(state, selectSales) {
             state.selectSales = selectSales;
         },
-        // 판매량 제품 업데이트
-        SET_UPDATE_SALES(state, updateSales) {
-            state.updateSales = updateSales;
+        
+        // 월별 판매량 조회
+        SET_SELECT_MONTH_SALES(state, selectMonthSales) {
+            state.selectMonthSales = selectMonthSales;
         },
-        //판매량 제품 삭제
-        SET_DELETE_SALES(state, deleteSales) {
-            state.deleteSales = deleteSales;
+        // 월별 판매량 수정
+        SET_UPDATE_MONTH_SALES(state, updateMonthSales) {
+            state.updateMonthSales = updateMonthSales;
+        },
+        // 월별 판매량 삭제
+        SET_DELETE_MONTH_SALES(state, deleteMonthSales) {
+            state.deletMontheSales = deleteMonthSales;
         },
         // 제품 구성품 추가하기
         SET_INSERT_SALES_PRODUCT_COMPONENT(state, insertSalesProductComponent) {
@@ -111,72 +123,21 @@ const salesStore = {
     },
     actions: {
         // 판매량 추가
-        INSERT_SALES(context, selectCon) {
-        console.log("INSERT_SALES actions 접속됨");
+        INSERT_MONTH_SALES(context, selectCon) {
+        console.log("INSERT_MONTH_SALES actions 접속됨");
         console.log(context);
 
-        return insertSales(selectCon)
+        return insertMonthSales(selectCon)
             .then((response) => {
             console.log("response");
             console.log(response);
-            context.commit("SET_INSERT_SALES", response.data.data);
+            context.commit("SET_INSERT_MONTH_SALES", response.data.data);
             return response.data;
             })
             .catch((error) => {
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
-            });
-        },
-
-        // 판매량 수정 추가
-        UPDATE_SALES(context, selectCon) {
-        console.log("UPDATE_SALES actions 접속됨");
-        console.log(context);
-
-        return updateSales(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_UPDATE_SALES", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
-        },
-
-        // 판매량 삭제
-        DELETE_SALES(context, selectCon) {
-        console.log("DELETE_SALES actions 접속됨");
-        console.log(selectCon);
-
-        return deleteSales(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log(response.data.data);
-            context.commit("SET_DELETE_SALES", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            if (error.response) {
-                // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else if (error.request) {
-                // 요청이 이루어 졌으나 응답을 받지 못했습니다.
-                // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
-                // Node.js의 http.ClientRequest 인스턴스입니다.
-                console.log(error.request);
-            } else {
-                // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
-                console.log("Error", error.message);
-            }
-            console.log(error.config);
             });
         },
 
@@ -198,7 +159,77 @@ const salesStore = {
             console.log(error.response.headers);
             });
         },
+
+        // 월별 판매량 조회
+        SELECT_MONTH_SALES(context, selectCon) {
+        console.log("SELECT_SALES actions 접속됨");
+        console.log(selectCon);
+
+        return selectMonthSales(selectCon)
+            .then((response) => {
+            console.log("response");
+            console.log(response);
+            context.commit("SET_SELECT_MONTH_SALES", response.data.data);
+            return response.data;
+            })
+            .catch((error) => {
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+            });
+        },
         
+        // 월별 판매량 수정 추가
+        UPDATE_MONTH_SALES(context, selectCon) {
+        console.log("UPDATE_SALES actions 접속됨");
+        console.log(context);
+
+        return updateMonthSales(selectCon)
+            .then((response) => {
+            console.log("response");
+            console.log(response);
+            context.commit("SET_UPDATE_MONTH_SALES", response.data.data);
+            return response.data;
+            })
+            .catch((error) => {
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+            });
+        },
+
+        // 월별 판매량 삭제
+        DELETE_MONTH_SALES(context, selectCon) {
+        console.log("DELETE_SALES actions 접속됨");
+        console.log(selectCon);
+
+        return deleteMonthSales(selectCon)
+            .then((response) => {
+            console.log("response");
+            console.log(response);
+            console.log(response.data.data);
+            context.commit("SET_DELETE_MONTH_SALES", response.data.data);
+            return response.data;
+            })
+            .catch((error) => {
+            if (error.response) {
+                // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // 요청이 이루어 졌으나 응답을 받지 못했습니다.
+                // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
+                // Node.js의 http.ClientRequest 인스턴스입니다.
+                console.log(error.request);
+            } else {
+                // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
+                console.log("Error", error.message);
+            }
+            console.log(error.config);
+            });
+        },
+
         // 제품 구성품 추가
         INSERT_SALES_PRODUCT_COMPONENT(context, selectCon) {
         console.log("INSERT_SALES_PRODUCT_COMPONENT actions 접속됨");
