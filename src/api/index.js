@@ -43,15 +43,10 @@ function insertProduct(newProduct) {
 function updateProduct(updateProduct) {
   console.log("상품 수정하기");
   console.log(updateProduct);
-  // for (var pair of updateProduct.entries()) {
-  //   console.log(pair[0] + ", " + pair[1]);
-  // }
 
   for (var key of updateProduct.keys()) {
     console.log(`${key} : ${updateProduct.get(key)}`);
   }
-
-
   return axios.put(config.productUrl + "updateProduct", updateProduct, {
     headers: { "Content-Type": `multipart/form-data` },
   });
@@ -337,6 +332,27 @@ function insertMakerAudit(newAudit) {
   });
 }
 
+// 제조사 점검 수정하기
+function updateMakerAudit(updateAudit) {
+  console.log("상품 수정하기");
+  console.log(updateAudit);
+
+  return axios.put(config.makerAuditUrl + "updateMakerAudit", updateAudit, {
+    headers: { "Content-Type": `multipart/form-data` },
+  });
+}
+
+// 제조사 점검 삭제하기
+function deleteMakerAudit(deleteAudit) {
+  let data = {
+    header: { "Content-Type": `application/json` },
+    params: {
+      id: deleteAudit.id,
+    },
+  };
+  return axios.delete(config.makerAuditUrl + "deleteMakerAudit", data);
+}
+
 
 // 클레임 추가하기
 function insertClaim(newClaim) {
@@ -549,6 +565,8 @@ export {
   updateMakerReply,
   deleteMakerReply,
   insertMakerAudit,
+  updateMakerAudit,
+  deleteMakerAudit,
   insertClaim,
   updateClaim,
   deleteClaim,

@@ -24,7 +24,7 @@
           label-sort-asc=""
           label-sort-desc=""
           label-sort-clear=""
-          @row-dblclicked="inspectDetails"
+          @row-dblclicked="makerDetails"
         ></b-table>
       </div>
     </b-overlay>
@@ -100,7 +100,7 @@ export default {
       XLSX.writeFile(workBook, "제조사 목록.xlsx");
     },
     // 더블 클릭 이벤트
-    inspectDetails(item) {
+    makerDetails(item) {
       console.log("this.$route.name : " + this.$route.name);
       console.log("row 더블클릭됨");
       console.log(item);

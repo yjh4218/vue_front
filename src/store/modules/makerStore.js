@@ -4,6 +4,8 @@ import {
   deleteMaker,
   selectMaker,
   insertMakerAudit,
+  updateMakerAudit,
+  deleteMakerAudit,
   updateMakerReply,
   deleteMakerReply
 } from "../../api/index";
@@ -314,7 +316,7 @@ const makerStore = {
         console.log("UPDATE_MAKER_AUDIT actions 접속됨");
         console.log(context);
 
-        return updateMaker(selectCon)
+        return updateMakerAudit(selectCon)
           .then((response) => {
             console.log("response");
             console.log(response);
@@ -333,7 +335,7 @@ const makerStore = {
         console.log("DELETE_MAKER_AUDIT actions 접속됨");
         console.log(selectCon);
 
-        return deleteMaker(selectCon)
+        return deleteMakerAudit(selectCon)
           .then((response) => {
             console.log("response");
             console.log(response);

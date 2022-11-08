@@ -34,6 +34,7 @@ export const store = new Vuex.Store({
     getProduct: {},
     getInspect: [],
     getMaker: [],
+    getMakerAudit: [],
     getClaim: [],
     getSales: [],
     getSalesProduct: [],
@@ -50,6 +51,10 @@ export const store = new Vuex.Store({
     // 제조사 라우터 이동간에 사용된 데이터
     getMaker(state) {
       return state.getMaker;
+    },
+    // 제조사 점검 라우터 이동간에 사용된 데이터
+    getMakerAudit(state) {
+      return state.getMakerAudit;
     },
     // 제조사 라우터 이동간에 사용된 데이터
     getClaim(state) {
@@ -76,6 +81,10 @@ export const store = new Vuex.Store({
     // vuex를 통한 데이터 이동(제조사 상세 조회 시 사용)
     SET_MAKER(state, getMaker) {
       state.getMaker = getMaker;
+    },
+    // vuex를 통한 데이터 이동(제조사 점검 상세 조회 시 사용)
+    SET_MAKER_AUDIT(state, getMakerAudit) {
+      state.getMakerAudit = getMakerAudit;
     },
     // vuex를 통한 데이터 이동(제조사 상세 조회 시 사용)
     SET_CLAIM(state, getClaim) {

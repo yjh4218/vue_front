@@ -11,20 +11,29 @@ export const imageMixin = {
     },
     methods: {
         // 클레임 상세 정보 이미지 파일 지정
-        imgUpdate(image) {
+        imgUpdate(image, sel) {
             this.imgUpdateFlag = true;
+            console.log(this.$router.name);
 
             image.forEach((x) => {
                 console.log("이미지 있음");
                 console.log(x);
 
-                // var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
-                var tempImg =
-                // "http://192.168.21.251:8080/" +
-                    "http://127.0.0.1:8080/" +
+                var tempImg = '';
+                
+                if (sel === 'file') {
+                    tempImg =
+                "http://192.168.21.197:8080/" +
+                    // "http://127.0.0.1:8080/" +
+                    x.filePath.substr(13).replaceAll("\\", "/");
+                } else {
+                    // var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
+                    tempImg =
+                "http://192.168.21.197:8080/" +
+                    // "http://127.0.0.1:8080/" +
                     x.imgFilePath.substr(13).replaceAll("\\", "/");
-            
-                // var temp ={ url: tempImg }
+                }
+
 
                 this.imgFiles.push([{ url: tempImg, imgId : x.id }]);
                 console.log(tempImg);

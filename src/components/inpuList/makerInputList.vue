@@ -147,89 +147,91 @@
         </div>
       </div>
 <!-- v-if="propsdata === 'updateView'" -->
-      <div class="leftTable">
-        <div class="row">
-          <div class="col-md-6">
-            <p>※ 제조사 히스토리(수정 시 체크 박스 선택 필요)</p>
+      <div v-if="propsdata === 'updateView'">
+        <div class="leftTable">
+          <div class="row">
+            <div class="col-md-6">
+              <p>※ 제조사 히스토리(수정 시 체크 박스 선택 필요)</p>
+            </div>
+            <div class="col-md-6">
+              <b-button
+                variant="primary"
+                class="rightBox"
+                v-b-modal.reply-update-modal
+              >
+                제조사 정보 수정
+              </b-button>
+              <b-button
+                variant="danger"
+                class="rightBox"
+                v-b-modal.reply-delete-modal
+              >
+                제조사 정보 삭제
+              </b-button>
+            </div>
           </div>
-          <div class="col-md-6">
-            <b-button
-              variant="primary"
-              class="rightBox"
-              v-b-modal.reply-update-modal
+          
+          <div class="replytable">
+            <b-table
+              sticky-header
+              responsive
+              striped
+              hover
+              :items="makerReply"
+              :fields="histioryFields"
+              label-sort-asc=""
+              label-sort-desc=""
+              label-sort-clear=""
             >
-              제조사 정보 수정
-            </b-button>
-            <b-button
-              variant="danger"
-              class="rightBox"
-              v-b-modal.reply-delete-modal
-            >
-              제조사 정보 삭제
-            </b-button>
+              <template v-slot:head(selected)>
+                <b-form-checkbox></b-form-checkbox>
+              </template>
+              <template v-slot:cell(selected)="row">
+                <b-form-checkbox
+                  v-model="row.item.selected"
+                  @change="selectReplyData(row.item)"
+                ></b-form-checkbox>
+              </template>
+
+              <!-- 수정 권한 내용 -->
+              <template v-slot:cell(makerChangeReply)="row">
+                <b-form-input v-model="row.item.makerChangeReply" />
+              </template>
+            </b-table>
           </div>
         </div>
-        <div class="replytable">
-          <b-table
-            sticky-header
-            responsive
-            striped
-            hover
-            :items="makerReply"
-            :fields="histioryFields"
-            label-sort-asc=""
-            label-sort-desc=""
-            label-sort-clear=""
-          >
-            <template v-slot:head(selected)>
-              <b-form-checkbox></b-form-checkbox>
-            </template>
-            <template v-slot:cell(selected)="row">
-              <b-form-checkbox
-                v-model="row.item.selected"
-                @change="selectReplyData(row.item)"
-              ></b-form-checkbox>
-            </template>
-
-            <!-- 수정 권한 내용 -->
-            <template v-slot:cell(makerChangeReply)="row">
-              <b-form-input v-model="row.item.makerChangeReply" />
-            </template>
-          </b-table>
+        <div class="rightTable">
+          <div class="row">
+            <div class="col-md-6">
+              <p>※ 제조사 점검내역(수정, 삭제 시 더블클릭)</p>
+            </div>
+            <div class="col-md-6">
+              <b-button
+                variant="primary"
+                class="rightBox"
+                @click="addAudit()"
+              >
+                점검 내역 추가
+              </b-button>
+            </div>
+          </div>
+          <div>
+            <b-table
+              sticky-header
+              responsive
+              striped
+              hover
+              :items="makerAudit"
+              :fields="auditFields"
+              label-sort-asc=""
+              label-sort-desc=""
+              label-sort-clear=""
+              @row-dblclicked="makerAuditDetails"
+            >
+            </b-table>
+          </div>
         </div>
       </div>
-
-      <div class="rightTable">
-        <div class="row">
-          <div class="col-md-6">
-            <p>※ 제조사 점검내역(수정, 삭제 시 더블클릭)</p>
-          </div>
-          <div class="col-md-6">
-            <b-button
-              variant="primary"
-              class="rightBox"
-              @click="addAudit()"
-            >
-              점검 내역 추가
-            </b-button>
-          </div>
-        </div>
-        <div>
-          <b-table
-            sticky-header
-            responsive
-            striped
-            hover
-            :items="makerAudit"
-            :fields="auditFields"
-            label-sort-asc=""
-            label-sort-desc=""
-            label-sort-clear=""
-          >
-          </b-table>
-        </div>
-      </div>
-
       <b-modal id="insert-modal">
         <!-- <template #modal-title> 신규제조사 등록 </template> -->
         <div class="my-4">신규 제조사를 등록하시겠습니까?</div>
@@ -583,6 +585,7 @@ export default {
         this.makerReply = this.$store.state.getMaker.makerChangeReplies;
         this.inputRead = false;
         this.messageId = this.$store.state.getMaker.id;
+        this.makerAudit = this.$store.state.getMaker.makerAuditList;
 
         this.makerReply.forEach((e) => {
           let tmpData = {
@@ -599,7 +602,7 @@ export default {
         console.log("setData else 실행 : " + this.propsdata);
       }
     },
-    // 제품 검색
+    // 점검 내역 추가
     addAudit() {
       // 관리자가 아닐 경우 추가 불가능
       // adminChkMixin 사용
@@ -631,6 +634,31 @@ export default {
     // 수정인지, 신규 등록인지 확인
     inpuReadMode() {
       this.inputRead = true;
+    },
+    // 더블 클릭 이벤트
+    makerAuditDetails(item) {
+      console.log("this.$route.name : " + this.$route.name);
+      console.log("row 더블클릭됨");
+      console.log(item);
+
+      console.log("this.$route.name : " + this.$route.name);
+      this.$store.commit("SET_MAKER_AUDIT", "");
+
+      // 제조사 점검 상세정보 페이지로 이동
+      this.$store.commit("SET_MAKER_AUDIT", item);
+      // 관리자가 아닐 경우 오픈 불가능
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
+        this.modalName = "noAdmin";
+
+        this.openModal();
+      } else{
+        this.messageMode="updateView"
+        this.searchModal = true;
+        this.modalName = "addAudit";
+      }
+      // this.$router.push(`/makerUp/${item.id}`);
     },
     // 제조사 추가
     insertMaker() {

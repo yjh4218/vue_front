@@ -221,6 +221,53 @@
           </div>
           <div class="row">
             <div class="col-md-12 mb-3">
+              <p>※ 파일 첨부하기</p>
+              <b-form-file multiple @change="AddfileData" plain></b-form-file>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <p>※ 파일 첨부 목록</p>
+              <div>
+                <b-table
+                  sticky-header
+                  responsive
+                  striped
+                  hover
+                  :items="fileData"
+                  :fields="fileFields"
+                  label-sort-asc=""
+                  label-sort-desc=""
+                  label-sort-clear=""
+                >
+                  <template #cell(index)="data">
+                    {{ data.index + 1 }}
+                  </template>
+                  <template v-slot:cell(filename)="row">
+                    <span v-for="(item, index) in row.item" :key="index">
+                      {{ item.name }}
+                    </span>
+                  </template>
+
+                  <!-- 수정 권한 내용 -->
+                  <template v-slot:cell(chkDel)="row">
+                    <b-button
+                      @click="delDown(row.item, row.index, $event.target)"
+                      >삭제</b-button
+                    >
+                  </template>
+                  <template v-slot:cell(down)="row">
+                    <b-button
+                      @click="downData(row.item, row.index, $event.target)"
+                      >다운로드</b-button
+                    >
+                  </template>
+                </b-table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-3">
               <b-input-group prepend="사진 첨부하기">
                 <b-form-file
                   class="imgup"
@@ -681,12 +728,13 @@ import { modalMixin } from "../../mixins/modalMixin.js";
 import { spinnerMixin } from "../../mixins/spinnerMixin.js";
 import { imageMixin } from "../../mixins/imageMixin.js";
 import { adminChkMixin } from "../../mixins/adminChkMixin.js";
+import { fileMixin } from "../../mixins/fileMixin.js";
 
 export default {
   components: {
     confirmModal,
   },
-  mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin],
+  mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin, fileMixin],
   props: ["propsdata"],
   data() {
     return {
@@ -782,6 +830,22 @@ export default {
         },
         { key: "replyDate", label: "작성날짜", sortable: true, thClass: "w15" },
       ],
+      fileFields: [
+        {
+          key: "index",
+          label: "번호",
+          sortable: true,
+          thClass: "w5",
+        },
+        {
+          key: "filename",
+          label: "파일명",
+          sortable: true,
+          thClass: "w50",
+        },
+        { key: "down", label: "다운로드", sortable: true, thClass: "w15" },
+        { key: "chkDel", label: "삭제버튼", sortable: true, thClass: "w15" },
+      ],
       confirmSkuNo: "",
       inputRead: true,
       skuNoDuplication: true,
@@ -871,10 +935,25 @@ export default {
           this.selectReply.push(tmpData);
         });
 
-        // 이미지 파일 있는지 확인.
-        if (this.$store.state.getProduct.imageFile.length > 0) {
-          this.imgUpdate(this.$store.state.getProduct.imageFile);
+        // file 데이터 있는지 확인
+        if (this.$store.state.getProduct.productFile.length > 0) {
+          var tmpImageFile = [];
+          var tmpFileData = [];
+
+          this.$store.state.getProduct.productFile.forEach((element) => {
+            var tmp = element.filePath.split(".");
+
+            if (tmp[1] === "png" || tmp[1] === "jpg") {
+              tmpImageFile.push(element);
+            } else {
+              tmpFileData.push(element);
+            }
+          });
+          console.log(this.fileData);
+          this.imgUpdate(tmpImageFile, "file");
+          this.updateFileData(tmpFileData);
         }
+
       } else {
         console.log("setData else 실행 : " + this.propsdata);
       }
@@ -943,7 +1022,7 @@ export default {
       }
       // 관리자일 경우 추가 가능
       else {
-        this.openSpinner();
+        // this.openSpinner();
 
         this.$store.commit("productStore/SET_INSERT_PRODUCT", "3");
 
@@ -952,8 +1031,13 @@ export default {
         this.imgFiles.forEach((element) => {
           // console.log(element);
           element.forEach((e) => {
-            this.formData.append("image", e["file"]);
+            this.formData.append("file", e["file"]);
           });
+        });
+
+        // this.formData.append("fileData", this.fileData);
+        this.fileData.forEach((element) => {
+          this.formData.append("file", element["file"]);
         });
 
         let data = {
@@ -1041,12 +1125,23 @@ export default {
         element.forEach((e) => {
           if (e["file"]) {
             console.log("신규 이미지 존재");
-            this.formData.append("image", e["file"]);
+            this.formData.append("file", e["file"]);
           } else if (e["imgId"]) {
             console.log("기존 이미지 존재");
-            this.formData.append("imgId", e["imgId"]);
+            this.formData.append("fileId", e["imgId"]);
           }
         });
+      });
+
+      this.fileData.forEach((element) => {
+        console.log(element);
+        if (element["file"]) {
+          console.log("신규 파일 존재");
+          this.formData.append("file", element["file"]);
+        } else if (element["fileId"]) {
+          console.log("기존 파일 존재");
+          this.formData.append("fileId", element["fileId"]);
+        }
       });
 
       let data = {

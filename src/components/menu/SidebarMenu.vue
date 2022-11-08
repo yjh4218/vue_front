@@ -86,53 +86,53 @@ export default {
             },
           ],
         },
-        {
-          title: "클레임 관리",
-          icon: "fa fa-user-plus",
-          child: [
-            {
-              href: "/claimIn",
-              title: "클레임 등록",
-              icon: "fa fa-plus-circle",
-            },
-            {
-              href: "/claimSel",
-              title: "클레임 조회",
-              icon: "fa fa-list",
-            },
-          ],
-        },
-        {
-          title: "판매량 관리",
-          icon: "fa fa-money",
-          child: [
-            {
-              href: "/salesIn",
-              title: "판매량 등록",
-              icon: "fa fa-plus-circle",
-            },
-            {
-              href: "/salesSel",
-              title: "판매량 조회",
-              icon: "fa fa-list",
-            },
-            {
-              href: "/salesUp",
-              title: "판매량 수정 및 삭제",
-              icon: "fa fa-minus-circle",
-            },
-            {
-              href: "/salesProductIn",
-              title: "판매 제품 등록",
-              icon: "fa fa-archive",
-            },
-            {
-              href: "/salesProductSel",
-              title: "판매 제품 조회",
-              icon: "fa fa-list",
-            },
-          ],
-        },
+        // {
+        //   title: "클레임 관리",
+        //   icon: "fa fa-user-plus",
+        //   child: [
+        //     {
+        //       href: "/claimIn",
+        //       title: "클레임 등록",
+        //       icon: "fa fa-plus-circle",
+        //     },
+        //     {
+        //       href: "/claimSel",
+        //       title: "클레임 조회",
+        //       icon: "fa fa-list",
+        //     },
+        //   ],
+        // },
+        // {
+        //   title: "판매량 관리",
+        //   icon: "fa fa-money",
+        //   child: [
+        //     {
+        //       href: "/salesIn",
+        //       title: "판매량 등록",
+        //       icon: "fa fa-plus-circle",
+        //     },
+        //     {
+        //       href: "/salesSel",
+        //       title: "판매량 조회",
+        //       icon: "fa fa-list",
+        //     },
+        //     {
+        //       href: "/salesUp",
+        //       title: "판매량 수정 및 삭제",
+        //       icon: "fa fa-minus-circle",
+        //     },
+        //     {
+        //       href: "/salesProductIn",
+        //       title: "판매 제품 등록",
+        //       icon: "fa fa-archive",
+        //     },
+        //     {
+        //       href: "/salesProductSel",
+        //       title: "판매 제품 조회",
+        //       icon: "fa fa-list",
+        //     },
+        //   ],
+        // },
       ],
     };
   },
