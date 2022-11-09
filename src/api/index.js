@@ -13,16 +13,10 @@ const config = {
 
 // 유저 로그인
 function userLogin(user) {
-  console.log("유저 로그인 api 접근");
-
-  console.log(user);
-
   let data = {
     email: user.userId,
     password: user.userPassword,
   };
-
-  console.log(data);
 
   return axios.post(config.authUrl + "login", data, {
     header: { "Content-Type": `application/json` },
@@ -31,8 +25,6 @@ function userLogin(user) {
 
 // 상품 추가하기
 function insertProduct(newProduct) {
-  console.log("상품추가하기");
-  console.log(newProduct);
 
   return axios.post(config.productUrl + "insertProduct", newProduct, {
     headers: { "Content-Type": `multipart/form-data` },
@@ -41,12 +33,6 @@ function insertProduct(newProduct) {
 
 // 상품 수정하기
 function updateProduct(updateProduct) {
-  console.log("상품 수정하기");
-  console.log(updateProduct);
-
-  for (var key of updateProduct.keys()) {
-    console.log(`${key} : ${updateProduct.get(key)}`);
-  }
   return axios.put(config.productUrl + "updateProduct", updateProduct, {
     headers: { "Content-Type": `multipart/form-data` },
   });
@@ -54,9 +40,6 @@ function updateProduct(updateProduct) {
 
 // 상품 삭제하기
 function deleteProduct(product) {
-  console.log("제품 삭제");
-  console.log(product);
-
   let data = {
     header: { "Content-Type": `application/json` },
     params: {
@@ -69,8 +52,6 @@ function deleteProduct(product) {
 
 // 특정 상품 조회
 function selectProduct(selectCon) {
-  console.log("api : sku_no, productName, brandName, maker");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -85,15 +66,12 @@ function selectProduct(selectCon) {
       // productCurseId: selectCon.productCurseId,
     },
   };
-  console.log(data);
 
   return axios.get(config.productUrl + "selectProducts", data);
 }
 
 // 제품 페이지 조회
 function selectPageProduct(selectCon) {
-  console.log("selectPageProduct api access");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -101,15 +79,12 @@ function selectPageProduct(selectCon) {
       productCurseId: encodeURI(selectCon.productCurseId),
     },
   };
-  console.log(data);
 
   return axios.get(config.productUrl + "selectPageProduct", data);
 }
 
 // 제품 sku 중복 확인
 function checkSkuNo(skuNo) {
-  console.log("api : sku_no");
-  console.log(skuNo);
 
   let data = {
     params: {
@@ -122,16 +97,12 @@ function checkSkuNo(skuNo) {
 
 // 상품 리플 수정하기
 function updateProductReply(productReply) {
-  console.log("리플 수정하기");
-  console.log(productReply);
 
   return axios.put(config.productUrl + "updateProductReply", productReply);
 }
 
 // 상품 리플 삭제하기
 function deleteProductReply(productReply) {
-  console.log("리플 삭제");
-  console.log(productReply);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -145,13 +116,6 @@ function deleteProductReply(productReply) {
 
 // 검수 추가하기
 function insertInspect(newInspect) {
-  console.log("검수 추가하기");
-  // console.log(imgFiles[0]);
-  console.log(newInspect.get("productId"));
-  for (var pair of newInspect.entries()) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
-
   return axios.post(config.inspectUrl + "insertInspect", newInspect, {
     headers: { "Content-Type": `multipart/form-data` },
   });
@@ -159,11 +123,6 @@ function insertInspect(newInspect) {
 
 // 검수 수정하기
 function updateInspect(updateInspect) {
-  console.log("검수 수정하기");
-  console.log(updateInspect);
-  for (var pair of updateInspect.entries()) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
 
   return axios.put(config.inspectUrl + "updateInspect", updateInspect, {
     headers: { "Content-Type": `multipart/form-data` },
@@ -184,13 +143,10 @@ function deleteInspect(deleteInspect) {
 // 모든 검수 조회
 function selectAllInspect() {
   return axios.get(config.inspectUrl + "selectAllInspect");
-  //return axios.get(`${config.baseUrl}news/1.json`);
 }
 
 // 일부 검수 조회
 function selectInspect(selectCon) {
-  console.log("api : sku_no, productName, brandName, maker");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -212,8 +168,6 @@ function selectInspect(selectCon) {
 
 // 검수 엑셀 다운 
 function selectInspectExcel(selectCon) {
-  console.log("api : sku_no, productName, brandName, maker");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -234,8 +188,6 @@ function selectInspectExcel(selectCon) {
 
 // 검수 페이지 조회
 function selectPageInspect(selectCon) {
-  console.log("selectPageInspect api access");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -249,22 +201,18 @@ function selectPageInspect(selectCon) {
 
 // 제조사 추가하기
 function insertMaker(newMaker) {
-  console.log("제조사 추가하기");
 
   return axios.post(config.makerUrl + "insertMaker", newMaker);
 }
 
 // 제조사 수정하기
 function updateMaker(updateMaker) {
-  console.log("제조사 수정하기");
-  console.log(updateMaker);
 
   return axios.put(config.makerUrl + "updateMaker", updateMaker);
 }
 
 // 제조사 삭제하기
 function deleteMaker(deleteMaker) {
-  console.log("deleteMaker api 접속");
   let data = {
     header: { "Content-Type": `application/json` },
     params: {
@@ -276,8 +224,6 @@ function deleteMaker(deleteMaker) {
 
 // 일부 제조사 조회
 function selectMaker(selectCon) {
-  console.log("일부 제조사 조회 api 접속");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -297,16 +243,12 @@ function selectMaker(selectCon) {
 
 // 제조사 리플 수정하기
 function updateMakerReply(makerReply) {
-  console.log("리플 수정하기");
-  console.log(makerReply);
 
   return axios.put(config.makerUrl + "updateMakerReply", makerReply);
 }
 
 // 제조사 리플 삭제하기
 function deleteMakerReply(makerReply) {
-  console.log("리플 삭제");
-  console.log(makerReply);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -320,13 +262,6 @@ function deleteMakerReply(makerReply) {
 
 // 제조사 점검 추가하기
 function insertMakerAudit(newAudit) {
-  console.log("제조사 점검 추가하기");
-  // console.log(imgFiles[0]);
-  // console.log(newAudit.get("productId"));
-  for (var pair of newAudit.entries()) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
-
   return axios.post(config.makerAuditUrl + "insertMakerAudit", newAudit, {
     headers: { "Content-Type": `multipart/form-data` },
   });
@@ -334,9 +269,6 @@ function insertMakerAudit(newAudit) {
 
 // 제조사 점검 수정하기
 function updateMakerAudit(updateAudit) {
-  console.log("상품 수정하기");
-  console.log(updateAudit);
-
   return axios.put(config.makerAuditUrl + "updateMakerAudit", updateAudit, {
     headers: { "Content-Type": `multipart/form-data` },
   });
@@ -356,12 +288,6 @@ function deleteMakerAudit(deleteAudit) {
 
 // 클레임 추가하기
 function insertClaim(newClaim) {
-  console.log("클레임 추가하기");
-  // console.log(imgFiles[0]);
-  console.log(newClaim.get("productId"));
-  for (var pair of newClaim.entries()) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
 
   return axios.post(config.claimUrl + "insertClaim", newClaim, {
     headers: { "Content-Type": `multipart/form-data` },
@@ -370,11 +296,6 @@ function insertClaim(newClaim) {
 
 // 클레임 수정하기
 function updateClaim(updateClaim) {
-  console.log("클레임 수정하기");
-  console.log(updateClaim);
-  for (var pair of updateClaim.entries()) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
 
   return axios.put(config.claimUrl + "updateClaim", updateClaim, {
     headers: { "Content-Type": `multipart/form-data` },
@@ -392,16 +313,9 @@ function deleteClaim(deleteClaim) {
   return axios.delete(config.claimUrl + "deleteClaim", data);
 }
 
-// 모든 클레임 조회
-// function selectAllClaim() {
-//   return axios.get(config.ClaimUrl + "selectAllClaim");
-//   //return axios.get(`${config.baseUrl}news/1.json`);
-// }
 
 // 일부 클레임 조회
 function selectClaim(selectCon) {
-  console.log("api : sku_no, productName, brandName, maker");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -421,16 +335,12 @@ function selectClaim(selectCon) {
 
 // 월별 판매량 추가하기
 function insertMonthSales(newSales) {
-  console.log("월별 판매량 추가하기");
-  console.log(newSales);
 
   return axios.post(config.salesUrl + "insertSales", newSales);
 }
 
 // 일부 판매량 조회
 function selectSales(selectCon) {
-  console.log("판매량 조회");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -447,15 +357,12 @@ function selectSales(selectCon) {
 
 // 월별 판매량 수정하기
 function updateMonthSales(updateSales) {
-  console.log("월별 판매량 수정하기");
-  console.log(updateSales);
 
   return axios.put(config.salesUrl + "updateMonthSales", updateSales);
 }
 
 // 월별 판매량 삭제하기
 function deleteMonthSales(deleteSales) {
-  console.log("월별 판매량 삭제하기");
   let data = {
     header: { "Content-Type": `application/json` },
     params: {
@@ -468,8 +375,6 @@ function deleteMonthSales(deleteSales) {
 
 // 월별 판매량 조회
 function selectMonthSales(selectCon) {
-  console.log("월별 판매량 조회");
-  console.log(selectCon);
 
   let data = {
     header: { "Content-Type": `application/json` },
@@ -485,21 +390,17 @@ function selectMonthSales(selectCon) {
 
 // 판매구성품 추가하기
 function insertSalesProductComponent(newSales) {
-  console.log("판매구성품 추가하기");
-  console.log(newSales);
   return axios.post(config.salesUrl + "insertSalesProductComponent", newSales);
 }
 
 // 판매구성품 수정하기
 function updateSalesProductComponent(newSales) {
-  console.log("판매구성품 수정하기");
 
   return axios.post(config.salesUrl + "updateSalesProductComponent", newSales);
 }
 
 // 판매구성품 삭제하기
 function deleteSalesProductComponent(newSales) {
-  console.log("판매구성품 삭제하기");
   let data = {
     header: { "Content-Type": `application/json` },
     params: {
@@ -511,8 +412,6 @@ function deleteSalesProductComponent(newSales) {
 
 // 판매구성품 중복조회
 function checkProductComponentSkuNo(checkSkuNo) {
-  console.log("api : sku_no");
-  console.log(checkSkuNo);
 
   let data = {
     params: {
@@ -525,8 +424,6 @@ function checkProductComponentSkuNo(checkSkuNo) {
 
 // 판매구성품 조회
 function selectProductComponent(select) {
-  console.log("일부 제조사 조회 api 접속");
-  console.log(select);
 
   let data = {
     header: { "Content-Type": `application/json` },

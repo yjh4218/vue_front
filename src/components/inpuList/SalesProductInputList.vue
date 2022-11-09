@@ -340,8 +340,6 @@ export default {
           this.openModal();
         }
       }
-
-      console.log(this.addList);
     },
     // 구성품 생성 완료 회신
     successMakeCom() {
@@ -352,28 +350,19 @@ export default {
     },
     // 구성품 삭제 버튼
     removeProduct(val) {
-      console.log("구성품 삭제");
-      console.log(val);
       this.$set(this.addList, val.productCnt, undefined);
       this.delCnt++;
 
-      console.log(this.addList);
-
-      console.log("구성품 목록");
       this.componentProduct.splice(val.productCnt, 1);
-      console.log(this.componentProduct);
     },
     // 구성품 내용 들 저장
     childProduct(val) {
-      console.log("event emit");
-      console.log(val);
       this.componentProduct[val.productCnt] = {
         productId: val.productId,
         productName: val.productName,
         skuNo: val.skuNo,
         quantity: val.quantity,
       };
-      console.log(this.componentProduct);
       this.comProductLength = this.componentProduct.length;
 
       if (this.comProductLength === this.addListLength) {
@@ -386,7 +375,6 @@ export default {
     },
     // 모든 구성품들 저장 진행
     saveAllComponentData(val) {
-      console.log("모든 구성품들 저장 진행");
       this.addList = this.addList.filter((element) => element !== undefined);
       this.addListLength = this.addList.length;
       this.saveFlag = true;
@@ -397,9 +385,6 @@ export default {
     searchProductDup() {
       this.openSpinner();
 
-      console.log("구성품에서 sku-no 중복되는 내용 있는지 확인");
-      console.log(this.propsdata);
-
       this.$store.commit("salesStore/SET_CHECK_PRODUCT_RESULT", "3");
 
       this.$store
@@ -409,7 +394,6 @@ export default {
 
           // 중복값 없음
           if (response.data === 1) {
-            console.log("response 값 1");
             this.skuNoDuplication = true;
             this.insertState = false;
             this.openModal();
@@ -417,7 +401,6 @@ export default {
           }
           // 중복값 있음
           else if (response.data === 0) {
-            console.log("response 값 0");
             this.skuNoDuplication = false;
             this.confirmSkuNo = this.skuNo;
             this.insertState = true;
@@ -425,12 +408,8 @@ export default {
             this.closeSpinner();
           }
           this.closeSpinner();
-
-          console.log("중복확인 : " + this.skuNoDuplication);
-          console.log("modalName : " + this.modalName);
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
     },
@@ -448,14 +427,11 @@ export default {
       else {
         this.openSpinner();
 
-        console.log("구성품 추가 진행");
-
         // 중간 값들 삭제
         this.componentProduct = this.componentProduct.filter(
           (element) => element !== undefined
         );
-        console.log(this.componentProduct);
-
+        
         let data = {
           skuNo: this.skuNo,
           productName: this.productName,
@@ -469,24 +445,18 @@ export default {
 
             // 저장 완료
             if (response.data === 1) {
-              console.log("response 값 1");
               this.insertState = true;
               this.openModal();
               this.closeSpinner();
             }
             // 저장 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.insertState = false;
               this.openModal();
               this.closeSpinner();
             }
-            console.log("insertState : " + this.insertState);
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -494,8 +464,6 @@ export default {
     // 제품 수정일 경우 데이터 input에 입력
     updateData() {
       if (this.propsdata === "updateView") {
-        console.log("setData if 실행 : " + this.propsdata);
-        console.log(this.$store.state.getSalesProduct);
         this.dbClickUpFlag = true;
         this.inputRead = false;
 
@@ -505,8 +473,6 @@ export default {
         this.dbClickUpLength = this.$store.state.getSalesProduct.length;
 
         this.addComponentProductInput();
-      } else {
-        console.log("setData else 실행 : " + this.propsdata);
       }
     },
 
@@ -524,13 +490,10 @@ export default {
       else {
         this.openSpinner();
 
-        console.log("구성품 수정 진행");
-
         // 중간 값들 삭제
         this.componentProduct = this.componentProduct.filter(
           (element) => element !== undefined
         );
-        console.log(this.componentProduct);
 
         let data = {
           id: this.productId,
@@ -546,24 +509,18 @@ export default {
 
             // 저장 완료
             if (response.data === 1) {
-              console.log("response 값 1");
               this.updateState = true;
               this.openModal();
               this.closeSpinner();
             }
             // 저장 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.updateState = false;
               this.openModal();
               this.closeSpinner();
             }
-            console.log("updateState : " + this.updateState);
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -571,7 +528,6 @@ export default {
 
     // 제품 삭제
     deleteSalesProductComponent() {
-      console.log("제품 삭제 진행");
 
       // 관리자가 아닐 경우 삭제 불가능
       // adminChkMixin 사용
@@ -597,22 +553,16 @@ export default {
             this.modalName = "deleteSalesProductComponent";
 
             if (response.data === 1) {
-              console.log("response 값 1");
               this.deleteState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
               this.deleteState = false;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("updateProduct : " + this.deleteState);
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }

@@ -73,17 +73,11 @@ export default {
   },
   methods: {
     chkLogin() {
-      console.log("기존에 로그인하였는지 확인");
-      // console.log(this.$store.getters.getUserLogin);
-      // console.log(this.$store.getters.getUserLogin.status);
-      console.log(this.$store.getters["loginStore/getUserLogin"]);
-      console.log(this.$store.getters["loginStore/getUserLogin"].status);
       if (
         this.$store.getters["loginStore/getUserLogin"].status === 200 &&
         this.$store.getters["loginStore/getUserLogin"].data.body.result ===
           "success"
       ) {
-        console.log("기존에 로그인 됨.");
         this.roturInit();
       }
     },
@@ -96,8 +90,6 @@ export default {
           userPassword: this.userPassword,
         })
         .then((response) => {
-          console.log(response);
-          // console.log(response.status);
 
           // 통신 성공 시
           if (response.status === 200) {
@@ -105,7 +97,6 @@ export default {
             if (response.data.body.result === "fail") {
               this.modalName = "200";
               this.modalMessage = response.data.body.massage;
-              console.log(this.modalName);
               this.openModal();
             } 
             // 로그인 성공 시
@@ -118,29 +109,20 @@ export default {
                 className: [],
                 newProduct : "product"
               })
-              .then((response)=> {
-                console.log("제조사들 조회 완료");
-                console.log(response);
-              }).catch((error) =>{
-                console.log("제조사들 조회 에러");
-                console.log(error);
-              });
+
               this.roturInit();
             }
           }
           // 통신 실패 시 진행
           else if (response.status === 401) {
             this.modalName = "401";
-            console.log(this.modalName);
             this.openModal();
           } else {
             this.modalName = "500";
-            console.log(this.modalName);
             this.openModal();
           }
         })
         .catch((error) => {
-          console.log("로그인 실패");
           console.log(error);
         });
     },
@@ -156,7 +138,6 @@ export default {
     // 로그인이 되었을 경우
     roturInit() {
       this.closeSpinner();
-      console.log("routerInit 접속. 메인화면 이동");
       this.$router.push("/productSel");
       // this.$router.go();
     },
@@ -170,45 +151,14 @@ export default {
     },
     modalText() {
       this.closeSpinner();
-      console.log("모달 메시지 확인 필요함");
       this.modal = false;
     },
   },
   computed: {
-    // 제품 조회 및 결과값 입력
-    // loginResult(){
-    //   return this.$store.getters.getUserLogin;
-    // },
+    
   },
   watch: {
-    // 제품 조회 및 결과값 입력
-    // loginResult(val){
-    //   console.log(val);
-    //   console.log(val.status);
-    //   this.closeSpinner();
-    //   // 통신 성공 시
-    //   if(val.status === 200){
-    //       // 로그인 실패
-    //       if(val.data.body.result === 'fail'){
-    //         this.modalName = "200"
-    //         this.modalMessage = val.data.body.massage;
-    //         console.log(this.modalName);
-    //         this.openModal();
-    //       } else {
-    //         this.roturInit();
-    //       }
-    //     }
-    //     // 통신 실패 시 진행
-    //     else if(val.status === 401){
-    //       this.modalName = "401"
-    //       console.log(this.modalName);
-    //       this.openModal();
-    //     } else{
-    //       this.modalName = "500"
-    //       console.log(this.modalName);
-    //       this.openModal();
-    //     }
-    // },
+  
   },
 };
 </script>

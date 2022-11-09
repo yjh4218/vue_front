@@ -52,7 +52,6 @@ const makerStore = {
         },
         // 제조사 수정 데이터 확인
         getUpdateMaker(state) {
-        console.log("get 업데이트");
           return state.updateMaker;
         },
         // 제조사 삭제 데이터 확인
@@ -79,7 +78,6 @@ const makerStore = {
         },
         // 제조사 점검 수정 데이터 확인
         getUpdateMakerAudit(state) {
-        console.log("get 업데이트");
           return state.updateMakerAudit;
         },
         // 제조사 점검 삭제 데이터 확인
@@ -103,7 +101,6 @@ const makerStore = {
       },
       // 제조사 제품 업데이트
       SET_UPDATE_MAKER(state, updateMaker) {
-        console.log("set 업데이트");
         state.updateMaker = updateMaker;
       },
       //제조사 제품 삭제
@@ -130,7 +127,6 @@ const makerStore = {
       },
       // 제조사 점검 수정
       SET_UPDATE_MAKER_AUDIT(state, updateMakerAudit) {
-        console.log("set 업데이트");
         state.updateMakerAudit = updateMakerAudit;
       },
       //제조사 점검 삭제
@@ -146,61 +142,42 @@ const makerStore = {
     actions: {
       // 신규 제조사 추가
       INSERT_MAKER(context, selectCon) {
-        console.log("INSERT_MAKER actions 접속됨");
-        console.log(context);
 
         return insertMaker(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
             context.commit("SET_INSERT_MAKER", response.data.data);
             return response.data;
           })
           .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           });
       },
 
       // 제조사 수정
       UPDATE_MAKER(context, selectCon) {
-        console.log("UPDATE_MAKER actions 접속됨");
-        console.log(context);
 
         return updateMaker(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
             context.commit("SET_UPDATE_MAKER", response.data.data);
             return response.data;
           })
           .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           });
       },
 
       // 제조사 삭제
       DELETE_MAKER(context, selectCon) {
-        console.log("DELETE_MAKER actions 접속됨");
-        console.log(selectCon);
 
         return deleteMaker(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log(response.data.data);
             context.commit("SET_DELETE_MAKER", response.data.data);
             return response.data;
           })
           .catch((error) => {
             if (error.response) {
               // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
+              console.log(error.response);
             } else if (error.request) {
               // 요청이 이루어 졌으나 응답을 받지 못했습니다.
               // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
@@ -216,69 +193,49 @@ const makerStore = {
 
       // 일부 제조사 조회
       SELECT_MAKER(context, selectCon) {
-        console.log("SELECT_MAKER actions 접속됨");
-        console.log(selectCon);
 
         return selectMaker(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
+            
             if (response.data.message !== "product") {
-              console.log("select_maker에 저장");
               context.commit("SET_SELECT_MAKER", response.data.data);
             }
             else {
-              console.log("select_maker_product 에 저장");
               context.commit("SET_SELECT_MAKER_PRODUCT", response.data.data);
             }
             
             return response.data;
           })
           .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           });
       },
         
       // 리플 수정하기
       UPDATE_MAKER_REPLY(context, selectCon) {
-        console.log("UPDATE_MAKER_REPLY actions 접속됨");
-        console.log(context);
 
         return updateMakerReply(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
             context.commit("SET_UPDATE_MAKER_REPLY", response.data.data);
             return response.data;
           })
           .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           });
       },
 
       // 리플 삭제
       DELETE_MAKER_REPLY(context, selectCon) {
-        console.log("DELETE_MAKER_REPLY actions 접속됨");
-        console.log(selectCon);
-
         return deleteMakerReply(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log(response.data.data);
+            
             context.commit("SET_DELETE_MAKER_REPLY", response.data.data);
             return response.data;
           })
           .catch((error) => {
             if (error.response) {
               // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
+              console.log(error.response);
             } else if (error.request) {
               // 요청이 이루어 졌으나 응답을 받지 못했습니다.
               // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
@@ -294,61 +251,40 @@ const makerStore = {
 
       // 신규 제조사 점검 추가
       INSERT_MAKER_AUDIT(context, selectCon) {
-        console.log("INSERT_MAKER_AUDIT actions 접속됨");
-        console.log(context);
-
         return insertMakerAudit(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
+            
             context.commit("SET_INSERT_MAKER_AUDIT", response.data.data);
             return response.data;
           })
           .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           });
       },
 
       // 제조사 점검 수정
       UPDATE_MAKER_AUDIT(context, selectCon) {
-        console.log("UPDATE_MAKER_AUDIT actions 접속됨");
-        console.log(context);
-
         return updateMakerAudit(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
             context.commit("SET_UPDATE_MAKER_AUDIT", response.data.data);
             return response.data;
           })
           .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           });
       },
 
       // 제조사 점검 삭제
       DELETE_MAKER_AUDIT(context, selectCon) {
-        console.log("DELETE_MAKER_AUDIT actions 접속됨");
-        console.log(selectCon);
-
         return deleteMakerAudit(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log(response.data.data);
             context.commit("SET_DELETE_MAKER_AUDIT", response.data.data);
             return response.data;
           })
           .catch((error) => {
             if (error.response) {
               // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
+              console.log(error.response);
             } else if (error.request) {
               // 요청이 이루어 졌으나 응답을 받지 못했습니다.
               // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
@@ -364,27 +300,18 @@ const makerStore = {
 
       // 제조사 점검 조회
       SELECT_MAKER_AUDIT(context, selectCon) {
-        console.log("SELECT_MAKER_AUDIT actions 접속됨");
-        console.log(selectCon);
-
         return selectMaker(selectCon)
           .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log("select_maker에 저장");
+            
             context.commit("SET_SELECT_MAKER_AUDIT", response.data.data);
             
             return response.data;
           })
           .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           });
       },
     }
-
-
 }
 
 export default makerStore

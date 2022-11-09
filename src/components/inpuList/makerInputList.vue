@@ -569,8 +569,6 @@ export default {
     // 제조사 상세 정보 입력
     updateData() {
       if (this.propsdata === "updateView") {
-        console.log("setData if 실행 : " + this.propsdata);
-
         this.makerId = this.$store.state.getMaker.id;
         this.makerName = this.$store.state.getMaker.makerName;
         this.className = this.$store.state.getMaker.className;
@@ -599,7 +597,6 @@ export default {
         });
       } else {
         this.imgFlag = true;
-        console.log("setData else 실행 : " + this.propsdata);
       }
     },
     // 점검 내역 추가
@@ -619,17 +616,11 @@ export default {
     },
     // 상품정보 변경
     selectReplyData(item) {
-      console.log("체크 선택됨");
-      console.log(this.selectReply);
-
-      console.log(item);
       this.selectReply.forEach((element, index) => {
         if (element.id === item.id) {
           this.selectReply[index].selected = item.selected;
         }
       });
-      console.log("체크 끝남");
-      console.log(this.selectReply);
     },
     // 수정인지, 신규 등록인지 확인
     inpuReadMode() {
@@ -637,11 +628,6 @@ export default {
     },
     // 더블 클릭 이벤트
     makerAuditDetails(item) {
-      console.log("this.$route.name : " + this.$route.name);
-      console.log("row 더블클릭됨");
-      console.log(item);
-
-      console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_MAKER_AUDIT", "");
 
       // 제조사 점검 상세정보 페이지로 이동
@@ -673,9 +659,7 @@ export default {
       // 관리자일 경우 추가 가능
       else {
         this.openSpinner();
-
         this.$store.commit("makerStore/SET_INSERT_MAKER", 3);
-        console.log("제조사 추가 진행");
 
         let data = {
           id: this.makerId,
@@ -698,21 +682,18 @@ export default {
 
             // 제조사 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.insertState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.insertState = 0;
               this.openModal();
               this.closeSpinner();
             }
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -730,9 +711,7 @@ export default {
       // 관리자일 경우 수정 가능
       else {
         this.openSpinner();
-        console.log("제품 수정 진행");
         this.$store.commit("makerStore/SET_UPDATE_MAKER", 3);
-        console.log("makerId : " + this.makerId);
 
         let data = {
           id: this.makerId,
@@ -749,8 +728,6 @@ export default {
           note: this.note,
         };
 
-        console.log("데이터 들어옴");
-
         this.$store
           .dispatch("makerStore/UPDATE_MAKER", data)
           .then((response) => {
@@ -758,23 +735,20 @@ export default {
 
             // 제조사 업데이트 성공
             if (response.data === 1) {
-              console.log("response 값 1");
+              
               this.updateState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 업데이트 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
+              
               this.updateState = 3;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -792,7 +766,6 @@ export default {
       // 관리자일 경우 삭제 가능
       else {
         this.openSpinner();
-        console.log("제조사 삭제 진행");
         this.$store.commit("makerStore/SET_DELETE_MAKER", 3);
 
         this.$store
@@ -801,23 +774,20 @@ export default {
             this.modalName = "deleteMaker";
             // 제조사 삭제 성공
             if (response.data === 1) {
-              console.log("response 값 1");
+              
               this.deleteState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 업데이트 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
+              
               this.deleteState = 0;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -836,14 +806,9 @@ export default {
       // 관리자일 경우 수정 가능
       else {
         this.openSpinner();
-
-        console.log("리플 수정 진행");
-
         this.$store.commit("makerStore/SET_UPDATE_MAKER_REPLY", "3");
 
-        // console.log("makerId : " + this.makerId);
-
-         var tmpReply = [];
+        var tmpReply = [];
         this.makerReply.forEach((element) => {
           if (element.selected) {
             tmpReply.push({replyId : element.id, changeReplyData : element.makerChangeReply});
@@ -855,33 +820,22 @@ export default {
           replyDataList: tmpReply,
         };
 
-        console.log("수정 진행 전 데이터 확인");
-        console.log("makerReply");
-        console.log(this.makerReply);
-        console.log("data");
-        console.log(data);
-
         this.$store
           .dispatch("makerStore/UPDATE_MAKER_REPLY", data)
           .then((response) => {
             this.modalName = "updateMakerReply";
 
             if (response.data === 1) {
-              console.log("response 값 1");
               this.updateState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
               this.updateState = false;
               this.openModal();
               this.closeSpinner();
             }
-            console.log("updateProduct : " + this.updateState);
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -889,7 +843,6 @@ export default {
 
     // 제품 리플 삭제
     deleteMakerReply() {
-      console.log("제품 변경 리플 삭제 진행");
 
       // 관리자가 아닐 경우 삭제 불가능
       // adminChkMixin 사용
@@ -922,22 +875,16 @@ export default {
             this.modalName = "deleteMakerReply";
 
             if (response.data === 1) {
-              console.log("response 값 1");
               this.deleteState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
               this.deleteState = false;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("updateProduct : " + this.deleteState);
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }

@@ -7,8 +7,6 @@ export const fileMixin = {
     methods: {
         updateFileData(file) {
             file.forEach(element => {
-                console.log("파일 들어옴");
-                console.log(element);
                 var tmpUrl =
                 "http://192.168.21.197:8080/" +
                 // "http://127.0.0.1:8080/" +
@@ -29,20 +27,13 @@ export const fileMixin = {
         
         // 파일 첨부 데이터 확인
         async AddfileData(event) {
-            console.log("file add event");
-            console.log(event);
-
             var files = event.target.files;
-            console.log(files);
 
             var temp = await this.fileDataFun(files);
 
             temp.forEach((element) => {
                 this.fileData.push(element);
             });
-
-            console.log("파일 추가.");
-            console.log(this.fileData);
         },
         // 파일 데이터 처리
         fileDataFun(files) {
@@ -53,41 +44,32 @@ export const fileMixin = {
 
             return new Promise(function (resolve) {
                 [].forEach.call(files, function (i, item) {
-                var fileReader = new FileReader();
-                fileReader.onload = async function (e) {
-                    console.log(e.target);
+                    var fileReader = new FileReader();
+                    fileReader.onload = async function (e) {
+                        var img = await {
+                            url: e.target.result,
+                            file: files[item],
+                        };
 
-                    var img = await {
-                    url: e.target.result,
-                    file: files[item],
+                        temp.push(img);
+
+                        if (cnt === len) {
+                            resolve(temp);
+                        } else {
+                            cnt++;
+                        }
                     };
-
-                    console.log("url");
-                    console.log(img);
-
-                    temp.push(img);
-
-                    if (cnt === len) {
-                    resolve(temp);
-                    } else {
-                    cnt++;
-                    }
-                };
-                fileReader.readAsDataURL(files[item]);
+                    
+                    fileReader.readAsDataURL(files[item]);
                 });
             });
         },
         // 첨부파일 삭제
         delDown(item, index) {
-            console.log("파일삭제");
-            console.log(item);
-            console.log(index);
             this.fileData.splice(index, 1);
         },
         // 첨부파일 다운로드
         downData(item) {
-            console.log("파일 다운");
-            console.log(item);
             if (item.fileId !== undefined || item.fileId !== null) {
                 fetch(item.url)
                 .then((response) => response.blob())

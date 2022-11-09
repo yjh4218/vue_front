@@ -25,7 +25,6 @@ export const modalMixin = {
         },
         // 등록 완료 되었을 경우 초기화
         roturInit(modalName) {
-            console.log("routerInit 접속. 새로고침 진행" + modalName);
             if(modalName === "productSel"){
                 this.$router.push("/productSel");
             } 
@@ -51,7 +50,6 @@ export const modalMixin = {
         },
         modalText() {
             this.closeSpinner();
-            console.log("모달 메시지 확인 필요함");
             this.modal = false;
         },
     }

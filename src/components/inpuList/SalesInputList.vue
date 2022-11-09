@@ -290,11 +290,9 @@ export default {
           workbook.Sheets[sheetName].B1.w = "productName";
           workbook.Sheets[sheetName].C1.w = "salesVolumn";
 
-          console.log(workbook.Sheets[sheetName].A1);
           const roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
           tmpResult = roa;
         });
-        console.log(tmpResult);
         this.excelJsonData = tmpResult;
         this.getSalesData = tmpResult;
         this.excelFileFlag = true;
@@ -317,14 +315,10 @@ export default {
     },
     // 날짜 확인 및 입력
     checkDate() {
-      console.log(this.tmpMonth);
-      console.log(this.tmpMonth.slice(0, 4));
-      console.log(this.tmpMonth.slice(5, 7));
       this.modalMonth =
         this.tmpMonth.slice(0, 4) + "년 " + this.tmpMonth.slice(5, 7) + "월";
 
       this.salesMonth = this.tmpMonth.slice(0, 7) + "-01";
-      console.log(this.salesMonth);
     },
     // 판매량 추가
     insertSalesData() {
@@ -340,7 +334,6 @@ export default {
       else {
         this.openSpinner();
         this.$store.commit("salesStore/SET_INSERT_MONTH_SALES", 3);
-        console.log("판매량 추가 진행");
 
         let data = {
           salesMonth: this.salesMonth,
@@ -351,45 +344,35 @@ export default {
           .dispatch("salesStore/INSERT_MONTH_SALES", data)
           .then((response) => {
             this.modalName = "insertSales";
-            console.log("response 응답 옴");
-            console.log(response);
 
             // 판매량 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
+              
               this.insertState = 1;
             }
             // 판매량 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.insertState = 0;
             } else if (response.data === 2) {
-              console.log("response 값 2");
               this.insertState = 2;
             }
             this.openModal();
             this.closeSpinner();
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
-
-        // this.formData = new FormData();
       }
     },
 
     // 데이터 조회
     selectSalesData() {
-      console.log("데이터 조회");
       this.openSpinner();
       // 화면에 보여지는 조회된 날짜
       this.salesMonth =
         this.findDate.slice(0, 4) + "년 " + this.findDate.slice(6, 7) + "월";
       this.findDate = this.findDate.slice(0, 7) + "-01";
       var bfdate = dayjs(this.findDate);
-
-      console.log(bfdate);
 
       this.$store
         .dispatch("salesStore/SELECT_MONTH_SALES", {
@@ -398,9 +381,6 @@ export default {
           findDate: bfdate.format("YYYY-MM-DD"),
         })
         .then((response) => {
-          console.log("response 응답 옴");
-          console.log(response);
-
           this.getSalesData = response.data;
           if (this.getSalesData.length > 0) {
             this.getSalesDataFlag = true;
@@ -410,7 +390,6 @@ export default {
           this.closeSpinner();
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
     },
@@ -429,7 +408,6 @@ export default {
       else {
         this.openSpinner();
         this.$store.commit("salesStore/SET_UPDATE_MONTH_SALES", 3);
-        console.log("판매량 수정 진행");
 
         let data = {
           salesMonth: this.getSalesData[0].salesMonth,
@@ -440,24 +418,19 @@ export default {
           .dispatch("salesStore/UPDATE_MONTH_SALES", data)
           .then((response) => {
             this.modalName = "updateMonthSales";
-            console.log("response 응답 옴");
-            console.log(response);
 
             // 판매량 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.updateState = 1;
             }
             // 판매량 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.updateState = 0;
             }
             this.openModal();
             this.closeSpinner();
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
 
@@ -478,15 +451,12 @@ export default {
       else {
         this.openSpinner();
         this.$store.commit("salesStore/SET_DELETE_MONTH_SALES", 3);
-        console.log("판매량 삭제 진행");
 
         var tmpIds = [];
 
         this.getSalesData.forEach((element) => {
           tmpIds.push(element.id);
         });
-
-        console.log(tmpIds);
 
         let data = {
           ids: tmpIds,
@@ -496,24 +466,22 @@ export default {
           .dispatch("salesStore/DELETE_MONTH_SALES", data)
           .then((response) => {
             this.modalName = "deleteMonthSales";
-            console.log("response 응답 옴");
-            console.log(response);
 
             // 판매량 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
+              
               this.deleteState = 1;
             }
             // 판매량 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
+              
               this.deleteState = 0;
             }
             this.openModal();
             this.closeSpinner();
           })
           .catch((error) => {
-            console.log("error 발생");
+            
             console.log(error);
           });
 

@@ -78,7 +78,6 @@ export default {
   watch: {
     // 검수 조회 및 결과값 입력
     SelectMaker(val) {
-      console.log(val);
       this.getSelectSales = val;
       this.closeSpinner();
     },
@@ -93,11 +92,6 @@ export default {
     },
     // 더블 클릭 이벤트
     inspectDetails(item) {
-      console.log("this.$route.name : " + this.$route.name);
-      console.log("row 더블클릭됨");
-      console.log(item);
-
-      console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_MAKER", "");
 
       // 전체 제품 조회 화면일 경우 제품 상세정보 페이지로 이동
@@ -106,12 +100,10 @@ export default {
     },
     // 스피너 열기
     openSpinner() {
-      console.log("openSpinner 열림");
       this.spinnerState = true;
     },
     // 스피너 닫기
     closeSpinner() {
-      console.log("closeSpinner 닫기 ");
       this.spinnerState = false;
     },
   },

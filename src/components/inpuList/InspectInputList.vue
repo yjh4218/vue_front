@@ -576,8 +576,6 @@ export default {
   watch: {
     // 제품 조회 및 결과값 입력
     selectProdut(val) {
-      console.log("확인 : " + val.skuNo + ", " + val.productName);
-      console.log(val);
       this.productId = val.productId;
       this.skuNo = val.skuNo;
       this.productName = val.productName;
@@ -593,8 +591,6 @@ export default {
     // 검수 상세 정보 입력
     updateData() {
       if (this.propsdata === "updateView") {
-        console.log("setData if 실행 : " + this.propsdata);
-        console.log(this.$store.state.getInspect);
         this.inspectId = this.$store.state.getInspect.id;
         this.productId = this.$store.state.getInspect.product.id;
         this.skuNo = this.$store.state.getInspect.product.skuNo;
@@ -622,15 +618,11 @@ export default {
         if (this.$store.state.getInspect.imageFile.length > 0) {
           this.imgUpdate(this.$store.state.getInspect.imageFile);
         }
-      } else {
-        console.log("setData else 실행 : " + this.propsdata);
-      }
+      } 
     },
     // 등록 완료 되었을 경우 초기화
     roturInit() {
-      console.log("routerInit 접속. 새로고침 진행");
       this.$router.push("/inspectSel");
-      // this.$router.go();
     },
     // 업데이트 진행 시 수정모드인지 확인
     inpuReadMode() {
@@ -661,10 +653,8 @@ export default {
       else {
         // this.openSpinner();
         this.$store.commit("inspectStore/SET_INSERT_INSPECT", 3);
-        console.log("검수 추가 진행");
 
         this.imgFiles.forEach((element) => {
-          // console.log(element);
           element.forEach((e) => {
             this.formData.append("image", e["file"]);
           });
@@ -692,8 +682,6 @@ export default {
           specialReport: this.specialReport,
         };
 
-        console.log("this.productId : " + this.productId);
-
         this.formData.append(
           "data",
           new Blob([JSON.stringify(data)], { type: "application/json" })
@@ -709,31 +697,27 @@ export default {
           .dispatch("inspectStore/INSERT_INSPECT", this.formData)
           .then((response) => {
             this.modalName = "insertInspect";
-            console.log("response 응답 옴");
-            console.log(response);
-
+            
             // 검수 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.insertState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 해당 검수 날짜에 이미 등록된 검수 내용 존재
             else if (response.data === 2) {
-              console.log("response 값 2");
               this.insertState = 2;
               this.openModal();
               this.closeSpinner();
             }
             // 검수 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
+              
               this.insertState = 0;
             }
           })
           .catch((error) => {
-            console.log("error 발생");
+            
             console.log(error);
           });
 
@@ -744,18 +728,13 @@ export default {
     updateInspect() {
       
       this.openSpinner();
-      console.log("제품 수정 진행");
       this.$store.commit("inspectStore/SET_UPDATE_INSPECT", 3);
-      console.log("productId : " + this.productId);
 
       this.imgFiles.forEach((element) => {
-        // console.log(element);
         element.forEach((e) => {
           if (e["file"]) {
-            console.log("신규 이미지 존재");
             this.formData.append("image", e["file"]);
           } else if (e["imgId"]) {
-            console.log("기존 이미지 존재");
             this.formData.append("imgId", e["imgId"]);
           }
         });
@@ -801,23 +780,18 @@ export default {
 
           // 검수 업데이트 성공
           if (response.data === 1) {
-            console.log("response 값 1");
             this.updateState = 1;
             this.openModal();
             this.closeSpinner();
           }
           // 검수 업데이트 실패
           else if (response.data === 0) {
-            console.log("response 값 0");
             this.updateState = 3;
             this.openModal();
             this.closeSpinner();
           }
-
-          console.log("modalName : " + this.modalName);
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
       
@@ -835,23 +809,19 @@ export default {
           this.modalName = "deleteInspect";
           // 검수 삭제 성공
           if (response.data === 1) {
-            console.log("response 값 1");
             this.deleteState = 1;
             this.openModal();
             this.closeSpinner();
           }
           // 검수 업데이트 실패
           else if (response.data === 0) {
-            console.log("response 값 0");
+            
             this.deleteState = 0;
             this.openModal();
             this.closeSpinner();
-          }
-
-          console.log("modalName : " + this.modalName);
+          }          
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
       

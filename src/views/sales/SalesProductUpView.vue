@@ -21,18 +21,6 @@ export default {
       inputRead: "true"
     };
   },
-  created() {
-    console.log("SalesProductUp 들어옴");
-    // checkConfirm();
-  },
-  computed: {
-  },
-  methods: {
-    
-    // inpuReadMode() {
-    //   this.inputRead = false;
-    // },
-  },
 };
 </script>
 

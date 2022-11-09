@@ -557,8 +557,6 @@ export default {
   watch: {
     // 제품 조회 및 결과값 입력
     selectProdut(val) {
-      console.log("확인 : " + val.skuNo + ", " + val.productName);
-      console.log(val);
       this.productId = val.productId;
       this.skuNo = val.skuNo;
       this.productName = val.productName;
@@ -573,7 +571,6 @@ export default {
     // 클레임 상세 정보 입력
     updateData() {
       if (this.propsdata === "updateView") {
-        console.log("setData if 실행 : " + this.propsdata);
 
         this.claimId = this.$store.state.getClaim.id;
         this.productId = this.$store.state.getClaim.product.id;
@@ -597,14 +594,10 @@ export default {
         if (this.$store.state.getClaim.imageFile.length > 0) {
           this.imgUpdate(this.$store.state.getClaim.imageFile);
         }
-      } else {
-        console.log("setData else 실행 : " + this.propsdata);
-      }
+      } 
     },
     roturInit() {
-      console.log("routerInit 접속. 새로고침 진행");
       this.$router.push("/claimSel");
-      // this.$router.go();
     },
     // 업데이트 진행 시 수정모드인지 확인
     inpuReadMode() {
@@ -624,10 +617,8 @@ export default {
       else {
         this.openSpinner();
         this.$store.commit("claimStore/SET_INSERT_CLAIM", 3);
-        console.log("클레임 추가 진행");
 
         this.imgFiles.forEach((element) => {
-          // console.log(element);
           element.forEach((e) => {
             this.formData.append("image", e["file"]);
           });
@@ -668,19 +659,16 @@ export default {
 
             // 클레임 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.insertState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 클레임 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.insertState = 0;
             }
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
 
@@ -700,18 +688,13 @@ export default {
       // 관리자일 경우 수정 가능
       else {
         this.openSpinner();
-        console.log("제품 수정 진행");
         this.$store.commit("claimStore/SET_UPDATE_CLAIM", 3);
-        console.log("productId : " + this.productId);
 
         this.imgFiles.forEach((element) => {
-          // console.log(element);
           element.forEach((e) => {
             if (e["file"]) {
-              console.log("신규 이미지 존재");
               this.formData.append("image", e["file"]);
             } else if (e["imgId"]) {
-              console.log("기존 이미지 존재");
               this.formData.append("imgId", e["imgId"]);
             }
           });
@@ -753,23 +736,19 @@ export default {
 
             // 클레임 업데이트 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.updateState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 클레임 업데이트 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.updateState = 3;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
+            
             console.log(error);
           });
       }
@@ -787,7 +766,6 @@ export default {
       // 관리자일 경우 삭제 가능
       else {
         this.openSpinner();
-        console.log("클레임 삭제 진행");
         this.$store.commit("claimStore/SET_DELETE_CLAIM", 3);
 
         this.$store
@@ -796,23 +774,19 @@ export default {
             this.modalName = "deleteClaim";
             // 클레임 삭제 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.deleteState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 클레임 업데이트 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.deleteState = 0;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
+            
             console.log(error);
           });
       }

@@ -159,10 +159,8 @@ export default {
   watch: {
     // 검수 조회 및 결과값 입력
     SelectInspect(val) {
-      console.log("검색완료됨. 테이블 입력");
-      console.log(val);
       let tmpSearchData = this.$store.getters["inspectStore/getSearchData"];
-      console.log(tmpSearchData);
+
       if(tmpSearchData.page !== "excel"){
         this.getSelectInspect = val.data;
       }
@@ -186,8 +184,6 @@ export default {
         this.$store.commit("inspectStore/SET_SEARCH_DATA", data);
       }
 
-      console.log(this.getSelectInspect);
-      
       this.closeSpinner();
     },
   },
@@ -201,8 +197,6 @@ export default {
       } else {
         // this.openSpinner();
         let tmpSearchData = this.$store.getters["inspectStore/getSearchData"];
-        console.log("엑셀 다운!");
-        console.log(tmpSearchData);
 
         let data = {
           page: "excel",
@@ -221,18 +215,14 @@ export default {
             this.modalName = "excelDataDown";
             let excelData = response.data;
             this.excelDownState = true;
-            console.log("excel 다운 선택");
-            console.log(response.data);
             const workBook = XLSX.utils.book_new();
             const workSheet = XLSX.utils.json_to_sheet(excelData);
             XLSX.utils.book_append_sheet(workBook, workSheet, "검수목록");
             XLSX.writeFile(workBook, "검수목록.xlsx");
             this.closeSpinner();
-            console.log("확인");
           })
           .catch((error) => {
             this.excelDownState = false;
-            console.log("error 발생");
             console.log(error);
           });
 
@@ -244,9 +234,6 @@ export default {
     },
     pageChange(button, page) {
       this.openSpinner();
-      console.log("페이지 변경 클릭 : ");
-      console.log(button);
-      console.log(page);
 
       let data = {
         inspectCurseId: this.curseIdList[page - 1],
@@ -257,11 +244,6 @@ export default {
     },
     // 더블 클릭 이벤트
     inspectDetails(item) {
-      console.log("this.$route.name : " + this.$route.name);
-      console.log("row 더블클릭됨");
-      console.log(item);
-
-      console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_INSPECT", "");
 
       // 전체 제품 조회 화면일 경우 제품 상세정보 페이지로 이동
@@ -270,12 +252,10 @@ export default {
     },
     // 스피너 열기
     openSpinner() {
-      console.log("openSpinner 열림");
       this.spinnerState = true;
     },
     // 스피너 닫기
     closeSpinner() {
-      console.log("closeSpinner 닫기 ");
       this.spinnerState = false;
     },
   },

@@ -447,8 +447,6 @@ export default {
 
     // 점검 상세 정보 입력
     updateData() {
-      console.log("처음 생성 됨. 데이터 업데이트");
-      console.log(this.propsdata);
       if (this.propsdata[1] === "insertView") {
         this.inputRead = true;
       } else {
@@ -464,9 +462,6 @@ export default {
         this.auditIncon = this.$store.state.getMakerAudit.auditIncon;
         this.auditImprove = this.$store.state.getMakerAudit.auditIncon;
 
-        console.log("데이터 확인 중111");
-        console.log(this.$store.state.getMakerAudit.makerAuditFiles);
-
         // file 데이터 있는지 확인
         if (this.$store.state.getMakerAudit.makerAuditFiles.length > 0) {
           var tmpImageFile = [];
@@ -481,7 +476,6 @@ export default {
               tmpFileData.push(element);
             }
           });
-          console.log(this.fileData);
           this.imgUpdate(tmpImageFile, "file");
           this.updateFileData(tmpFileData);
         }
@@ -521,10 +515,8 @@ export default {
       else {
         this.openSpinner();
         this.$store.commit("makerStore/SET_INSERT_MAKER_AUDIT", 3);
-        console.log("점검 추가 진행");
 
         this.imgFiles.forEach((element) => {
-          // console.log(element);
           element.forEach((e) => {
             this.formData.append("file", e["file"]);
           });
@@ -546,8 +538,6 @@ export default {
           auditImprove: this.auditImprove,
         };
 
-        // console.log("this.makerId : " + this.makerId);
-
         this.formData.append(
           "data",
           new Blob([JSON.stringify(data)], { type: "application/json" })
@@ -563,31 +553,25 @@ export default {
           .dispatch("makerStore/INSERT_MAKER_AUDIT", this.formData)
           .then((response) => {
             this.modalName = "insertMakerAudit";
-            console.log("response 응답 옴");
-            console.log(response);
-
+            
             // 점검 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.insertState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 해당 점검 날짜에 이미 등록된 점검 내용 존재
             else if (response.data === 2) {
-              console.log("response 값 2");
               this.insertState = 2;
               this.openModal();
               this.closeSpinner();
             }
             // 점검 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.insertState = 0;
             }
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
 
@@ -597,32 +581,22 @@ export default {
     // 점검 수정진행
     updateMakerAudit() {
       this.openSpinner();
-      console.log("점검 수정 진행");
       this.$store.commit("makerStore/SET_UPDATE_MAKER_AUDIT", 3);
-      console.log("makerId : " + this.makerId);
-      console.log(this.imgFiles);
-      console.log(this.fileData);
 
       this.imgFiles.forEach((element) => {
-        // console.log(element);
         element.forEach((e) => {
           if (e["file"]) {
-            console.log("신규 이미지 존재");
             this.formData.append("file", e["file"]);
           } else if (e["imgId"]) {
-            console.log("기존 이미지 존재");
             this.formData.append("fileId", e["imgId"]);
           }
         });
       });
 
       this.fileData.forEach((element) => {
-        console.log(element);
         if (element["file"]) {
-          console.log("신규 파일 존재");
           this.formData.append("file", element["file"]);
         } else if (element["fileId"]) {
-          console.log("기존 파일 존재");
           this.formData.append("fileId", element["fileId"]);
         }
       });
@@ -657,32 +631,25 @@ export default {
 
           // 점검 업데이트 성공
           if (response.data === 1) {
-            console.log("response 값 1");
             this.updateState = 1;
             this.openModal();
             this.closeSpinner();
           }
           // 점검 업데이트 실패
           else if (response.data === 0) {
-            console.log("response 값 0");
             this.updateState = 3;
             this.openModal();
             this.closeSpinner();
           }
-
-          console.log("modalName : " + this.modalName);
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
     },
 
     // 점검 삭제 진행
     deleteMakerAudit() {
-
       this.openSpinner();
-      console.log("점검 삭제 진행");
       this.$store.commit("makerStore/SET_DELETE_MAKER_AUDIT", 3);
       this.$store
         .dispatch("makerStore/DELETE_MAKER_AUDIT", { id: this.id })
@@ -690,23 +657,18 @@ export default {
           this.modalName = "deleteMakerAudit";
           // 점검 삭제 성공
           if (response.data === 1) {
-            console.log("response 값 1");
             this.deleteState = 1;
             this.openModal();
             this.closeSpinner();
           }
           // 점검 업데이트 실패
           else if (response.data === 0) {
-            console.log("response 값 0");
             this.deleteState = 0;
             this.openModal();
             this.closeSpinner();
           }
-
-          console.log("modalName : " + this.modalName);
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
 
