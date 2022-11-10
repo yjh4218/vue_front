@@ -11,10 +11,10 @@
                   type="text"
                   v-model="skuNo"
                   :state="skuNoState"
-                  placeholder=""
                   value=""
-                  maxlength="12"
+                  maxlength="13"
                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                  placeholder="숫자만 써주세요."
                   required
                   :readonly="propsdata === 'updateView'"
                 ></b-form-input>
@@ -29,7 +29,7 @@
                 </b-input-group-prepend>
               </b-input-group>
               <b-form-text id="input-live-help">
-                -를 제외한 12자리 sku-no를 입력하세요.
+                -를 제외한 sku-no를 입력하세요.
               </b-form-text>
             </div>
             <div class="col-md-5 mb-3">

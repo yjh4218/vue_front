@@ -39,7 +39,7 @@
               type="text"
               v-model="makerPhone"
               placeholder="숫자만 써주세요."
-              maxlength="11"
+              maxlength="14"
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
             ></b-form-input>
           </b-input-group>

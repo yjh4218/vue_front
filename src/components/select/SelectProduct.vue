@@ -8,9 +8,9 @@
             <b-form-input
               type="text"
               v-model="skuNo"
-              placeholder=""
+              placeholder="숫자만 써주세요."
               value=""
-              maxlength="12"
+              maxlength="13"
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
             ></b-form-input>
           </b-input-group>
