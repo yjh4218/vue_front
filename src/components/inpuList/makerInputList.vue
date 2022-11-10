@@ -3,7 +3,7 @@
     <b-overlay :show="spinnerState" rounded="sm">
       <div :class="[inputRead ? 'divEnable' : 'divDisable']">
         <div class="row">
-          <div class="col-md-4 mb-3">
+          <div class="col-md-3 mb-3">
             <b-input-group prepend="제조사명">
               <b-form-input
                 type="text"
@@ -14,7 +14,19 @@
               ></b-form-input>
             </b-input-group>
           </div>
-          <div class="col-md-8 mb-3">
+          <div class="col-md-3 mb-3">
+            <b-input-group prepend="평가점수(100점 만점)">
+              <b-form-input
+                type="text"
+                v-model="makerScore"
+                placeholder=""
+                value=""
+                maxlength="3"
+                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              ></b-form-input>
+            </b-input-group>
+          </div>
+          <div class="col-md-6 mb-3">
             <b-input-group prepend="제조사 주소">
               <b-form-input
                 type="text"
@@ -35,30 +47,21 @@
             </b-input-group>
           </div>
           <div class="col-md-3 mb-3">
-            <b-input-group prepend="주요공정">
-              <b-form-input
-                type="text"
-                v-model="process"
-                placeholder=""
-              ></b-form-input>
-            </b-input-group>
-          </div>
-          <div class="col-md-3 mb-3">
-            <b-input-group prepend="주요제품">
-              <b-form-input
-                type="text"
-                v-model="importProduct"
-                placeholder=""
-              ></b-form-input>
-            </b-input-group>
-          </div>
-          <div class="col-md-3 mb-3">
             <b-input-group prepend="매출액(억)">
               <b-form-input
                 type="text"
                 v-model="sales"
                 placeholder=""
                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              ></b-form-input>
+            </b-input-group>
+          </div>
+          <div class="col-md-6 mb-3">
+            <b-input-group prepend="주요공정">
+              <b-form-input
+                type="text"
+                v-model="process"
+                placeholder=""
               ></b-form-input>
             </b-input-group>
           </div>
@@ -94,6 +97,28 @@
             </b-input-group>
           </div>
         </div>
+        <div class="col-md-12 mb-3">
+            <b-input-group prepend="주요제품">
+              <b-form-textarea
+                id="textarea-default"
+                v-model="importProduct"
+                rows="3"
+                max-rows="10"
+              ></b-form-textarea>
+            </b-input-group>
+          </div>
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <b-input-group prepend="제조사 정보">
+              <b-form-textarea
+                id="textarea-default"
+                v-model="makerInfo"
+                rows="3"
+                max-rows="10"
+              ></b-form-textarea>
+            </b-input-group>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-12 mb-3">
             <b-input-group prepend="비고">
@@ -107,17 +132,17 @@
           </div>
         </div>
         <div class="row">
-            <div class="col-md-12 mb-3">
-              <b-input-group prepend="제조사 히스토리">
-                <b-form-textarea
-                  id="textarea-default"
-                  v-model="makerChangeContent"
-                  rows="3"
-                  max-rows="5"
-                ></b-form-textarea>
-              </b-input-group>
-            </div>
+          <div class="col-md-12 mb-3">
+            <b-input-group prepend="제조사 히스토리">
+              <b-form-textarea
+                id="textarea-default"
+                v-model="makerChangeContent"
+                rows="3"
+                max-rows="5"
+              ></b-form-textarea>
+            </b-input-group>
           </div>
+        </div>
       </div>
       <div class="row" v-if="propsdata === 'insertView'">
         <div class="col-md-12 mb-3">
@@ -513,7 +538,9 @@ export default {
       makerAddress: "",
       process: "",
       importProduct: "",
+      makerScore: "",
       sales: "",
+      makerInfo: "",
       makerPerson: "",
       makerPhone: "",
       makerEmail: "",
@@ -572,6 +599,8 @@ export default {
         this.makerId = this.$store.state.getMaker.id;
         this.makerName = this.$store.state.getMaker.makerName;
         this.className = this.$store.state.getMaker.className;
+        this.makerScore = this.$store.state.getMaker.makerScore;
+        this.makerInfo = this.$store.state.getMaker.makerInfo;        
         this.makerAddress = this.$store.state.getMaker.makerAddress;
         this.process = this.$store.state.getMaker.process;
         this.importProduct = this.$store.state.getMaker.importProduct;
@@ -669,6 +698,8 @@ export default {
           process: this.process,
           importProduct: this.importProduct,
           sales: this.sales,
+          makerScore : this.makerScore,
+          makerInfo : this.makerInfo,
           makerPerson: this.makerPerson,
           makerPhone: this.makerPhone,
           makerEmail: this.makerEmail,
@@ -720,6 +751,8 @@ export default {
           makerAddress: this.makerAddress,
           process: this.process,
           importProduct: this.importProduct,
+          makerScore : this.makerScore,
+          makerInfo : this.makerInfo,
           sales: this.sales,
           makerPerson: this.makerPerson,
           makerPhone: this.makerPhone,

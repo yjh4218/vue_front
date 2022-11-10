@@ -71,20 +71,25 @@ export const fileMixin = {
         // 첨부파일 다운로드
         downData(item) {
             if (item.fileId !== undefined || item.fileId !== null) {
-                fetch(item.url)
-                .then((response) => response.blob())
-                .then((blob) => {
-                    // setFetching(false);
-                    const blobURL = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = blobURL;
-                    a.target = "_self";
-                    // a.style = "display: none";
+                const a = document.createElement("a");
+                a.href = item.url;
+                a.download = item.fileName.name;
+                a.click();
+                a.remove();
+                // fetch(item.url)
+                // .then((response) => response.blob())
+                // .then((blob) => {
+                //     // setFetching(false);
+                //     const blobURL = URL.createObjectURL(blob);
+                //     const a = document.createElement("a");
+                //     a.href = blobURL;
+                //     a.target = "_self";
+                //     // a.style = "display: none";
 
-                    a.download = item.fileName.name;
-                    document.body.appendChild(a);
-                    a.click();
-                });
+                //     a.download = item.fileName.name;
+                //     document.body.appendChild(a);
+                //     a.click();
+                // });
                 // .catch(() => setError(true));
             } else {
                 var fileDownload = require("js-file-download");

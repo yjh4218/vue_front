@@ -201,13 +201,13 @@ function selectPageInspect(selectCon) {
 
 // 제조사 추가하기
 function insertMaker(newMaker) {
-
+console.log(newMaker);
   return axios.post(config.makerUrl + "insertMaker", newMaker);
 }
 
 // 제조사 수정하기
 function updateMaker(updateMaker) {
-
+  console.log(updateMaker);
   return axios.put(config.makerUrl + "updateMaker", updateMaker);
 }
 
