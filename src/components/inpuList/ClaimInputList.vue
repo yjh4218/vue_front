@@ -180,7 +180,7 @@
                 class="imgup"
                 id="file-default"
                 multiple
-                @change="imgFileSelected"
+                @change="AddImageData"
                 plain
                 size="lg"
               ></b-form-file>
@@ -198,17 +198,15 @@
               >
                 <span
                   class="imgSizes"
-                  v-for="(img, index2) in item"
-                  :key="index2"
                 >
-                  <button
+                  <button :class="[inputRead ? 'divEnable' : 'divDisable']"
                     class="xBox"
                     v-b-modal.xBox-modal
-                    @click="imgElementSave(index, index2)"
+                    @click="imgElementSave(index)"
                   >
                     x
                   </button>
-                  <img :src="img.url" />
+                  <img :src="item.url" />
                 </span>
               </viewer>
             </b-input-group>

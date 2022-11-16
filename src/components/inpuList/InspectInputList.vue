@@ -229,7 +229,7 @@
                   class="imgup"
                   id="file-default"
                   multiple
-                  @change="imgFileSelected"
+                  @change="AddImageData"
                   plain
                   size="lg"
                 ></b-form-file>
@@ -248,18 +248,15 @@
               >
                 <span
                   class="imgSizes"
-                  v-for="(img, index2) in item"
-                  :key="index2"
                 >
-                  <button
-                   :class="[inputRead ? 'divEnable' : 'divDisable']"
+                  <button :class="[inputRead ? 'divEnable' : 'divDisable']"
                     class="xBox"
                     v-b-modal.xBox-modal
-                    @click="imgElementSave(index, index2)"
+                    @click="imgElementSave(index)"
                   >
                     x
                   </button>
-                  <img :src="img.url" />
+                  <img :src="item.url" />
                 </span>
               </viewer>
             </b-input-group>
@@ -655,9 +652,7 @@ export default {
         this.$store.commit("inspectStore/SET_INSERT_INSPECT", 3);
 
         this.imgFiles.forEach((element) => {
-          element.forEach((e) => {
-            this.formData.append("image", e["file"]);
-          });
+          this.formData.append("image", element["file"]);
         });
 
         let data = {
@@ -731,13 +726,11 @@ export default {
       this.$store.commit("inspectStore/SET_UPDATE_INSPECT", 3);
 
       this.imgFiles.forEach((element) => {
-        element.forEach((e) => {
-          if (e["file"]) {
-            this.formData.append("image", e["file"]);
-          } else if (e["imgId"]) {
-            this.formData.append("imgId", e["imgId"]);
+          if (element["file"]) {
+            this.formData.append("image", element["file"]);
+          } else if (element["imgId"]) {
+            this.formData.append("imgId", element["imgId"]);
           }
-        });
       });
 
       let data = {

@@ -7,7 +7,7 @@ import {
   deleteProduct,
   updateProductReply,
   deleteProductReply,
-} from "../../api/index";
+} from "../../api/productAPI";
 
 const productStore = {
   namespaced: true,

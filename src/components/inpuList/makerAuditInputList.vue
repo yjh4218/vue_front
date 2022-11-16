@@ -146,7 +146,7 @@
                   class="imgup"
                   id="file-default"
                   multiple
-                  @change="imgFileSelected"
+                  @change="AddImageData"
                   plain
                   size="lg"
                 ></b-form-file>
@@ -165,18 +165,15 @@
               >
                 <span
                   class="imgSizes"
-                  v-for="(img, index2) in item"
-                  :key="index2"
                 >
-                  <button
-                    :class="[inputRead ? 'divEnable' : 'divDisable']"
+                  <button :class="[inputRead ? 'divEnable' : 'divDisable']"
                     class="xBox"
                     v-b-modal.xBox-modal
-                    @click="imgElementSave(index, index2)"
+                    @click="imgElementSave(index)"
                   >
                     x
                   </button>
-                  <img :src="img.url" />
+                  <img :src="item.url" />
                 </span>
               </viewer>
             </b-input-group>
@@ -188,7 +185,7 @@
           <b-button
             variant="primary"
             class="rightBox"
-            v-b-modal.insert-modal
+            v-b-modal.insert-audit-modal
             :disabled="
               writDate === '' || auditDate === '' || auditResult === ''
             "
@@ -199,10 +196,10 @@
       </div>
       <div class="row" v-else>
         <div class="col-md-12 mb-3" v-if="inputRead">
-          <b-button variant="primary" class="rightBox" v-b-modal.update-modal>
+          <b-button variant="primary" class="rightBox" v-b-modal.update-audit-modal>
             점검 정보 수정
           </b-button>
-          <b-button variant="danger" class="rightBox" v-b-modal.delete-modal>
+          <b-button variant="danger" class="rightBox" v-b-modal.delete-audit-modal>
             점검 정보 삭제
           </b-button>
         </div>
@@ -213,7 +210,7 @@
         </div>
       </div>
 
-      <b-modal id="insert-modal">
+      <b-modal id="insert-audit-modal">
         <!-- <template #modal-title> 신규점검 등록 </template> -->
         <div class="my-4">신규 점검를 등록하시겠습니까?</div>
         <template #modal-footer>
@@ -221,7 +218,7 @@
             <b-button
               variant="primary"
               class="frightBox"
-              @click="insertMakerAudit(), $bvModal.hide('insert-modal')"
+              @click="insertMakerAudit(), $bvModal.hide('insert-audit-modal')"
               :disabled="spinnerState"
             >
               등록하기
@@ -229,7 +226,7 @@
             <b-button
               variant="primary"
               class="rightBox"
-              @click="$bvModal.hide('insert-modal')"
+              @click="$bvModal.hide('insert-audit-modal')"
             >
               취소하기
             </b-button>
@@ -237,7 +234,7 @@
         </template>
       </b-modal>
 
-      <b-modal id="update-modal">
+      <b-modal id="update-audit-modal">
         <!-- <template #modal-title> 신규점검 등록 </template> -->
         <div class="my-4">점검 정보를 수정하시겠습니까?</div>
         <template #modal-footer>
@@ -245,7 +242,7 @@
             <b-button
               variant="primary"
               class="frightBox"
-              @click="updateMakerAudit(), $bvModal.hide('update-modal')"
+              @click="updateMakerAudit(), $bvModal.hide('update-audit-modal')"
               :disabled="spinnerState"
             >
               수정하기
@@ -253,14 +250,14 @@
             <b-button
               variant="primary"
               class="rightBox"
-              @click="$bvModal.hide('update-modal')"
+              @click="$bvModal.hide('update-audit-modal')"
             >
               취소하기
             </b-button>
           </div>
         </template>
       </b-modal>
-      <b-modal id="delete-modal">
+      <b-modal id="delete-audit-modal">
         <!-- <template #modal-title> 신규점검 등록 </template> -->
         <div class="my-4">해당 점검 내용을 삭제하시겠습니까?</div>
         <template #modal-footer>
@@ -268,7 +265,7 @@
             <b-button
               variant="primary"
               class="frightBox"
-              @click="deleteMakerAudit(), $bvModal.hide('delete-modal')"
+              @click="deleteMakerAudit(), $bvModal.hide('delete-audit-modal')"
               :disabled="spinnerState"
             >
               삭제하기
@@ -276,7 +273,7 @@
             <b-button
               variant="primary"
               class="rightBox"
-              @click="$bvModal.hide('delete-modal')"
+              @click="$bvModal.hide('delete-audit-modal')"
             >
               취소하기
             </b-button>
@@ -468,7 +465,7 @@ export default {
           var tmpFileData = [];
 
           this.$store.state.getMakerAudit.makerAuditFiles.forEach((element) => {
-            var tmp = element.filePath.split(".");
+            var tmp = element.fileInPath.split(".");
 
             if (tmp[1] === "png" || tmp[1] === "jpg") {
               tmpImageFile.push(element);
@@ -517,9 +514,7 @@ export default {
         this.$store.commit("makerStore/SET_INSERT_MAKER_AUDIT", 3);
 
         this.imgFiles.forEach((element) => {
-          element.forEach((e) => {
-            this.formData.append("file", e["file"]);
-          });
+            this.formData.append("file", element["file"]);
         });
 
         // this.formData.append("fileData", this.fileData);
@@ -584,13 +579,11 @@ export default {
       this.$store.commit("makerStore/SET_UPDATE_MAKER_AUDIT", 3);
 
       this.imgFiles.forEach((element) => {
-        element.forEach((e) => {
-          if (e["file"]) {
-            this.formData.append("file", e["file"]);
-          } else if (e["imgId"]) {
-            this.formData.append("fileId", e["imgId"]);
+          if (element["file"]) {
+            this.formData.append("file", element["file"]);
+          } else if (element["imgId"]) {
+            this.formData.append("fileId", element["imgId"]);
           }
-        });
       });
 
       this.fileData.forEach((element) => {

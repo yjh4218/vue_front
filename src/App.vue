@@ -46,15 +46,11 @@ export default {
     };
   },
   created() {
-    // document.addEventListener("beforeunload", this.leaving());
+  },
+  mounted(){
+    this.chkLoginFun();
   },
   methods: {
-    // 화면 닫으면 자동 로그아웃
-    // leaving() {
-    //   this.$store.commit("loginStore/SET_USER_LOGIN", []);
-    //   this.$router.push("/userLogin");
-    //   this.logoutFlag = true;
-    // },
     login() {
       this.$router.push("/userLogin");
     },
@@ -64,16 +60,8 @@ export default {
       this.$router.push("/userLogin");
       this.logoutFlag = true;
     },
-  },
-  computed: {
     // 로그인 여부 확인
-    chkLogin() {
-      return this.$store.getters["loginStore/getUserLogin"].status;
-    },
-  },
-  watch: {
-    // 로그인 여부 확인
-    chkLogin() {
+    chkLoginFun(){
       // 로그인 되어 있을 경우 로그아웃 버튼 활성화
       console.log("로그인 여부 확인");
       console.log(this.$store.getters["loginStore/getUserLogin"].status);
@@ -88,6 +76,18 @@ export default {
       else {
         this.logoutFlag = true;
       }
+    }
+  },
+  computed: {
+    // 로그인 여부 확인
+    chkLogin() {
+      return this.$store.getters["loginStore/getUserLogin"].status;
+    },
+  },
+  watch: {
+    // 로그인 여부 확인
+    chkLogin() {
+      this.chkLoginFun();
     },
   },
 };
@@ -163,9 +163,9 @@ tr:hover {
 }
 .rightBoxPosition {
   position: absolute;
-  right: 0.7%;
-  margin: 10px;
-  width: 90px;
+  right: 0.3%;
+  margin-top: 10px;
+  width: 100px;
   z-index: 10;
 }
 .xBox {

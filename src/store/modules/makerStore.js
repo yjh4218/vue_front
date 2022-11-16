@@ -3,13 +3,15 @@ import {
   updateMaker,
   deleteMaker,
   selectMaker,
+  updateMakerReply,
+  deleteMakerReply
+} from "../../api/makerAPI";
+
+import {
   insertMakerAudit,
   updateMakerAudit,
   deleteMakerAudit,
-  updateMakerReply,
-  deleteMakerReply
-} from "../../api/index";
-
+} from "../../api/makerAuditAPI";
 
 const makerStore = {
     namespaced: true,

@@ -4,7 +4,7 @@ import {
   updateClaim,
   deleteClaim,
   selectClaim,
-} from "../../api/index";
+} from "../../api/claimAPI";
 
 const claimStore = {
     namespaced: true,

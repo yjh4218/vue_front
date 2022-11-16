@@ -23,6 +23,7 @@ export const store = new Vuex.Store({
   plugins: [
     createPersistedState({
       paths: ["loginStore"],
+      // 세션에 저장하여 window tab close 시 로그아웃 처리됨
       storage: window.sessionStorage,
       // reducer: () => ({
       //   userLogin: this.$store.getters["loginStore/getUserLogin"],

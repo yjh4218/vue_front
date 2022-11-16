@@ -5,7 +5,7 @@ import {
   selectInspect,
   selectPageInspect,
   selectInspectExcel,
-} from "../../api/index";
+} from "../../api/inspectAPI";
 
 const inspectStore = {
   namespaced: true,

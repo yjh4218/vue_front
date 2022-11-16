@@ -7,18 +7,29 @@ export const fileMixin = {
     methods: {
         updateFileData(file) {
             file.forEach(element => {
-                var tmpUrl =
-                "http://192.168.21.197:8080/" +
-                // "http://127.0.0.1:8080/" +
-                    element.filePath.substr(13).replaceAll("\\", "/");
+                // var tmpUrl = element.fileInPath.substr(20).replaceAll("\\", "/");
+                var tmpUrl = element.fileInPath.substr(16).replaceAll("\\", "/");
                 
-                var tmp = element.filePath.split(".");
+                // // 외부 서버 이용시
+                // var tmpUrl =
+                // "http://192.168.21.197:8080/" +
+                // // "http://127.0.0.1:8080/" +
+                //     element.filePath.substr(13).replaceAll("\\", "/");
+                
+                // 서버 컴퓨터 외부 파일 접근시
+                // var tmpUrl =
+                // "http://192.168.21.166:8080/" +
+                // // "http://127.0.0.1:8080/" +
+                //     element.filePath.substr(21).replaceAll("\\", "/");
+                
+                var tmp = element.fileInPath.split(".");
 
                 var tmpFileData = {
                     url: tmpUrl,
                     fileId: element.id,
                     fileName: { name: element.fileName },
                     extension: tmp[1],
+                    mode : "old"
                 };
                 this.fileData.push(tmpFileData);
             });
@@ -49,6 +60,7 @@ export const fileMixin = {
                         var img = await {
                             url: e.target.result,
                             file: files[item],
+                            mode : "new"
                         };
 
                         temp.push(img);
@@ -70,27 +82,13 @@ export const fileMixin = {
         },
         // 첨부파일 다운로드
         downData(item) {
-            if (item.fileId !== undefined || item.fileId !== null) {
+            if (item.mode === "old") {
                 const a = document.createElement("a");
+                // a.href = "../../assets" + item.url;
                 a.href = item.url;
                 a.download = item.fileName.name;
                 a.click();
                 a.remove();
-                // fetch(item.url)
-                // .then((response) => response.blob())
-                // .then((blob) => {
-                //     // setFetching(false);
-                //     const blobURL = URL.createObjectURL(blob);
-                //     const a = document.createElement("a");
-                //     a.href = blobURL;
-                //     a.target = "_self";
-                //     // a.style = "display: none";
-
-                //     a.download = item.fileName.name;
-                //     document.body.appendChild(a);
-                //     a.click();
-                // });
-                // .catch(() => setError(true));
             } else {
                 var fileDownload = require("js-file-download");
                 fileDownload(item.file, item.file.name);

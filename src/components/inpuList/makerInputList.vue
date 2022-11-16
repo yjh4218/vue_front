@@ -714,6 +714,7 @@ export default {
             // 제조사 추가 성공
             if (response.data === 1) {
               this.insertState = 1;
+              this.$store.commit("makerStore/SET_SELECT_MAKER_PRODUCT", []);
               this.openModal();
               this.closeSpinner();
             }
@@ -768,14 +769,13 @@ export default {
 
             // 제조사 업데이트 성공
             if (response.data === 1) {
-              
               this.updateState = 1;
+              this.$store.commit("makerStore/SET_SELECT_MAKER_PRODUCT", []);
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 업데이트 실패
             else if (response.data === 0) {
-              
               this.updateState = 3;
               this.openModal();
               this.closeSpinner();
@@ -807,14 +807,13 @@ export default {
             this.modalName = "deleteMaker";
             // 제조사 삭제 성공
             if (response.data === 1) {
-              
               this.deleteState = 1;
+              this.$store.commit("makerStore/SET_SELECT_MAKER_PRODUCT", []);
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 업데이트 실패
             else if (response.data === 0) {
-              
               this.deleteState = 0;
               this.openModal();
               this.closeSpinner();

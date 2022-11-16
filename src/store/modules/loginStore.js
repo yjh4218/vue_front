@@ -1,4 +1,4 @@
-import { userLogin } from "../../api/index.js";
+import { userLogin } from "../../api/userAPI";
 
 const loginStore = {
   namespaced: true,

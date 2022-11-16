@@ -73,6 +73,7 @@ export default {
   },
   methods: {
     chkLogin() {
+      console.log("들어옴");
       if (
         this.$store.getters["loginStore/getUserLogin"].status === 200 &&
         this.$store.getters["loginStore/getUserLogin"].data.body.result ===

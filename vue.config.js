@@ -35,5 +35,24 @@ module.exports = defineConfig({
         '@': path.resolve('src'),
       }
     },
-  }
+    module: {
+      rules: [
+        {
+          test: /\.(xls|xlsx|ppt|pptx|docx|doc|hwp|hwpx|pdf)$/,
+          // png|jpg|
+          // include: /fileData/,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: 'fileData/[name].[ext]',
+                // outputPath: 'fileData/',
+                // publicPath: 'fileData/'
+              }
+            }
+          ]
+        },
+      ]
+    }
+  },
 });

@@ -19,47 +19,111 @@ export const imageMixin = {
                 var tempImg = '';
                 
                 if (sel === 'file') {
-                    tempImg =
-                "http://192.168.21.197:8080/" +
-                    // "http://127.0.0.1:8080/" +
-                    x.filePath.substr(13).replaceAll("\\", "/");
+                    // tempImg = x.fileInPath.substr(20).replaceAll("\\", "/");
+                    tempImg = x.fileInPath.substr(16).replaceAll("\\", "/");
                 } else {
                     // var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
-                    tempImg =
-                "http://192.168.21.197:8080/" +
-                    // "http://127.0.0.1:8080/" +
-                    x.imgFilePath.substr(13).replaceAll("\\", "/");
+                    // tempImg = x.imgFileInPath.substr(20).replaceAll("\\", "/");
+                    tempImg = x.imgFileInPath.substr(16).replaceAll("\\", "/");
                 }
+                
+                // 외부 서버 이용시
+                // if (sel === 'file') {
+                //     tempImg =
+                // "http://192.168.21.197:8080/" +
+                //     // "http://127.0.0.1:8080/" +
+                //     x.fileInPath.substr(13).replaceAll("\\", "/");
+                // } else {
+                //     // var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
+                //     tempImg =
+                // "http://192.168.21.197:8080/" +
+                //     // "http://127.0.0.1:8080/" +
+                //     x.imgFilePath.substr(13).replaceAll("\\", "/");
+                // }
+
+                // 서버 컴퓨터 외부 파일 접근시
+                // if (sel === 'file') {
+                //     tempImg =
+                // "http://192.168.21.166:8080/" +
+                //     // "http://127.0.0.1:8080/" +
+                //     x.filePath.substr(21).replaceAll("\\", "/");
+                // } else {
+                //     // var tempImg = x.imgFilePath.substr(27).replaceAll("\\", "/");
+                //     tempImg =
+                // "http://192.168.21.166:8080/" +
+                //     // "http://127.0.0.1:8080/" +
+                //     x.imgFilePath.substr(21).replaceAll("\\", "/");
+                // }
 
 
-                this.imgFiles.push([{ url: tempImg, imgId : x.id }]);
+                this.imgFiles.push({ url: tempImg, imgId : x.id, mode : "old" });
             });
         },
 
         // 파일 이미지 추가 될 경우
-        imgFileSelected(event) {
+        // imgFileSelected(event) {
 
-            var files = event.target.files;
+        //     var files = event.target.files;
             
-            var temp = [];
+        //     var temp = [];
         
-            [].forEach.call(files, function (i, item) {
+        //     [].forEach.call(files, function (i, item) {
 
-                var fileReader = new FileReader();
-                fileReader.onload = function (e) {
+        //         var fileReader = new FileReader();
+        //         fileReader.onload = function (e) {
                     
-                    var img = {
-                        url : e.target.result,
-                        file : files[item]
+        //             var img = {
+        //                 url : e.target.result,
+        //                 file : files[item]
+        //             };
+
+        //             temp.push(img);
+        //         };
+        //         fileReader.readAsDataURL(files[item]);
+        //     });
+
+        //     this.imgFiles.push(temp);
+
+        // },
+        // 파일 데이터 처리
+        imgFileSelected(files) {
+            var temp = [];
+
+            var cnt = 1;
+            var len = files.length;
+
+            return new Promise(function (resolve) {
+                [].forEach.call(files, function (i, item) {
+                    var fileReader = new FileReader();
+                    fileReader.onload = async function (e) {
+                        var img = await {
+                            url: e.target.result,
+                            file: files[item],
+                            mode : "new"
+                        };
+
+                        temp.push(img);
+
+                        if (cnt === len) {
+                            resolve(temp);
+                        } else {
+                            cnt++;
+                        }
                     };
-
-                    temp.push(img);
-                };
-                fileReader.readAsDataURL(files[item]);
+                    
+                    fileReader.readAsDataURL(files[item]);
+                });
             });
+        },
+        // 파일 첨부 데이터 확인
+        async AddImageData(event) {
+            var files = event.target.files;
 
-            this.imgFiles.push(temp);
+            var temp = await this.imgFileSelected(files);
 
+            temp.forEach((element) => {
+                this.imgFiles.push(element);
+            });
         },
         // viewer 초기화
         inited(viewer) {
@@ -67,11 +131,11 @@ export const imageMixin = {
         },
         // xbox click
         xBoxClick() {
-            this.imgFiles[this.imgElement[0]].splice(this.imgElement[1], 1);
+            this.imgFiles.splice(this.imgElement, 1);
         },
         // img Element save
-        imgElementSave(index, index2) {
-            this.imgElement = [index, index2];
+        imgElementSave(index) {
+            this.imgElement = index;
         }
     }
 }

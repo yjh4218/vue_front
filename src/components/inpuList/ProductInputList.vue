@@ -174,11 +174,12 @@
               </b-input-group>
             </div>
             <div class="col-md-4 mb-3">
-              <b-input-group prepend="제품 중량">
+              <b-input-group prepend="제품 중량(g)">
                 <b-form-input
                   type="text"
                   v-model="productWeight"
                   placeholder=""
+                  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                   value=""
                 ></b-form-input>
               </b-input-group>
@@ -204,7 +205,7 @@
                   type="number"
                   v-model="calorie"
                   placeholder=""
-                  value="0"
+                  value=""
                 ></b-form-input>
               </b-input-group>
             </div>
@@ -214,7 +215,7 @@
                   type="number"
                   v-model="sodium"
                   placeholder=""
-                  value="0"
+                  value=""
                 ></b-form-input>
               </b-input-group>
             </div>
@@ -273,7 +274,7 @@
                   class="imgup"
                   id="file-default"
                   multiple
-                  @change="imgFileSelected"
+                  @change="AddImageData"
                   plain
                   size="lg"
                 ></b-form-file>
@@ -293,17 +294,15 @@
               >
                 <span
                   class="imgSizes"
-                  v-for="(img, index2) in item"
-                  :key="index2"
                 >
                   <button :class="[inputRead ? 'divEnable' : 'divDisable']"
                     class="xBox"
                     v-b-modal.xBox-modal
-                    @click="imgElementSave(index, index2)"
+                    @click="imgElementSave(index)"
                   >
                     x
                   </button>
-                  <img :src="img.url" />
+                  <img :src="item.url" />
                 </span>
               </viewer>
             </b-input-group>
@@ -856,7 +855,7 @@ export default {
   },
   mounted() {
     this.updateData();
-    this.saveMakerList();
+    this.chkMakerList();
   },
   computed: {
     // skuNo 11자리 확인
@@ -934,7 +933,7 @@ export default {
           var tmpFileData = [];
 
           this.$store.state.getProduct.productFile.forEach((element) => {
-            var tmp = element.filePath.split(".");
+            var tmp = element.fileInPath.split(".");
 
             if (tmp[1] === "png" || tmp[1] === "jpg") {
               tmpImageFile.push(element);
@@ -947,10 +946,39 @@ export default {
         }
       } 
     },
-    // 제품 분류에 따른 제조사 정보 저장
+    // 제품 분류에 따른 제조사 정보 조회
+    chkMakerList(){
+      this.openSpinner();
+      
+      // 제조사 정보가 없을 경우 재조회
+      if(this.$store.getters["makerStore/getSelectMakerProduct"].length === 0 ){
+        this.$store.dispatch("makerStore/SELECT_MAKER", {
+          makerName: "",
+          makerAddress: "",
+          makerPerson: "",
+          makerPhone: "",
+          className: [],
+          newProduct : "product"
+        })
+        .then((response) => {
+          if (response.data === 0) {
+            console.log("데이터 실패");
+            console.log(response);
+          } else{
+            this.saveMakerList();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      } else{
+        this.saveMakerList();
+      }
+    },
+    // 제조사 정보 리스트로 변환
     saveMakerList(){
-      var makerList =  this.$store.getters["makerStore/getSelectMakerProduct"];
-      makerList.forEach(element => {
+      // 제조사 리스트에 데이터 입력
+      this.$store.getters["makerStore/getSelectMakerProduct"].forEach(element => {
         switch(element.className){
           case "사료":
             this.makerOptions1.push({"value" : element.makerName, "text" :element.makerName})
@@ -971,8 +999,9 @@ export default {
             this.makerOptions6.push({"value" : element.makerName, "text" :element.makerName})
             break;
         }
-        
       });
+      
+      this.closeSpinner();
     },
     // 상품정보 변경
     selectReplyData(item) {
@@ -1004,14 +1033,12 @@ export default {
       }
       // 관리자일 경우 추가 가능
       else {
-        // this.openSpinner();
+        this.openSpinner();
 
         this.$store.commit("productStore/SET_INSERT_PRODUCT", "3");
 
         this.imgFiles.forEach((element) => {
-          element.forEach((e) => {
-            this.formData.append("file", e["file"]);
-          });
+            this.formData.append("file", element["file"]);
         });
 
         // this.formData.append("fileData", this.fileData);
@@ -1081,13 +1108,11 @@ export default {
       this.$store.commit("productStore/SET_UPDATE_PRODUCT", "3");
 
       this.imgFiles.forEach((element) => {
-        element.forEach((e) => {
-          if (e["file"]) {
-            this.formData.append("file", e["file"]);
-          } else if (e["imgId"]) {
-            this.formData.append("fileId", e["imgId"]);
+          if (element["file"]) {
+            this.formData.append("file", element["file"]);
+          } else if (element["imgId"]) {
+            this.formData.append("fileId", element["imgId"]);
           }
-        });
       });
 
       this.fileData.forEach((element) => {
