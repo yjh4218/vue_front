@@ -68,61 +68,41 @@ const inspectStore = {
   actions: {
     // 신규 검수 추가
     INSERT_INSPECT(context, selectCon) {
-      console.log("INSERT_INSPECT actions 접속됨");
-      console.log(context);
-
       return insertInspect(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_INSERT_INSPECT", response.data.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 검수 수정 추가
     UPDATE_INSPECT(context, selectCon) {
-      console.log("UPDATE_INSPECT actions 접속됨");
-      console.log(context);
 
       return updateInspect(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_UPDATE_INSPECT", response.data.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 검수 삭제
     DELETE_INSPECT(context, selectCon) {
-      console.log("DELETE_INSPECT actions 접속됨");
-      console.log(selectCon);
 
       return deleteInspect(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
-          console.log(response.data.data);
           context.commit("SET_DELETE_INSPECT", response.data.data);
           return response.data;
         })
         .catch((error) => {
           if (error.response) {
             // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           } else if (error.request) {
             // 요청이 이루어 졌으나 응답을 받지 못했습니다.
             // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
@@ -137,58 +117,40 @@ const inspectStore = {
     },
     // 검수 조회(처음)
     SELECT_INSPECT(context, selectCon) {
-      console.log("SELECT_INSPECT actions 접속됨");
-      console.log(selectCon);
 
       return selectInspect(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_SELECT_INSPECT", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 검수 엑셀 다운
     SELECT_INSPECT_EXCEL(context, selectCon) {
-      console.log("SELECT_INSPECT_EXCEL actions 접속됨");
-      console.log(selectCon);
 
       return selectInspectExcel(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_SELECT_INSPECT", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 페이지에 맞는 검색
     SELECT_PAGE_INSPECT(context, selectCon) {
-      console.log("SELECT_PAGE_INSPECT actions 접속됨");
-      console.log(selectCon);
 
       return selectPageInspect(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_SELECT_INSPECT", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
   },

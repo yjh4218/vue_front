@@ -63,56 +63,39 @@ const claimStore = {
 
         return insertClaim(selectCon)
             .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_INSERT_CLAIM", response.data.data);
-            return response.data;
+                context.commit("SET_INSERT_CLAIM", response.data.data);
+                return response.data;
             })
             .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+                console.log(error.response);
             });
         },
 
         // 클레임 수정 추가
         UPDATE_CLAIM(context, selectCon) {
-        console.log("UPDATE_CLAIM actions 접속됨");
-        console.log(context);
 
         return updateClaim(selectCon)
             .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_UPDATE_CLAIM", response.data.data);
-            return response.data;
+                context.commit("SET_UPDATE_CLAIM", response.data.data);
+                return response.data;
             })
             .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+                console.log(error.response);
             });
         },
 
         // 클레임 삭제
         DELETE_CLAIM(context, selectCon) {
-        console.log("DELETE_CLAIM actions 접속됨");
-        console.log(selectCon);
 
         return deleteClaim(selectCon)
             .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log(response.data.data);
-            context.commit("SET_DELETE_CLAIM", response.data.data);
-            return response.data;
+                context.commit("SET_DELETE_CLAIM", response.data.data);
+                return response.data;
             })
             .catch((error) => {
             if (error.response) {
                 // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
+                console.log(error.response);
             } else if (error.request) {
                 // 요청이 이루어 졌으나 응답을 받지 못했습니다.
                 // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
@@ -133,15 +116,11 @@ const claimStore = {
 
         return selectClaim(selectCon)
             .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_SELECT_CLAIM", response.data.data);
-            return response.data;
+                context.commit("SET_SELECT_CLAIM", response.data.data);
+                return response.data;
             })
             .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+                console.log(error.response);
             });
         },
         

@@ -124,219 +124,150 @@ const salesStore = {
     actions: {
         // 판매량 추가
         INSERT_MONTH_SALES(context, selectCon) {
-        console.log("INSERT_MONTH_SALES actions 접속됨");
-        console.log(context);
 
-        return insertMonthSales(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_INSERT_MONTH_SALES", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
+            return insertMonthSales(selectCon)
+                .then((response) => {
+                    context.commit("SET_INSERT_MONTH_SALES", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
 
         // 일부 판매량 조회
         SELECT_SALES(context, selectCon) {
-        console.log("SELECT_SALES actions 접속됨");
-        console.log(selectCon);
 
-        return selectSales(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_SELECT_SALES", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
+            return selectSales(selectCon)
+                .then((response) => {
+                    context.commit("SET_SELECT_SALES", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
 
         // 월별 판매량 조회
         SELECT_MONTH_SALES(context, selectCon) {
-        console.log("SELECT_SALES actions 접속됨");
-        console.log(selectCon);
-
-        return selectMonthSales(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_SELECT_MONTH_SALES", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
+            return selectMonthSales(selectCon)
+                .then((response) => {
+                    context.commit("SET_SELECT_MONTH_SALES", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
         
         // 월별 판매량 수정 추가
         UPDATE_MONTH_SALES(context, selectCon) {
-        console.log("UPDATE_SALES actions 접속됨");
-        console.log(context);
-
-        return updateMonthSales(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_UPDATE_MONTH_SALES", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
+            return updateMonthSales(selectCon)
+                .then((response) => {
+                    context.commit("SET_UPDATE_MONTH_SALES", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
 
         // 월별 판매량 삭제
         DELETE_MONTH_SALES(context, selectCon) {
-        console.log("DELETE_SALES actions 접속됨");
-        console.log(selectCon);
-
-        return deleteMonthSales(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log(response.data.data);
-            context.commit("SET_DELETE_MONTH_SALES", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            if (error.response) {
-                // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else if (error.request) {
-                // 요청이 이루어 졌으나 응답을 받지 못했습니다.
-                // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
-                // Node.js의 http.ClientRequest 인스턴스입니다.
-                console.log(error.request);
-            } else {
-                // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
-                console.log("Error", error.message);
-            }
-            console.log(error.config);
-            });
+            return deleteMonthSales(selectCon)
+                .then((response) => {
+                    context.commit("SET_DELETE_MONTH_SALES", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                if (error.response) {
+                    // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
+                    console.log(error.response);
+                } else if (error.request) {
+                    // 요청이 이루어 졌으나 응답을 받지 못했습니다.
+                    // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
+                    // Node.js의 http.ClientRequest 인스턴스입니다.
+                    console.log(error.request);
+                } else {
+                    // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
+                    console.log("Error", error.message);
+                }
+                console.log(error.config);
+                });
         },
 
         // 제품 구성품 추가
         INSERT_SALES_PRODUCT_COMPONENT(context, selectCon) {
-        console.log("INSERT_SALES_PRODUCT_COMPONENT actions 접속됨");
-        console.log(context);
 
         return insertSalesProductComponent(selectCon)
             .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_INSERT_SALES_PRODUCT_COMPONENT", response.data.data);
-            return response.data;
+                context.commit("SET_INSERT_SALES_PRODUCT_COMPONENT", response.data.data);
+                return response.data;
             })
             .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+                console.log(error.response);
             });
         },
 
         // 제품 구성품 수정
         UPDATE_SALES_PRODUCT_COMPONENT(context, selectCon) {
-        console.log("UPDATE_SALES_PRODUCT_COMPONENT actions 접속됨");
-        console.log(context);
-
-        return updateSalesProductComponent(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_UPDATE_SALES_PRODUCT_COMPONENT", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
+            return updateSalesProductComponent(selectCon)
+                .then((response) => {
+                    context.commit("SET_UPDATE_SALES_PRODUCT_COMPONENT", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
 
         
         // 제품 구성품 삭제
         DELETE_SALES_PRODUCT_COMPONENT(context, selectCon) {
-        console.log("DELETE_SALES_PRODUCT_COMPONENT actions 접속됨");
-        console.log(context);
-
-        return deleteSalesProductComponent(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_DELETE_SALES_PRODUCT_COMPONENT", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
+            return deleteSalesProductComponent(selectCon)
+                .then((response) => {
+                    context.commit("SET_DELETE_SALES_PRODUCT_COMPONENT", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
 
         // SKU 중복 조회
         CHECK_SKU_DUP(context, selectCon) {
-        console.log("CHECK_SKU_DUP actions 접속됨");
-        console.log(selectCon);
-
-        return checkProductComponentSkuNo(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            console.log(response.data.data);
-            context.commit("SET_CHECK_PRODUCT_RESULT", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            if (error.response) {
-                // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else if (error.request) {
-                // 요청이 이루어 졌으나 응답을 받지 못했습니다.
-                // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
-                // Node.js의 http.ClientRequest 인스턴스입니다.
-                console.log(error.request);
-            } else {
-                // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
-                console.log("Error", error.message);
-            }
-            console.log(error.config);
-            });
+            return checkProductComponentSkuNo(selectCon)
+                .then((response) => {
+                    context.commit("SET_CHECK_PRODUCT_RESULT", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
+                        console.log(error.response);
+                    } else if (error.request) {
+                        // 요청이 이루어 졌으나 응답을 받지 못했습니다.
+                        // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
+                        // Node.js의 http.ClientRequest 인스턴스입니다.
+                        console.log(error.request);
+                    } else {
+                        // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
+                        console.log("Error", error.message);
+                    }
+                    console.log(error.config);
+                });
         },
 
         // 판매 구성품 조회
         SELECT_PRODUCT_COMPONENT(context, selectCon) {
-        console.log("SELECT_PRODUCT_COMPONENT actions 접속됨");
-        console.log(selectCon);
-
-        return selectProductComponent(selectCon)
-            .then((response) => {
-            console.log("response");
-            console.log(response);
-            context.commit("SET_SELECT_PRODUCT_COMPONENT", response.data.data);
-            return response.data;
-            })
-            .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            });
+            return selectProductComponent(selectCon)
+                .then((response) => {
+                    context.commit("SET_SELECT_PRODUCT_COMPONENT", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
     }
 }

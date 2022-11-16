@@ -3,18 +3,30 @@
     <b-overlay :show="spinnerState" rounded="sm">
       <div :class="[inputRead ? 'divEnable' : 'divDisable']">
         <div class="row">
-          <div class="col-md-4 mb-3">
+          <div class="col-md-3 mb-3">
             <b-input-group prepend="제조사명">
               <b-form-input
                 type="text"
                 v-model="makerName"
                 placeholder=""
                 value=""
-                maxlength="20"
+                maxlength="100"
               ></b-form-input>
             </b-input-group>
           </div>
-          <div class="col-md-8 mb-3">
+          <div class="col-md-3 mb-3">
+            <b-input-group prepend="평가점수(100점 만점)">
+              <b-form-input
+                type="text"
+                v-model="makerScore"
+                placeholder=""
+                value=""
+                maxlength="3"
+                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              ></b-form-input>
+            </b-input-group>
+          </div>
+          <div class="col-md-6 mb-3">
             <b-input-group prepend="제조사 주소">
               <b-form-input
                 type="text"
@@ -35,30 +47,21 @@
             </b-input-group>
           </div>
           <div class="col-md-3 mb-3">
-            <b-input-group prepend="주요공정">
-              <b-form-input
-                type="text"
-                v-model="process"
-                placeholder=""
-              ></b-form-input>
-            </b-input-group>
-          </div>
-          <div class="col-md-3 mb-3">
-            <b-input-group prepend="주요제품">
-              <b-form-input
-                type="text"
-                v-model="importProduct"
-                placeholder=""
-              ></b-form-input>
-            </b-input-group>
-          </div>
-          <div class="col-md-3 mb-3">
             <b-input-group prepend="매출액(억)">
               <b-form-input
                 type="text"
                 v-model="sales"
                 placeholder=""
                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              ></b-form-input>
+            </b-input-group>
+          </div>
+          <div class="col-md-6 mb-3">
+            <b-input-group prepend="주요공정">
+              <b-form-input
+                type="text"
+                v-model="process"
+                placeholder=""
               ></b-form-input>
             </b-input-group>
           </div>
@@ -79,7 +82,7 @@
                 type="text"
                 v-model="makerPhone"
                 placeholder="숫자만 써주세요."
-                maxlength="11"
+                maxlength="14"
                 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
               ></b-form-input>
             </b-input-group>
@@ -91,6 +94,28 @@
                 v-model="makerEmail"
                 placeholder=""
               ></b-form-input>
+            </b-input-group>
+          </div>
+        </div>
+        <div class="col-md-12 mb-3">
+            <b-input-group prepend="주요제품">
+              <b-form-textarea
+                id="textarea-default"
+                v-model="importProduct"
+                rows="3"
+                max-rows="10"
+              ></b-form-textarea>
+            </b-input-group>
+          </div>
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <b-input-group prepend="제조사 정보">
+              <b-form-textarea
+                id="textarea-default"
+                v-model="makerInfo"
+                rows="3"
+                max-rows="10"
+              ></b-form-textarea>
             </b-input-group>
           </div>
         </div>
@@ -107,17 +132,17 @@
           </div>
         </div>
         <div class="row">
-            <div class="col-md-12 mb-3">
-              <b-input-group prepend="제조사 히스토리">
-                <b-form-textarea
-                  id="textarea-default"
-                  v-model="makerChangeContent"
-                  rows="3"
-                  max-rows="5"
-                ></b-form-textarea>
-              </b-input-group>
-            </div>
+          <div class="col-md-12 mb-3">
+            <b-input-group prepend="제조사 히스토리">
+              <b-form-textarea
+                id="textarea-default"
+                v-model="makerChangeContent"
+                rows="3"
+                max-rows="5"
+              ></b-form-textarea>
+            </b-input-group>
           </div>
+        </div>
       </div>
       <div class="row" v-if="propsdata === 'insertView'">
         <div class="col-md-12 mb-3">
@@ -147,89 +172,91 @@
         </div>
       </div>
 <!-- v-if="propsdata === 'updateView'" -->
-      <div class="leftTable">
-        <div class="row">
-          <div class="col-md-6">
-            <p>※ 제조사 히스토리(수정 시 체크 박스 선택 필요)</p>
+      <div v-if="propsdata === 'updateView'">
+        <div class="leftTable">
+          <div class="row">
+            <div class="col-md-6">
+              <p>※ 제조사 히스토리(수정 시 체크 박스 선택 필요)</p>
+            </div>
+            <div class="col-md-6">
+              <b-button
+                variant="primary"
+                class="rightBox"
+                v-b-modal.reply-update-modal
+              >
+                제조사 정보 수정
+              </b-button>
+              <b-button
+                variant="danger"
+                class="rightBox"
+                v-b-modal.reply-delete-modal
+              >
+                제조사 정보 삭제
+              </b-button>
+            </div>
           </div>
-          <div class="col-md-6">
-            <b-button
-              variant="primary"
-              class="rightBox"
-              v-b-modal.reply-update-modal
+          
+          <div class="replytable">
+            <b-table
+              sticky-header
+              responsive
+              striped
+              hover
+              :items="makerReply"
+              :fields="histioryFields"
+              label-sort-asc=""
+              label-sort-desc=""
+              label-sort-clear=""
             >
-              제조사 정보 수정
-            </b-button>
-            <b-button
-              variant="danger"
-              class="rightBox"
-              v-b-modal.reply-delete-modal
-            >
-              제조사 정보 삭제
-            </b-button>
+              <template v-slot:head(selected)>
+                <b-form-checkbox></b-form-checkbox>
+              </template>
+              <template v-slot:cell(selected)="row">
+                <b-form-checkbox
+                  v-model="row.item.selected"
+                  @change="selectReplyData(row.item)"
+                ></b-form-checkbox>
+              </template>
+
+              <!-- 수정 권한 내용 -->
+              <template v-slot:cell(makerChangeReply)="row">
+                <b-form-input v-model="row.item.makerChangeReply" />
+              </template>
+            </b-table>
           </div>
         </div>
-        <div class="replytable">
-          <b-table
-            sticky-header
-            responsive
-            striped
-            hover
-            :items="makerReply"
-            :fields="histioryFields"
-            label-sort-asc=""
-            label-sort-desc=""
-            label-sort-clear=""
-          >
-            <template v-slot:head(selected)>
-              <b-form-checkbox></b-form-checkbox>
-            </template>
-            <template v-slot:cell(selected)="row">
-              <b-form-checkbox
-                v-model="row.item.selected"
-                @change="selectReplyData(row.item)"
-              ></b-form-checkbox>
-            </template>
-
-            <!-- 수정 권한 내용 -->
-            <template v-slot:cell(makerChangeReply)="row">
-              <b-form-input v-model="row.item.makerChangeReply" />
-            </template>
-          </b-table>
+        <div class="rightTable">
+          <div class="row">
+            <div class="col-md-6">
+              <p>※ 제조사 점검내역(수정, 삭제 시 더블클릭)</p>
+            </div>
+            <div class="col-md-6">
+              <b-button
+                variant="primary"
+                class="rightBox"
+                @click="addAudit()"
+              >
+                점검 내역 추가
+              </b-button>
+            </div>
+          </div>
+          <div>
+            <b-table
+              sticky-header
+              responsive
+              striped
+              hover
+              :items="makerAudit"
+              :fields="auditFields"
+              label-sort-asc=""
+              label-sort-desc=""
+              label-sort-clear=""
+              @row-dblclicked="makerAuditDetails"
+            >
+            </b-table>
+          </div>
         </div>
       </div>
-
-      <div class="rightTable">
-        <div class="row">
-          <div class="col-md-6">
-            <p>※ 제조사 점검내역(수정, 삭제 시 더블클릭)</p>
-          </div>
-          <div class="col-md-6">
-            <b-button
-              variant="primary"
-              class="rightBox"
-              @click="addAudit()"
-            >
-              점검 내역 추가
-            </b-button>
-          </div>
-        </div>
-        <div>
-          <b-table
-            sticky-header
-            responsive
-            striped
-            hover
-            :items="makerAudit"
-            :fields="auditFields"
-            label-sort-asc=""
-            label-sort-desc=""
-            label-sort-clear=""
-          >
-          </b-table>
-        </div>
-      </div>
-
       <b-modal id="insert-modal">
         <!-- <template #modal-title> 신규제조사 등록 </template> -->
         <div class="my-4">신규 제조사를 등록하시겠습니까?</div>
@@ -511,7 +538,9 @@ export default {
       makerAddress: "",
       process: "",
       importProduct: "",
+      makerScore: "",
       sales: "",
+      makerInfo: "",
       makerPerson: "",
       makerPhone: "",
       makerEmail: "",
@@ -567,11 +596,11 @@ export default {
     // 제조사 상세 정보 입력
     updateData() {
       if (this.propsdata === "updateView") {
-        console.log("setData if 실행 : " + this.propsdata);
-
         this.makerId = this.$store.state.getMaker.id;
         this.makerName = this.$store.state.getMaker.makerName;
         this.className = this.$store.state.getMaker.className;
+        this.makerScore = this.$store.state.getMaker.makerScore;
+        this.makerInfo = this.$store.state.getMaker.makerInfo;        
         this.makerAddress = this.$store.state.getMaker.makerAddress;
         this.process = this.$store.state.getMaker.process;
         this.importProduct = this.$store.state.getMaker.importProduct;
@@ -583,6 +612,7 @@ export default {
         this.makerReply = this.$store.state.getMaker.makerChangeReplies;
         this.inputRead = false;
         this.messageId = this.$store.state.getMaker.id;
+        this.makerAudit = this.$store.state.getMaker.makerAuditList;
 
         this.makerReply.forEach((e) => {
           let tmpData = {
@@ -596,10 +626,9 @@ export default {
         });
       } else {
         this.imgFlag = true;
-        console.log("setData else 실행 : " + this.propsdata);
       }
     },
-    // 제품 검색
+    // 점검 내역 추가
     addAudit() {
       // 관리자가 아닐 경우 추가 불가능
       // adminChkMixin 사용
@@ -616,21 +645,35 @@ export default {
     },
     // 상품정보 변경
     selectReplyData(item) {
-      console.log("체크 선택됨");
-      console.log(this.selectReply);
-
-      console.log(item);
       this.selectReply.forEach((element, index) => {
         if (element.id === item.id) {
           this.selectReply[index].selected = item.selected;
         }
       });
-      console.log("체크 끝남");
-      console.log(this.selectReply);
     },
     // 수정인지, 신규 등록인지 확인
     inpuReadMode() {
       this.inputRead = true;
+    },
+    // 더블 클릭 이벤트
+    makerAuditDetails(item) {
+      this.$store.commit("SET_MAKER_AUDIT", "");
+
+      // 제조사 점검 상세정보 페이지로 이동
+      this.$store.commit("SET_MAKER_AUDIT", item);
+      // 관리자가 아닐 경우 오픈 불가능
+      // adminChkMixin 사용
+      this.adminChk();
+      if (this.adminChkFlag) {
+        this.modalName = "noAdmin";
+
+        this.openModal();
+      } else{
+        this.messageMode="updateView"
+        this.searchModal = true;
+        this.modalName = "addAudit";
+      }
+      // this.$router.push(`/makerUp/${item.id}`);
     },
     // 제조사 추가
     insertMaker() {
@@ -645,9 +688,7 @@ export default {
       // 관리자일 경우 추가 가능
       else {
         this.openSpinner();
-
         this.$store.commit("makerStore/SET_INSERT_MAKER", 3);
-        console.log("제조사 추가 진행");
 
         let data = {
           id: this.makerId,
@@ -657,6 +698,8 @@ export default {
           process: this.process,
           importProduct: this.importProduct,
           sales: this.sales,
+          makerScore : this.makerScore,
+          makerInfo : this.makerInfo,
           makerPerson: this.makerPerson,
           makerPhone: this.makerPhone,
           makerEmail: this.makerEmail,
@@ -670,21 +713,18 @@ export default {
 
             // 제조사 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.insertState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.insertState = 0;
               this.openModal();
               this.closeSpinner();
             }
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -702,9 +742,7 @@ export default {
       // 관리자일 경우 수정 가능
       else {
         this.openSpinner();
-        console.log("제품 수정 진행");
         this.$store.commit("makerStore/SET_UPDATE_MAKER", 3);
-        console.log("makerId : " + this.makerId);
 
         let data = {
           id: this.makerId,
@@ -713,6 +751,8 @@ export default {
           makerAddress: this.makerAddress,
           process: this.process,
           importProduct: this.importProduct,
+          makerScore : this.makerScore,
+          makerInfo : this.makerInfo,
           sales: this.sales,
           makerPerson: this.makerPerson,
           makerPhone: this.makerPhone,
@@ -721,8 +761,6 @@ export default {
           note: this.note,
         };
 
-        console.log("데이터 들어옴");
-
         this.$store
           .dispatch("makerStore/UPDATE_MAKER", data)
           .then((response) => {
@@ -730,23 +768,20 @@ export default {
 
             // 제조사 업데이트 성공
             if (response.data === 1) {
-              console.log("response 값 1");
+              
               this.updateState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 업데이트 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
+              
               this.updateState = 3;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -764,7 +799,6 @@ export default {
       // 관리자일 경우 삭제 가능
       else {
         this.openSpinner();
-        console.log("제조사 삭제 진행");
         this.$store.commit("makerStore/SET_DELETE_MAKER", 3);
 
         this.$store
@@ -773,23 +807,20 @@ export default {
             this.modalName = "deleteMaker";
             // 제조사 삭제 성공
             if (response.data === 1) {
-              console.log("response 값 1");
+              
               this.deleteState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 제조사 업데이트 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
+              
               this.deleteState = 0;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -808,14 +839,9 @@ export default {
       // 관리자일 경우 수정 가능
       else {
         this.openSpinner();
-
-        console.log("리플 수정 진행");
-
         this.$store.commit("makerStore/SET_UPDATE_MAKER_REPLY", "3");
 
-        // console.log("makerId : " + this.makerId);
-
-         var tmpReply = [];
+        var tmpReply = [];
         this.makerReply.forEach((element) => {
           if (element.selected) {
             tmpReply.push({replyId : element.id, changeReplyData : element.makerChangeReply});
@@ -827,33 +853,22 @@ export default {
           replyDataList: tmpReply,
         };
 
-        console.log("수정 진행 전 데이터 확인");
-        console.log("makerReply");
-        console.log(this.makerReply);
-        console.log("data");
-        console.log(data);
-
         this.$store
           .dispatch("makerStore/UPDATE_MAKER_REPLY", data)
           .then((response) => {
             this.modalName = "updateMakerReply";
 
             if (response.data === 1) {
-              console.log("response 값 1");
               this.updateState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
               this.updateState = false;
               this.openModal();
               this.closeSpinner();
             }
-            console.log("updateProduct : " + this.updateState);
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -861,7 +876,6 @@ export default {
 
     // 제품 리플 삭제
     deleteMakerReply() {
-      console.log("제품 변경 리플 삭제 진행");
 
       // 관리자가 아닐 경우 삭제 불가능
       // adminChkMixin 사용
@@ -894,22 +908,16 @@ export default {
             this.modalName = "deleteMakerReply";
 
             if (response.data === 1) {
-              console.log("response 값 1");
               this.deleteState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
               this.deleteState = false;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("updateProduct : " + this.deleteState);
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }

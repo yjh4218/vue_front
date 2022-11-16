@@ -21,10 +21,6 @@ export default {
       inputRead: "true",
     };
   },
-  created() {
-    console.log("inspectUpView 들어옴");
-    // checkConfirm();
-  },
   computed: {},
   methods: {
     // inpuReadMode() {

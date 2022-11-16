@@ -39,7 +39,7 @@
               type="text"
               v-model="makerPhone"
               placeholder="숫자만 써주세요."
-              maxlength="11"
+              maxlength="14"
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
             ></b-form-input>
           </b-input-group>
@@ -116,8 +116,6 @@ export default {
   methods: {
     // 데이터 조회
     searchData() {
-      console.log("데이터 조회");
-
       this.$store.dispatch("makerStore/SELECT_MAKER", {
         makerName: this.maker,
         makerAddress: this.makerAddress,
@@ -128,7 +126,6 @@ export default {
     },
     // 상위 컴포넌트에 스피너 열기
     spinnerStart() {
-      console.log("event emit 접속");
       this.$emit('spinnerStart')
     }
   },

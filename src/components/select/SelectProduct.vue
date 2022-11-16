@@ -8,9 +8,9 @@
             <b-form-input
               type="text"
               v-model="skuNo"
-              placeholder=""
+              placeholder="숫자만 써주세요."
               value=""
-              maxlength="12"
+              maxlength="13"
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
             ></b-form-input>
           </b-input-group>
@@ -199,8 +199,6 @@ export default {
   methods: {
     // 데이터 조회
     searchData() {
-      console.log("데이터 조회");
-      console.log(this.$route.name);
 
       this.spinnerStart();
       if (
@@ -229,10 +227,6 @@ export default {
         var afdate = dayjs(this.afterDate);
 
         if (bfdate.isSameOrBefore(this.afterDate, "day")) {
-          console.log("날짜 확인됨");
-
-          console.log(afdate);
-          console.log(bfdate);
 
           let data = {
             page: 0,
@@ -269,12 +263,10 @@ export default {
     },
     // 상위 컴포넌트에 스피너 열기
     spinnerStart() {
-      console.log("event emit 접속");
       this.$emit("spinnerStart");
     },
   },
   mounted() {
-    console.log("selectProduct Mount 실행");
     // 처음 실행 시 날짜 지정
     this.prevWeek();
     // 처음에 전체 검수 조회 함

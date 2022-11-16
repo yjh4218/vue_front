@@ -11,10 +11,10 @@
                   type="text"
                   v-model="skuNo"
                   :state="skuNoState"
-                  placeholder=""
                   value=""
-                  maxlength="12"
+                  maxlength="13"
                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                  placeholder="숫자만 써주세요."
                   required
                   :readonly="propsdata === 'updateView'"
                 ></b-form-input>
@@ -29,7 +29,7 @@
                 </b-input-group-prepend>
               </b-input-group>
               <b-form-text id="input-live-help">
-                -를 제외한 12자리 sku-no를 입력하세요.
+                -를 제외한 sku-no를 입력하세요.
               </b-form-text>
             </div>
             <div class="col-md-5 mb-3">
@@ -217,6 +217,53 @@
                   value="0"
                 ></b-form-input>
               </b-input-group>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <p>※ 파일 첨부하기</p>
+              <b-form-file multiple @change="AddfileData" plain></b-form-file>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <p>※ 파일 첨부 목록</p>
+              <div>
+                <b-table
+                  sticky-header
+                  responsive
+                  striped
+                  hover
+                  :items="fileData"
+                  :fields="fileFields"
+                  label-sort-asc=""
+                  label-sort-desc=""
+                  label-sort-clear=""
+                >
+                  <template #cell(index)="data">
+                    {{ data.index + 1 }}
+                  </template>
+                  <template v-slot:cell(filename)="row">
+                    <span v-for="(item, index) in row.item" :key="index">
+                      {{ item.name }}
+                    </span>
+                  </template>
+
+                  <!-- 수정 권한 내용 -->
+                  <template v-slot:cell(chkDel)="row">
+                    <b-button
+                      @click="delDown(row.item, row.index, $event.target)"
+                      >삭제</b-button
+                    >
+                  </template>
+                  <template v-slot:cell(down)="row">
+                    <b-button
+                      @click="downData(row.item, row.index, $event.target)"
+                      >다운로드</b-button
+                    >
+                  </template>
+                </b-table>
+              </div>
             </div>
           </div>
           <div class="row">
@@ -681,12 +728,13 @@ import { modalMixin } from "../../mixins/modalMixin.js";
 import { spinnerMixin } from "../../mixins/spinnerMixin.js";
 import { imageMixin } from "../../mixins/imageMixin.js";
 import { adminChkMixin } from "../../mixins/adminChkMixin.js";
+import { fileMixin } from "../../mixins/fileMixin.js";
 
 export default {
   components: {
     confirmModal,
   },
-  mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin],
+  mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin, fileMixin],
   props: ["propsdata"],
   data() {
     return {
@@ -782,6 +830,22 @@ export default {
         },
         { key: "replyDate", label: "작성날짜", sortable: true, thClass: "w15" },
       ],
+      fileFields: [
+        {
+          key: "index",
+          label: "번호",
+          sortable: true,
+          thClass: "w5",
+        },
+        {
+          key: "filename",
+          label: "파일명",
+          sortable: true,
+          thClass: "w50",
+        },
+        { key: "down", label: "다운로드", sortable: true, thClass: "w15" },
+        { key: "chkDel", label: "삭제버튼", sortable: true, thClass: "w15" },
+      ],
       confirmSkuNo: "",
       inputRead: true,
       skuNoDuplication: true,
@@ -805,9 +869,6 @@ export default {
     searchProductDup() {
       this.openSpinner();
 
-      console.log("ProductInputList 컴포넌트");
-      console.log(this.propsdata);
-
       this.$store.commit("productStore/SET_CHECK_PRODUCT_RESULT", "3");
 
       this.$store
@@ -816,13 +877,13 @@ export default {
           this.modalName = "checkSkuNo";
 
           if (response.data === 1) {
-            console.log("response 값 1");
+            
             this.skuNoDuplication = true;
             this.insertState = false;
             this.openModal();
             this.closeSpinner();
           } else if (response.data === 0) {
-            console.log("response 값 0");
+            
             this.skuNoDuplication = false;
             this.confirmSkuNo = this.skuNo;
             this.insertState = true;
@@ -830,16 +891,12 @@ export default {
             this.closeSpinner();
           }
           this.closeSpinner();
-
-          console.log("중복확인 : " + this.skuNoDuplication);
-          console.log("modalName : " + this.modalName);
         })
         .catch();
     },
     // 제품 수정일 경우 데이터 input에 입력
     updateData() {
       if (this.propsdata === "updateView") {
-        console.log("setData if 실행 : " + this.propsdata);
         this.productId = this.$store.state.getProduct.id;
         this.skuNo = this.$store.state.getProduct.skuNo;
         this.productName = this.$store.state.getProduct.productName;
@@ -871,13 +928,24 @@ export default {
           this.selectReply.push(tmpData);
         });
 
-        // 이미지 파일 있는지 확인.
-        if (this.$store.state.getProduct.imageFile.length > 0) {
-          this.imgUpdate(this.$store.state.getProduct.imageFile);
+        // file 데이터 있는지 확인
+        if (this.$store.state.getProduct.productFile.length > 0) {
+          var tmpImageFile = [];
+          var tmpFileData = [];
+
+          this.$store.state.getProduct.productFile.forEach((element) => {
+            var tmp = element.filePath.split(".");
+
+            if (tmp[1] === "png" || tmp[1] === "jpg") {
+              tmpImageFile.push(element);
+            } else {
+              tmpFileData.push(element);
+            }
+          });
+          this.imgUpdate(tmpImageFile, "file");
+          this.updateFileData(tmpFileData);
         }
-      } else {
-        console.log("setData else 실행 : " + this.propsdata);
-      }
+      } 
     },
     // 제품 분류에 따른 제조사 정보 저장
     saveMakerList(){
@@ -908,21 +976,14 @@ export default {
     },
     // 상품정보 변경
     selectReplyData(item) {
-      console.log("체크 선택됨");
-      console.log(this.selectReply);
-
-      console.log(item);
       this.selectReply.forEach((element, index) => {
         if (element.id === item.id) {
           this.selectReply[index].selected = item.selected;
         }
       });
-      console.log("체크 끝남");
-      console.log(this.selectReply);
     },
     // 제품 분류 수정
     classNameChange(){
-      console.log("제품분류 수정됨");
       if(this.className !== '사료'){
         this.calorie = "0";
         this.sodium  = "0";
@@ -943,17 +1004,19 @@ export default {
       }
       // 관리자일 경우 추가 가능
       else {
-        this.openSpinner();
+        // this.openSpinner();
 
         this.$store.commit("productStore/SET_INSERT_PRODUCT", "3");
 
-        console.log("제품 추가 진행");
-
         this.imgFiles.forEach((element) => {
-          // console.log(element);
           element.forEach((e) => {
-            this.formData.append("image", e["file"]);
+            this.formData.append("file", e["file"]);
           });
+        });
+
+        // this.formData.append("fileData", this.fileData);
+        this.fileData.forEach((element) => {
+          this.formData.append("file", element["file"]);
         });
 
         let data = {
@@ -975,8 +1038,6 @@ export default {
           note: this.note,
         };
 
-        console.log(data);
-
         this.formData.append(
           "data",
           new Blob([JSON.stringify(data)], { type: "application/json" })
@@ -989,36 +1050,24 @@ export default {
           })
         );
 
-        for (var pair of this.formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
-          console.log(pair[1]);
-        }
-        for (var key of this.formData.keys()) {
-          console.log(`${key} : ${this.formData.get(key)}`);
-        }
-
         this.$store
           .dispatch("productStore/INSERT_PRODUCT", this.formData)
           .then((response) => {
             this.modalName = "insertProduct";
 
             if (response.data === 1) {
-              console.log("response 값 1");
+              
               this.insertState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
+              
               this.insertState = false;
               this.openModal();
               this.closeSpinner();
             }
-            console.log("insertState : " + this.insertState);
-
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
 
@@ -1029,24 +1078,24 @@ export default {
     updateProduct() {
       
       this.openSpinner();
-
-      console.log("제품 수정 진행");
-
       this.$store.commit("productStore/SET_UPDATE_PRODUCT", "3");
 
-      console.log("productId : " + this.productId);
-
       this.imgFiles.forEach((element) => {
-        // console.log(element);
         element.forEach((e) => {
           if (e["file"]) {
-            console.log("신규 이미지 존재");
-            this.formData.append("image", e["file"]);
+            this.formData.append("file", e["file"]);
           } else if (e["imgId"]) {
-            console.log("기존 이미지 존재");
-            this.formData.append("imgId", e["imgId"]);
+            this.formData.append("fileId", e["imgId"]);
           }
         });
+      });
+
+      this.fileData.forEach((element) => {
+        if (element["file"]) {
+          this.formData.append("file", element["file"]);
+        } else if (element["fileId"]) {
+          this.formData.append("fileId", element["fileId"]);
+        }
       });
 
       let data = {
@@ -1068,9 +1117,6 @@ export default {
         sodium: this.sodium,
         note: this.note,
       };
-
-      console.log("this.productChangeContent");
-      console.log(this.productChangeContent);
 
       this.formData.append(
         "data",
@@ -1095,21 +1141,16 @@ export default {
           this.modalName = "updateProduct";
 
           if (response.data === 1) {
-            console.log("response 값 1");
             this.updateState = true;
             this.openModal();
             this.closeSpinner();
           } else if (response.data === 0) {
-            console.log("response 값 0");
             this.updateState = false;
             this.openModal();
             this.closeSpinner();
           }
-          console.log("updateProduct : " + this.updateState);
-          console.log("modalName : " + this.modalName);
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
       
@@ -1130,22 +1171,16 @@ export default {
           this.modalName = "deleteProduct";
 
           if (response.data === 1) {
-            console.log("response 값 1");
             this.deleteState = true;
             this.openModal();
             this.closeSpinner();
           } else if (response.data === 0) {
-            console.log("response 값 0");
             this.deleteState = false;
             this.openModal();
             this.closeSpinner();
           }
-
-          console.log("updateProduct : " + this.deleteState);
-          console.log("modalName : " + this.modalName);
         })
         .catch((error) => {
-          console.log("error 발생");
           console.log(error);
         });
       
@@ -1165,11 +1200,7 @@ export default {
       else {
         this.openSpinner();
 
-        console.log("리플 수정 진행");
-
         this.$store.commit("productStore/SET_UPDATE_PRODUCT_REPLY", "3");
-
-        // console.log("productId : " + this.productId);
 
         var tmpReply = [];
         this.productReply.forEach((element) => {
@@ -1183,33 +1214,22 @@ export default {
           replyDataList: tmpReply,
         };
 
-        console.log("수정 진행 전 데이터 확인");
-        console.log("productReply");
-        console.log(this.productReply);
-        console.log("data");
-        console.log(data);
-
         this.$store
           .dispatch("productStore/UPDATE_PRODUCT_REPLY", data)
           .then((response) => {
             this.modalName = "updateProductReply";
 
             if (response.data === 1) {
-              console.log("response 값 1");
               this.updateState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
               this.updateState = false;
               this.openModal();
               this.closeSpinner();
             }
-            console.log("updateProduct : " + this.updateState);
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -1217,8 +1237,6 @@ export default {
 
     // 제품 리플 삭제
     deleteProductReply() {
-      console.log("제품 변경 리플 삭제 진행");
-
       // 관리자가 아닐 경우 삭제 불가능
       // adminChkMixin 사용
       this.adminChk();
@@ -1250,22 +1268,16 @@ export default {
             this.modalName = "deleteProductReply";
 
             if (response.data === 1) {
-              console.log("response 값 1");
               this.deleteState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              console.log("response 값 0");
               this.deleteState = false;
               this.openModal();
               this.closeSpinner();
             }
-
-            console.log("updateProduct : " + this.deleteState);
-            console.log("modalName : " + this.modalName);
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
       }
@@ -1286,9 +1298,7 @@ export default {
     },
     // 등록 완료 되었을 경우 초기화
     roturInit() {
-      console.log("routerInit 접속. 새로고침 진행");
       this.$router.push("/productSel");
-      // this.$router.go();
     },
   },
 };

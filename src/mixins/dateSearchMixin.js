@@ -22,7 +22,6 @@ export const dateSearchMixin = {
         prevWeek() {
             var d = new Date();
             this.afterDate = this.setDate(d);
-            console.log("d : " + d);
 
             var dayOfMonth = d.getDate();
             d.setDate(dayOfMonth - 7);

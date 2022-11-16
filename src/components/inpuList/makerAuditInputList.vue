@@ -35,6 +35,7 @@
                 <b-form-input
                   type="text"
                   v-model="auditScore"
+                  maxlength="3"
                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                 ></b-form-input>
               </b-input-group>
@@ -51,10 +52,7 @@
           <div class="row">
             <div class="col-md-12 mb-3">
               <b-input-group prepend="점검목적">
-                <b-form-input
-                  type="text"
-                  v-model="auditPurpose"
-                ></b-form-input>
+                <b-form-input type="text" v-model="auditPurpose"></b-form-input>
               </b-input-group>
             </div>
           </div>
@@ -120,20 +118,22 @@
                   </template>
                   <template v-slot:cell(filename)="row">
                     <span v-for="(item, index) in row.item" :key="index">
-                      {{item.name}}
-                    </span> 
+                      {{ item.name }}
+                    </span>
                   </template>
 
                   <!-- 수정 권한 내용 -->
                   <template v-slot:cell(chkDel)="row">
                     <b-button
                       @click="delDown(row.item, row.index, $event.target)"
-                    >삭제</b-button>
+                      >삭제</b-button
+                    >
                   </template>
                   <template v-slot:cell(down)="row">
                     <b-button
                       @click="downData(row.item, row.index, $event.target)"
-                    >다운로드</b-button>
+                      >다운로드</b-button
+                    >
                   </template>
                 </b-table>
               </div>
@@ -169,7 +169,7 @@
                   :key="index2"
                 >
                   <button
-                   :class="[inputRead ? 'divEnable' : 'divDisable']"
+                    :class="[inputRead ? 'divEnable' : 'divDisable']"
                     class="xBox"
                     v-b-modal.xBox-modal
                     @click="imgElementSave(index, index2)"
@@ -190,7 +190,8 @@
             class="rightBox"
             v-b-modal.insert-modal
             :disabled="
-            writDate === '' || auditDate ==='' || auditResult === ''"
+              writDate === '' || auditDate === '' || auditResult === ''
+            "
           >
             신규 점검 등록
           </b-button>
@@ -206,8 +207,8 @@
           </b-button>
         </div>
         <div class="col-md-12 mb-3" v-else>
-          <b-button variant="primary" class="rightBox" @click="inpuReadMode" >
-            점검 추가하기
+          <b-button variant="primary" class="rightBox" @click="inpuReadMode">
+            점검 수정하기
           </b-button>
         </div>
       </div>
@@ -244,7 +245,7 @@
             <b-button
               variant="primary"
               class="frightBox"
-              @click="updateInspect(), $bvModal.hide('update-modal')"
+              @click="updateMakerAudit(), $bvModal.hide('update-modal')"
               :disabled="spinnerState"
             >
               수정하기
@@ -267,7 +268,7 @@
             <b-button
               variant="primary"
               class="frightBox"
-              @click="deleteInspect(), $bvModal.hide('delete-modal')"
+              @click="deleteMakerAudit(), $bvModal.hide('delete-modal')"
               :disabled="spinnerState"
             >
               삭제하기
@@ -322,7 +323,7 @@
             <p>검사 내용 등록에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
-        <div v-if="modalName === 'updateInspect'">
+        <div v-if="modalName === 'updateMakerAudit'">
           <div v-if="updateState === 1">
             <p>검사 정보가 수정되었습니다.</p>
           </div>
@@ -330,7 +331,7 @@
             <p>검사 정보 수정에 실패했습니다. 다시 시도해 주십시오.</p>
           </div>
         </div>
-        <div v-if="modalName === 'deleteInspect'">
+        <div v-if="modalName === 'deleteMakerAudit'">
           <div v-if="deleteState === 1">
             <p>점검 정보가 삭제되었습니다.</p>
           </div>
@@ -349,23 +350,23 @@
           slot="footer"
           v-if="modalName === 'insertMakerAudit' && insertState === 1"
         >
-          <b-button variant="primary" @click="roturInit('inspectSel')"
+          <b-button variant="primary" @click="roturInit('makerSel')"
             >확인</b-button
           >
         </template>
         <template
           slot="footer"
-          v-else-if="modalName === 'updateInspect' && updateState === 1"
+          v-else-if="modalName === 'updateMakerAudit' && updateState === 1"
         >
-          <b-button variant="primary" @click="roturInit('inspectSel')"
+          <b-button variant="primary" @click="roturInit('makerSel')"
             >확인</b-button
           >
         </template>
         <template
           slot="footer"
-          v-else-if="modalName === 'deleteInspect' && deleteState"
+          v-else-if="modalName === 'deleteMakerAudit' && deleteState"
         >
-          <b-button variant="primary" @click="roturInit('inspectSel')"
+          <b-button variant="primary" @click="roturInit('makerSel')"
             >확인</b-button
           >
         </template>
@@ -386,17 +387,19 @@ import { modalMixin } from "../../mixins/modalMixin.js";
 import { spinnerMixin } from "../../mixins/spinnerMixin.js";
 import { imageMixin } from "../../mixins/imageMixin.js";
 import { adminChkMixin } from "../../mixins/adminChkMixin.js";
+import { fileMixin } from "../../mixins/fileMixin.js";
 // import ss from '../'
 
 export default {
   components: {
     confirmModal,
   },
-  mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin],
+  mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin, fileMixin],
   props: ["propsdata"],
   data() {
     return {
-      makerId:"",
+      id: "",
+      makerId: "",
       makerAudittId: "",
       writDate: "",
       auditDate: "",
@@ -406,7 +409,6 @@ export default {
       auditContent: "",
       auditIncon: "",
       auditImprove: "",
-      fileData:[],
       auditResultOptions: [
         { value: "적합", text: "적합" },
         { value: "부적합", text: "부적합" },
@@ -428,7 +430,7 @@ export default {
         { key: "down", label: "다운로드", sortable: true, thClass: "w15" },
         { key: "chkDel", label: "삭제버튼", sortable: true, thClass: "w15" },
       ],
-      chkFileData :false,
+      chkFileData: false,
       inputRead: true,
       searchModal: false,
       insertState: 3,
@@ -439,107 +441,50 @@ export default {
   mounted() {
     this.updateData();
   },
-  computed: {
-    
-  },
-  watch: {
-  },
+  computed: {},
+  watch: {},
   methods: {
-    // 파일 첨부 데이터 확인
-    async AddfileData(event){
-      console.log("file add event");
-      console.log(event);
 
-      var files = event.target.files;
-      console.log(files);
-      
-      var temp = await this.fileDataFun(files);
-
-      temp.forEach(element => {
-        this.fileData.push(element);
-      });
-
-      console.log("파일 추가.");
-      console.log(this.fileData);
-
-    },
-    // 파일 데이터 처리
-    fileDataFun(files){
-      var temp = [];
-
-      var cnt = 1;
-      var len = files.length;
-
-      return new Promise(function(resolve){
-        [].forEach.call(files, function (i,item) {
-
-          var fileReader = new FileReader();
-          fileReader.onload = async function (e) {
-              
-              console.log(e.target);
-
-              var img = await {
-                  url : e.target.result,
-                  file : files[item]
-              };
-
-              console.log("url");
-              console.log(img);
-
-              temp.push(img);
-              
-              if(cnt === len){
-                resolve(temp)
-              } else{
-                cnt++;
-              }
-          };
-          fileReader.readAsDataURL(files[item]);
-        });
-      })
-    },
-    // 첨부파일 삭제
-    delDown(item, index){
-      console.log("파일삭제");
-      console.log(item);
-      console.log(index);
-      this.fileData.splice(index,1);
-    },
-    // 첨부파일 다운로드
-    downData(item, index){
-      console.log("파일 다운");
-      console.log(this.fileData[index]);
-      console.log(item);
-      console.log(item.name);
-      var fileDownload = require('js-file-download');
-      fileDownload(item.file, item.file.name);
-    },
-    
     // 점검 상세 정보 입력
     updateData() {
-      console.log("처음 생성 됨. 데이터 업데이트");
-      console.log(this.propsdata);
-      if(this.propsdata[1] === 'insertView'){
+      if (this.propsdata[1] === "insertView") {
         this.inputRead = true;
-      } else{
+      } else {
         this.inputRead = false;
+
+        this.id = this.$store.state.getMakerAudit.id;
+        this.writDate = this.$store.state.getMakerAudit.writDate;
+        this.auditDate = this.$store.state.getMakerAudit.auditDate;
+        this.auditPurpose = this.$store.state.getMakerAudit.auditPurpose;
+        this.auditScore = this.$store.state.getMakerAudit.auditScore;
+        this.auditResult = this.$store.state.getMakerAudit.auditResult;
+        this.auditContent = this.$store.state.getMakerAudit.auditContent;
+        this.auditIncon = this.$store.state.getMakerAudit.auditIncon;
+        this.auditImprove = this.$store.state.getMakerAudit.auditIncon;
+
+        // file 데이터 있는지 확인
+        if (this.$store.state.getMakerAudit.makerAuditFiles.length > 0) {
+          var tmpImageFile = [];
+          var tmpFileData = [];
+
+          this.$store.state.getMakerAudit.makerAuditFiles.forEach((element) => {
+            var tmp = element.filePath.split(".");
+
+            if (tmp[1] === "png" || tmp[1] === "jpg") {
+              tmpImageFile.push(element);
+            } else {
+              tmpFileData.push(element);
+            }
+          });
+          this.imgUpdate(tmpImageFile, "file");
+          this.updateFileData(tmpFileData);
+        }
       }
 
       // makerId와 데이터를 조회하면 데이터 입력 진행.
       this.makerId = this.propsdata[0];
-
-      // 이미지 파일 있는지 확인.
-      // if (this.$store.state.getInspect.imageFile.length > 0) {
-      //   this.imgUpdate(this.$store.state.getInspect.imageFile);
-      // }
     },
 
-    // // 등록 완료 되었을 경우 초기화
-    // roturInit() {
-    //   console.log("routerInit 접속. 새로고침 진행");
-    //   this.$router.push("/inspectSel");
-    //   // this.$router.go();
-    // },
     // // 업데이트 진행 시 수정모드인지 확인
     inpuReadMode() {
       // 관리자가 아닐 경우 추가 불가능
@@ -568,34 +513,30 @@ export default {
       }
       // 관리자일 경우 추가 가능
       else {
-        // this.openSpinner();
+        this.openSpinner();
         this.$store.commit("makerStore/SET_INSERT_MAKER_AUDIT", 3);
-        console.log("점검 추가 진행");
 
         this.imgFiles.forEach((element) => {
-          // console.log(element);
           element.forEach((e) => {
             this.formData.append("file", e["file"]);
           });
         });
 
         // this.formData.append("fileData", this.fileData);
-        this.fileData.forEach(element => {
-          this.formData.append("file", element["file"])
+        this.fileData.forEach((element) => {
+          this.formData.append("file", element["file"]);
         });
 
         let data = {
-          writDate : this.writDate,
-          auditDate : this.auditDate,
-          auditPurpose : this.auditPurpose,
-          auditScore : this.auditScore,
-          auditResult : this.auditResult,
-          auditContent : this.auditContent,
-          auditIncon : this.auditIncon,
-          auditImprove : this.auditImprove,
+          writDate: this.writDate,
+          auditDate: this.auditDate,
+          auditPurpose: this.auditPurpose,
+          auditScore: this.auditScore,
+          auditResult: this.auditResult,
+          auditContent: this.auditContent,
+          auditIncon: this.auditIncon,
+          auditImprove: this.auditImprove,
         };
-
-        // console.log("this.makerId : " + this.makerId);
 
         this.formData.append(
           "data",
@@ -612,153 +553,126 @@ export default {
           .dispatch("makerStore/INSERT_MAKER_AUDIT", this.formData)
           .then((response) => {
             this.modalName = "insertMakerAudit";
-            console.log("response 응답 옴");
-            console.log(response);
-
+            
             // 점검 추가 성공
             if (response.data === 1) {
-              console.log("response 값 1");
               this.insertState = 1;
               this.openModal();
               this.closeSpinner();
             }
             // 해당 점검 날짜에 이미 등록된 점검 내용 존재
             else if (response.data === 2) {
-              console.log("response 값 2");
               this.insertState = 2;
               this.openModal();
               this.closeSpinner();
             }
             // 점검 등록 실패
             else if (response.data === 0) {
-              console.log("response 값 0");
               this.insertState = 0;
             }
           })
           .catch((error) => {
-            console.log("error 발생");
             console.log(error);
           });
 
         this.formData = new FormData();
       }
     },
-    // // 점검 수정진행
-    // updateInspect() {
-      
-    //   this.openSpinner();
-    //   console.log("제품 수정 진행");
-    //   this.$store.commit("inspectStore/SET_UPDATE_INSPECT", 3);
-    //   console.log("makerId : " + this.makerId);
+    // 점검 수정진행
+    updateMakerAudit() {
+      this.openSpinner();
+      this.$store.commit("makerStore/SET_UPDATE_MAKER_AUDIT", 3);
 
-    //   this.imgFiles.forEach((element) => {
-    //     // console.log(element);
-    //     element.forEach((e) => {
-    //       if (e["file"]) {
-    //         console.log("신규 이미지 존재");
-    //         this.formData.append("image", e["file"]);
-    //       } else if (e["imgId"]) {
-    //         console.log("기존 이미지 존재");
-    //         this.formData.append("imgId", e["imgId"]);
-    //       }
-    //     });
-    //   });
+      this.imgFiles.forEach((element) => {
+        element.forEach((e) => {
+          if (e["file"]) {
+            this.formData.append("file", e["file"]);
+          } else if (e["imgId"]) {
+            this.formData.append("fileId", e["imgId"]);
+          }
+        });
+      });
 
-    //   let data = {
-    //     id: this.inspectId,
-    //     skuNo: this.skuNo,
-    //     productName: this.productName,
-    //     inspectDate: this.inspectDate,
-    //     decideResult: this.decideResult,
-    //     lotDate: this.lotDate,
-    //     appearance : this.appearance,
-    //     moisture: this.moisture,
-    //     color : this.color,
-    //     size : this.size,
-    //     damage : this.damage,
-    //     finishState : this.finishState,
-    //     checkWork : this.checkWork,
-    //     usability  : this.usability,
-    //     foreignBody  : this.foreignBody,
-    //     weight : this.weight,
-    //     checkPacking : this.checkPacking,
-    //     inspectContent: this.inspectContent,
-    //     specialReport: this.specialReport,
-    //   };
+      this.fileData.forEach((element) => {
+        if (element["file"]) {
+          this.formData.append("file", element["file"]);
+        } else if (element["fileId"]) {
+          this.formData.append("fileId", element["fileId"]);
+        }
+      });
 
-    //   this.formData.append(
-    //     "data",
-    //     new Blob([JSON.stringify(data)], { type: "application/json" })
-    //   );
-    //   this.formData.append(
-    //     "makerId",
-    //     new Blob([JSON.stringify(this.makerId)], {
-    //       type: "application/json",
-    //     })
-    //   );
+      let data = {
+        id: this.id,
+        writDate: this.writDate,
+        auditDate: this.auditDate,
+        auditPurpose: this.auditPurpose,
+        auditScore: this.auditScore,
+        auditResult: this.auditResult,
+        auditContent: this.auditContent,
+        auditIncon: this.auditIncon,
+        auditImprove: this.auditImprove,
+      };
 
-    //   this.$store
-    //     .dispatch("inspectStore/UPDATE_INSPECT", this.formData)
-    //     .then((response) => {
-    //       this.modalName = "updateInspect";
+      this.formData.append(
+        "data",
+        new Blob([JSON.stringify(data)], { type: "application/json" })
+      );
+      this.formData.append(
+        "makerId",
+        new Blob([JSON.stringify(this.makerId)], {
+          type: "application/json",
+        })
+      );
 
-    //       // 점검 업데이트 성공
-    //       if (response.data === 1) {
-    //         console.log("response 값 1");
-    //         this.updateState = 1;
-    //         this.openModal();
-    //         this.closeSpinner();
-    //       }
-    //       // 점검 업데이트 실패
-    //       else if (response.data === 0) {
-    //         console.log("response 값 0");
-    //         this.updateState = 3;
-    //         this.openModal();
-    //         this.closeSpinner();
-    //       }
+      this.$store
+        .dispatch("makerStore/UPDATE_MAKER_AUDIT", this.formData)
+        .then((response) => {
+          this.modalName = "updateMakerAudit";
 
-    //       console.log("modalName : " + this.modalName);
-    //     })
-    //     .catch((error) => {
-    //       console.log("error 발생");
-    //       console.log(error);
-    //     });
-      
-    // },
-    // // 점검 삭제 진행
-    // deleteInspect() {
-    
-    //   this.openSpinner();
-    //   console.log("점검 삭제 진행");
-    //   this.$store.commit("inspectStore/SET_DELETE_INSPECT", 3);
+          // 점검 업데이트 성공
+          if (response.data === 1) {
+            this.updateState = 1;
+            this.openModal();
+            this.closeSpinner();
+          }
+          // 점검 업데이트 실패
+          else if (response.data === 0) {
+            this.updateState = 3;
+            this.openModal();
+            this.closeSpinner();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
 
-    //   this.$store
-    //     .dispatch("inspectStore/DELETE_INSPECT", { id: this.inspectId })
-    //     .then((response) => {
-    //       this.modalName = "deleteInspect";
-    //       // 점검 삭제 성공
-    //       if (response.data === 1) {
-    //         console.log("response 값 1");
-    //         this.deleteState = 1;
-    //         this.openModal();
-    //         this.closeSpinner();
-    //       }
-    //       // 점검 업데이트 실패
-    //       else if (response.data === 0) {
-    //         console.log("response 값 0");
-    //         this.deleteState = 0;
-    //         this.openModal();
-    //         this.closeSpinner();
-    //       }
+    // 점검 삭제 진행
+    deleteMakerAudit() {
+      this.openSpinner();
+      this.$store.commit("makerStore/SET_DELETE_MAKER_AUDIT", 3);
+      this.$store
+        .dispatch("makerStore/DELETE_MAKER_AUDIT", { id: this.id })
+        .then((response) => {
+          this.modalName = "deleteMakerAudit";
+          // 점검 삭제 성공
+          if (response.data === 1) {
+            this.deleteState = 1;
+            this.openModal();
+            this.closeSpinner();
+          }
+          // 점검 업데이트 실패
+          else if (response.data === 0) {
+            this.deleteState = 0;
+            this.openModal();
+            this.closeSpinner();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-    //       console.log("modalName : " + this.modalName);
-    //     })
-    //     .catch((error) => {
-    //       console.log("error 발생");
-    //       console.log(error);
-    //     });
-      
-    // },
+    },
   },
 };
 </script>

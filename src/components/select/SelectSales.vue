@@ -87,11 +87,8 @@ export default {
     },
     // 데이터 조회
     searchData() {
-      console.log("데이터 조회");
       this.spinnerStart();
       var bfdate = dayjs(this.findDate);
-
-      console.log(bfdate);
 
       this.$store.dispatch("salesStore/SELECT_SALES", {
         skuNo: this.skuNo,
@@ -103,7 +100,6 @@ export default {
 
     // 상위 컴포넌트에 스피너 열기
     spinnerStart() {
-      console.log("event emit 접속");
       this.$emit("spinnerStart");
     },
 

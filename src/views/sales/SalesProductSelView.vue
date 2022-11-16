@@ -111,8 +111,6 @@ export default {
   watch: {
     // 검수 조회 및 결과값 입력
     SelectMaker(val) {
-      console.log("SelectMaker");
-      console.log(val);
       this.getSelectProductComponent = val;
       this.closeSpinner();
     },
@@ -129,29 +127,17 @@ export default {
     },
     // 더블 클릭 이벤트
     inspectDetails(item, index) {
-      console.log("this.$route.name : " + this.$route.name);
-      console.log("row 더블클릭됨");
-      console.log(item);
-
-      console.log(index);
 
       var temp = [];
       var size = item.productLength;
       var startPos = item.componentNumber - 1;
       var i = index - startPos;
 
-      console.log("size : " + size);
-      console.log("startPos : " + startPos);
-      console.log("i : " + i);
-
       for (var cnt = 0; cnt < size; cnt++) {
         temp.push(this.getSelectProductComponent[i]);
         i++;
       }
 
-      console.log("구성품 목록");
-      console.log(temp);
-      console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_SALES_PRODUCT", "");
 
       // 전체 제품 조회 화면일 경우 제품 상세정보 페이지로 이동

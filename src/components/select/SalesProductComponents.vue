@@ -157,8 +157,6 @@ export default {
         productCnt: this.productCnt,
       });
     }
-    // console.log("구성품 skuNo");
-    // console.log(this.message.dbClickUpProduct.componentSkuNo);
   },
   computed: {
     // 제품 조회 및 결과값 입력
@@ -169,8 +167,6 @@ export default {
   watch: {
     // 제품 조회 및 결과값 입력
     selectProdut(val) {
-      console.log("확인 : " + val.skuNo + ", " + val.productName);
-      console.log(val);
       if (this.productCnt === val.salesProduct) {
         this.productId = val.productId;
         this.skuNo = val.skuNo;
@@ -178,7 +174,6 @@ export default {
       }
     },
     saveAllData() {
-      console.log("saveAllData 로그 확인");
       this.saveData();
     },
   },

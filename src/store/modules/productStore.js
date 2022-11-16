@@ -100,61 +100,39 @@ const productStore = {
   actions: {
     // 신규 제품 추가
     INSERT_PRODUCT(context, selectCon) {
-      console.log("INSERT_PRODUCT actions 접속됨");
-      console.log(context);
-
       return insertProduct(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_INSERT_PRODUCT", response.data.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 제품 수정하기
     UPDATE_PRODUCT(context, selectCon) {
-      console.log("UPDATE_PRODUCT actions 접속됨");
-      console.log(context);
-
       return updateProduct(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_UPDATE_PRODUCT", response.data.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 제품 삭제
     DELETE_PRODUCT(context, selectCon) {
-      console.log("DELETE_PRODUCT actions 접속됨");
-      console.log(selectCon);
-
       return deleteProduct(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
-          console.log(response.data.data);
           context.commit("SET_DELETE_PRODUCT", response.data.data);
           return response.data;
         })
         .catch((error) => {
           if (error.response) {
             // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           } else if (error.request) {
             // 요청이 이루어 졌으나 응답을 받지 못했습니다.
             // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
@@ -170,61 +148,41 @@ const productStore = {
 
     // 일부 제품 조회(처음 조회)
     SELECT_PRODUCT(context, selectCon) {
-      console.log("SELECT_PRODUCT actions 접속됨");
-      console.log(selectCon);
-
       return selectProduct(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_SELECT_PRODUCT", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 데이터 조회 결과(페이지)
     SELECT_PAGE_PRODUCT(context, selectCon) {
       console.log("SELECT_PAGE_PRODUCT actions 접속됨");
-      console.log(selectCon);
 
       return selectPageProduct(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_SELECT_PRODUCT", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // SKU 중복 조회
     CHECK_SKU_DUP(context, selectCon) {
-      console.log("CHECK_SKU_DUP actions 접속됨");
-      console.log(selectCon);
-
       return checkSkuNo(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
-          console.log(response.data.data);
           context.commit("SET_CHECK_PRODUCT_RESULT", response.data.data);
           return response.data;
         })
         .catch((error) => {
           if (error.response) {
             // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           } else if (error.request) {
             // 요청이 이루어 졌으나 응답을 받지 못했습니다.
             // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
@@ -240,42 +198,27 @@ const productStore = {
 
     // 리플 수정하기
     UPDATE_PRODUCT_REPLY(context, selectCon) {
-      console.log("UPDATE_PRODUCT_REPLY actions 접속됨");
-      console.log(context);
-
       return updateProductReply(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_UPDATE_PRODUCT_REPLY", response.data.data);
           return response.data;
         })
         .catch((error) => {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          console.log(error.response);
         });
     },
 
     // 리플 삭제
     DELETE_PRODUCT_REPLY(context, selectCon) {
-      console.log("DELETE_PRODUCT_REPLY actions 접속됨");
-      console.log(selectCon);
-
       return deleteProductReply(selectCon)
         .then((response) => {
-          console.log("response");
-          console.log(response);
-          console.log(response.data.data);
           context.commit("SET_DELETE_PRODUCT_REPLY", response.data.data);
           return response.data;
         })
         .catch((error) => {
           if (error.response) {
             // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
+            console.log(error.response);
           } else if (error.request) {
             // 요청이 이루어 졌으나 응답을 받지 못했습니다.
             // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는

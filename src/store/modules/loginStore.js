@@ -23,21 +23,14 @@ const loginStore = {
   actions: {
     // 유저 로그인
     USER_LOGIN(context, user) {
-      console.log("USER_LOGIN actions 접속됨");
-      console.log(context);
 
       return userLogin(user)
         .then((response) => {
-          console.log("response");
-          console.log(response);
           context.commit("SET_USER_LOGIN", response);
           return response;
         })
         .catch((error) => {
           console.log(error.response);
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
           context.commit("SET_USER_LOGIN", error.response);
           return error.response;
         });

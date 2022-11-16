@@ -110,7 +110,6 @@ export default {
   methods: {
     //엑셀 다운로드
     download() {
-      console.log("확인");
       const workBook = XLSX.utils.book_new();
       const workSheet = XLSX.utils.json_to_sheet(this.getSelectClaim);
       XLSX.utils.book_append_sheet(workBook, workSheet, "제조사 목록");
@@ -118,11 +117,6 @@ export default {
     },
     // 더블 클릭 이벤트
     claimDetails(item) {
-      console.log("this.$route.name : " + this.$route.name);
-      console.log("row 더블클릭됨");
-      console.log(item);
-
-      console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_CLAIM", "");
 
       // 전체 제품 조회 화면일 경우 제품 상세정보 페이지로 이동
@@ -131,12 +125,10 @@ export default {
     },
     // 스피너 열기
     openSpinner() {
-      console.log("openSpinner 열림");
       this.spinnerState = true;
     },
     // 스피너 닫기
     closeSpinner() {
-      console.log("closeSpinner 닫기 ");
       this.spinnerState = false;
     },
   },

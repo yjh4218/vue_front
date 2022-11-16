@@ -6,11 +6,11 @@ export const spinnerMixin = {
     methods: {
         // 스피너 열기
         openSpinner() {
-        this.spinnerState = true;
+            this.spinnerState = true;
         },
         // 스피너 닫기
         closeSpinner() {
-        this.spinnerState = false;
+            this.spinnerState = false;
         },
     }
 }

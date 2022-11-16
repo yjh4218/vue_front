@@ -81,8 +81,6 @@ export default {
   methods: {
     // 데이터 조회
     searchData() {
-      console.log("데이터 조회");
-
       this.$store.dispatch("salesStore/SELECT_PRODUCT_COMPONENT", {
         skuNo: this.skuNo,
         productName: this.productName,
@@ -92,7 +90,6 @@ export default {
     },
     // 상위 컴포넌트에 스피너 열기
     spinnerStart() {
-      console.log("event emit 접속");
       this.$emit('spinnerStart')
     }
   },

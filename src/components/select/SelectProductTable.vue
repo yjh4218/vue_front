@@ -113,9 +113,6 @@ export default {
         this.openSpinner();
         let tmpSearchData = this.$store.getters["productStore/getSearchData"];
 
-        console.log("tmpSearchData");
-        console.log(tmpSearchData);
-
         let data = {
           downExcel: "excel",
           skuNo: tmpSearchData.skuNo,
@@ -131,9 +128,6 @@ export default {
             this.modalName = "excelDataDown";
             let excelData = response.data;
             this.excelDownState = true;
-            console.log("excel 다운 선택");
-            console.log(response);
-            console.log(response.data);
             const workBook = XLSX.utils.book_new();
             const workSheet = XLSX.utils.json_to_sheet(excelData);
             XLSX.utils.book_append_sheet(workBook, workSheet, "상품목록");
@@ -143,7 +137,6 @@ export default {
           })
           .catch((error) => {
             this.excelDownState = false;
-            console.log("error 발생");
             console.log(error);
             this.openModal();
           });
@@ -155,11 +148,6 @@ export default {
     makeExcel() {},
     // 더블 클릭 이벤트
     productDetails(item) {
-      console.log("this.$route.name : " + this.$route.name);
-      console.log("row 더블클릭됨");
-      console.log(item);
-
-      console.log("this.$route.name : " + this.$route.name);
       this.$store.commit("SET_PRODUCT", "");
 
       var tempData = {};
@@ -180,7 +168,6 @@ export default {
           productName: item.productName,
           className: item.className,
         };
-        console.log("tempData : " + tempData);
         this.$store.commit("SET_PRODUCT", tempData);
         this.$emit("selectProductCheck");
       } else if (
@@ -193,14 +180,12 @@ export default {
           skuNo: item.skuNo,
           productName: item.productName,
         };
-        console.log(tempData);
         this.$store.commit("SET_PRODUCT", tempData);
         this.$emit("selectProductCheck");
       }
     },
     pageChange(button, page) {
       this.openSpinner();
-      console.log("페이지 변경 클릭 : ");
 
       // 검색 데이터 저장
       let data = {
@@ -212,12 +197,10 @@ export default {
     },
     // 스피너 열기
     openSpinner() {
-      console.log("openSpinner 열림");
       this.spinnerState = true;
     },
     // 스피너 닫기
     closeSpinner() {
-      console.log("closeSpinner 닫기 ");
       this.spinnerState = false;
     },
   },
@@ -237,7 +220,6 @@ export default {
   watch: {
     // 검수 조회 및 결과값 입력
     SelectProduct(val) {
-      console.log("검색완료됨. 테이블 입력");
       let tmpSearchData = this.$store.getters["productStore/getSearchData"];
       if (tmpSearchData.page === 0) {
         // 총 검색 수량 확인
