@@ -1,6 +1,8 @@
 <template>
-  <div>
-      메인화면
+  <div class="body">
+    <b-overlay :show="spinnerState" rounded="sm">
+      메인화면(개발중)
+    </b-overlay>
   </div>
 </template>
 

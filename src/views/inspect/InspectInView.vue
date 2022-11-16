@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <div class="title">출고 검사 등록</div>
+    <div class="title">입고 검사 등록</div>
     <div class="divInsert">
       <inspect-input-list :propsdata="message"></inspect-input-list>
     </div>

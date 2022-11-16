@@ -51,19 +51,31 @@
             <b-form-checkbox-group
               class="chkBoxGroup"
               id="checkbox-group-1"
-              v-model="businessType"
+              v-model="className"
               :aria-describedby="ariaDescribedby"
               name="flavour-1"
             >
               <b-form-checkbox class="chkBox" value="사료"
                 >사료</b-form-checkbox
               >
-              <b-form-checkbox class="chkBox" value="화장품/의약외품"
-                >화장품/의약외품</b-form-checkbox
-              >
-              <b-form-checkbox class="chkBox" value="공산품">
-                공산품
+              <b-form-checkbox class="chkBox" value="동물용 의료기기">
+                동물용 의료기기
               </b-form-checkbox>
+              <b-form-checkbox class="chkBox" value="동물용 의약외품">
+                동물용 의약외품
+              </b-form-checkbox>
+              <b-form-checkbox class="chkBox" value="공산품"
+                >공산품</b-form-checkbox
+              >
+              <b-form-checkbox class="chkBox" value="생활화학제품">
+                생활화학제품
+              </b-form-checkbox>
+              <b-form-checkbox class="chkBox" value="화장품"
+                >화장품</b-form-checkbox
+              >
+              <b-form-checkbox class="chkBox" value="기타"
+                >기타</b-form-checkbox
+              >
             </b-form-checkbox-group>
           </b-input-group>
         </div>
@@ -95,7 +107,7 @@ export default {
       makerPerson: "",
       makerPhone: "",
       selectParam: [],
-      businessType: [],
+      className: [],
     };
   },
   created() {
@@ -106,12 +118,12 @@ export default {
     searchData() {
       console.log("데이터 조회");
 
-      this.$store.dispatch("SELECT_MAKER", {
+      this.$store.dispatch("makerStore/SELECT_MAKER", {
         makerName: this.maker,
         makerAddress: this.makerAddress,
         makerPerson: this.makerPerson,
         makerPhone: this.makerPhone,
-        businessType: this.businessType,
+        className: this.className,
       });
     },
     // 상위 컴포넌트에 스피너 열기

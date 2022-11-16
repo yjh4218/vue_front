@@ -1,11 +1,11 @@
 <template>
   <div class="body">
     <b-overlay :show="spinnerState" rounded="sm">
-      <div class="title">제조사 조회</div>
-      <select-maker
+      <div class="title">판매량 조회</div>
+      <select-sales
         :propsdata="message"
         @spinnerStart="openSpinner"
-      ></select-maker>
+      ></select-sales>
       <div class="row">
         <div class="col-md-12">
           <b-button variant="primary" class="right-box" v-on:click="download"
@@ -19,7 +19,7 @@
           responsive
           striped
           hover
-          :items="getSelectMaker"
+          :items="getSelectSales"
           :fields="fields"
           label-sort-asc=""
           label-sort-desc=""
@@ -32,62 +32,54 @@
 </template>
 
 <script>
-import SelectMaker from "../../components/select/SelectMaker.vue";
+import SelectSales from "../../components/select/SelectSales.vue";
 import * as XLSX from "xlsx";
 // import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    SelectMaker,
+    SelectSales,
   },
   data() {
     return {
       message: "testSelView",
-      getSelectMaker: [],
+      getSelectSales: [],
       fields: [
-        { key: "makerName", label: "제조사명", sortable: true, thClass: "w10" },
-        { key: "className", label: "제조업종", sortable: true, thClass: "w10" },
-        {
-          key: "importProduct",
-          label: "주요제품",
-          sortable: true,
-          thClass: "w20",
-        },
-        { key: "process", label: "주요공정", sortable: true, thClass: "w15" },
-        { key: "sales", label: "매출액", sortable: true, thClass: "w10" },
-        {
-          key: "makerPerson",
-          label: "거래처 담당자",
-          sortable: true,
-          thClass: "w10",
-        },
-        {
-          key: "makerPhone",
-          label: "거래처 연락처",
-          sortable: true,
-          thClass: "w15",
-        },
+        { key: "skuNo", label: "SKU-NO", sortable: true },
+        { key: "productName", label: "제품명", sortable: true },
+        { key: "jan", label: "1월", sortable: true },
+        { key: "feb", label: "2월", sortable: true },
+        { key: "mar", label: "3월", sortable: true },
+        { key: "apr", label: "4월", sortable: true },
+        { key: "may", label: "5월", sortable: true },
+        { key: "jun", label: "6월", sortable: true },
+        { key: "jul", label: "7월", sortable: true },
+        { key: "aug", label: "8월", sortable: true },
+        { key: "sep", label: "9월", sortable: true },
+        { key: "oct", label: "10월", sortable: true },
+        { key: "nov", label: "11월", sortable: true },
+        { key: "december", label: "12월", sortable: true },
       ],
       spinnerState: false,
     };
   },
   created() {},
   mounted() {
-    this.openSpinner();
+    // this.openSpinner();
   },
   computed: {
     // ...mapGetters('makerStore', [
-    //   'getSelectMaker'
+    //   'getSelectSales'
     // ]),
     SelectMaker() {
-      return this.$store.getters["makerStore/getSelectMaker"];
+      return this.$store.getters["salesStore/getSelectSales"];
     },
   },
   watch: {
     // 검수 조회 및 결과값 입력
     SelectMaker(val) {
       console.log(val);
-      this.getSelectMaker = val;
+      this.getSelectSales = val;
       this.closeSpinner();
     },
   },
@@ -95,7 +87,7 @@ export default {
     //엑셀 다운로드
     download() {
       const workBook = XLSX.utils.book_new();
-      const workSheet = XLSX.utils.json_to_sheet(this.getSelectMaker);
+      const workSheet = XLSX.utils.json_to_sheet(this.getSelectSales);
       XLSX.utils.book_append_sheet(workBook, workSheet, "제조사 목록");
       XLSX.writeFile(workBook, "제조사 목록.xlsx");
     },
