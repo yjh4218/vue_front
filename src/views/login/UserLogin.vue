@@ -16,14 +16,14 @@
         v-model="userPassword"
         placeholder="비밀번호"
         value=""
+        @keyup.enter="userLogin()"
       ></b-form-input>
       <b-button variant="primary" class="loginInput" @click="userLogin()">
         로그인
       </b-button>
       <!-- <b-button variant="primary" class="loginInput"> 회원가입 </b-button> -->
-      <router-link style="float: left" class="linkFont" to="/productSel">
-        비회원으로 사용하기</router-link
-      >
+      <!-- <router-link style="float: left" class="linkFont" to="/productSel">
+        비회원으로 사용하기</router-link> -->
       <!-- <router-link style="float: right" class="linkFont" to="/inspectUp">
         비밀번호를 잊어버리셨나요?</router-link
       > -->
@@ -91,7 +91,6 @@ export default {
           userPassword: this.userPassword,
         })
         .then((response) => {
-
           // 통신 성공 시
           if (response.status === 200) {
             // 로그인 실패
@@ -99,7 +98,7 @@ export default {
               this.modalName = "200";
               this.modalMessage = response.data.body.massage;
               this.openModal();
-            } 
+            }
             // 로그인 성공 시
             else {
               this.$store.dispatch("makerStore/SELECT_MAKER", {
@@ -108,8 +107,8 @@ export default {
                 makerPerson: "",
                 makerPhone: "",
                 className: [],
-                newProduct : "product"
-              })
+                newProduct: "product",
+              });
 
               this.roturInit();
             }
@@ -155,12 +154,8 @@ export default {
       this.modal = false;
     },
   },
-  computed: {
-    
-  },
-  watch: {
-  
-  },
+  computed: {},
+  watch: {},
 };
 </script>
 

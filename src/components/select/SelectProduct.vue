@@ -12,6 +12,7 @@
               value=""
               maxlength="13"
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
@@ -22,6 +23,7 @@
               v-model="productName"
               placeholder=""
               value=""
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
@@ -32,6 +34,7 @@
               v-model="brandName"
               placeholder=""
               value=""
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
@@ -42,12 +45,13 @@
               v-model="maker"
               placeholder=""
               value=""
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
       </div>
       <div slot="middle" class="row">
-        <div class="col-md-10 mb-3">
+        <div class="col-md-6 mb-3">
           <b-input-group prepend="제품분류" v-slot="{ ariaDescribedby }">
             <b-form-checkbox-group
               class="chkBoxGroup"
@@ -57,8 +61,7 @@
               name="flavour-1"
             >
               <b-form-checkbox class="chkBox" value="사료"
-                >사료</b-form-checkbox
-              >
+                >사료</b-form-checkbox>
               <b-form-checkbox class="chkBox" value="동물용 의료기기">
                 동물용 의료기기
               </b-form-checkbox>
@@ -66,17 +69,42 @@
                 동물용 의약외품
               </b-form-checkbox>
               <b-form-checkbox class="chkBox" value="공산품"
-                >공산품</b-form-checkbox
-              >
+                >공산품</b-form-checkbox>
               <b-form-checkbox class="chkBox" value="생활화학제품">
                 생활화학제품
               </b-form-checkbox>
               <b-form-checkbox class="chkBox" value="화장품"
-                >화장품</b-form-checkbox
-              >
+                >화장품</b-form-checkbox>
               <b-form-checkbox class="chkBox" value="기타"
-                >기타</b-form-checkbox
-              >
+                >기타</b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-input-group>
+        </div>
+        <div class="col-md-4 mb-3"
+          v-if="
+              this.$route.name === 'selectAllProduct' ||
+              this.$route.name === 'inspectInView' ||
+              this.$route.name === 'claimInView' ||
+              this.$route.name === 'salesProductInView' ||
+              this.$route.name === 'salesProductUp' ||
+              this.$route.name === 'productInsert'
+        ">
+          <b-input-group prepend="운영여부" v-slot="{ ariaDescribedby }">
+            <b-form-checkbox-group
+              class="chkBoxGroup"
+              id="checkbox-group-1"
+              v-model="operation"
+              :aria-describedby="ariaDescribedby"
+              name="flavour-1"
+            >
+            <b-form-checkbox class="chkBox" value="출시예정"
+                >출시예정</b-form-checkbox>
+              <b-form-checkbox class="chkBox" value="상품 운영 중">
+                상품 운영 중
+              </b-form-checkbox>
+              <b-form-checkbox class="chkBox" value="판매중단(단종)">
+                판매중단(단종)
+              </b-form-checkbox>
             </b-form-checkbox-group>
           </b-input-group>
         </div>
@@ -87,16 +115,11 @@
             this.$route.name === 'inspectInView' ||
             this.$route.name === 'claimInView' ||
             this.$route.name === 'salesProductInView' ||
-            this.$route.name === 'salesProductUp'
+            this.$route.name === 'salesProductUp' ||
+            this.$route.name === 'productInsert'
           "
         >
-          <b-button
-            variant="primary"
-            class="left-box"
-            @click="
-              spinnerStart();
-              searchData();
-            "
+          <b-button variant="primary" class="left-box" @click="searchData()"
             >상품 조회</b-button
           >
         </div>
@@ -133,13 +156,7 @@
           >
         </div>
         <div class="col-md-2 mb-3" v-if="this.$route.name === 'inspectSelView'">
-          <b-button
-            variant="primary"
-            class="left-box"
-            @click="
-              spinnerStart();
-              searchData();
-            "
+          <b-button variant="primary" class="left-box" @click="searchData()"
             >검수 조회</b-button
           >
         </div>
@@ -191,6 +208,7 @@ export default {
       header: ["skuNo", "제품명", "브랜드명", "제조사", "출시일자"],
       selectParam: [],
       className: [],
+      operation:[],
       modal: false,
       modalName: "",
     };
@@ -199,14 +217,16 @@ export default {
   methods: {
     // 데이터 조회
     searchData() {
-
+      console.log(this.$route.name);
       this.spinnerStart();
       if (
         this.$route.name === "selectAllProduct" ||
         this.$route.name === "inspectInView" ||
         this.$route.name === "claimInView" ||
         this.$route.name === "salesProductInView" ||
-        this.$route.name === "salesProductUp"
+        this.$route.name === "salesProductUp" ||
+        this.$route.name === "productInsert" || 
+        this.$route.name === "inspectUpView"
       ) {
         // 검색 데이터 저장
         let data = {
@@ -217,7 +237,9 @@ export default {
           brandName: this.brandName,
           maker: this.maker,
           className: this.className,
+          operation: this.operation
         };
+        console.log(data);
         // 검색 데이터 저장
         this.$store.commit("productStore/SET_SEARCH_DATA", data);
 
@@ -227,7 +249,6 @@ export default {
         var afdate = dayjs(this.afterDate);
 
         if (bfdate.isSameOrBefore(this.afterDate, "day")) {
-
           let data = {
             page: 0,
             name: this.$route.name,

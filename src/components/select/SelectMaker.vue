@@ -10,6 +10,7 @@
               v-model="makerName"
               placeholder=""
               value=""
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
@@ -20,6 +21,7 @@
               v-model="makerAddress"
               placeholder=""
               value=""
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
@@ -30,6 +32,7 @@
               v-model="makerPerson"
               placeholder=""
               value=""
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
@@ -41,6 +44,7 @@
               placeholder="숫자만 써주세요."
               maxlength="14"
               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+              @keyup.enter="searchData()"
             ></b-form-input>
           </b-input-group>
         </div>
@@ -80,10 +84,13 @@
           </b-input-group>
         </div>
         <div class="col-md-2 mb-3" v-if="this.$route.name !== 'inspectSelView'">
-          <b-button 
+          <b-button
             variant="primary"
             class="left-box"
-            @click="spinnerStart(); searchData();"
+            @click="
+              spinnerStart();
+              searchData();
+            "
             >제조사 조회</b-button
           >
         </div>
@@ -97,7 +104,7 @@ import selectSlot from "./SelectProductSlot.vue";
 
 export default {
   components: {
-    selectSlot
+    selectSlot,
   },
   data() {
     return {
@@ -110,9 +117,7 @@ export default {
       className: [],
     };
   },
-  created() {
-    
-  },
+  created() {},
   methods: {
     // 데이터 조회
     searchData() {
@@ -126,8 +131,8 @@ export default {
     },
     // 상위 컴포넌트에 스피너 열기
     spinnerStart() {
-      this.$emit('spinnerStart')
-    }
+      this.$emit("spinnerStart");
+    },
   },
   mounted() {
     // 처음에 전체 검수 조회 함
@@ -142,7 +147,7 @@ export default {
 }
 .left-box {
   float: right;
-  width:auto;
+  width: auto;
 }
 .custom-control custom-control-inline custom-checkbox {
   margin-left: 10px;

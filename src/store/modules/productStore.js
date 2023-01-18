@@ -160,7 +160,7 @@ const productStore = {
 
     // 데이터 조회 결과(페이지)
     SELECT_PAGE_PRODUCT(context, selectCon) {
-      console.log("SELECT_PAGE_PRODUCT actions 접속됨");
+      // console.log("SELECT_PAGE_PRODUCT actions 접속됨");
 
       return selectPageProduct(selectCon)
         .then((response) => {

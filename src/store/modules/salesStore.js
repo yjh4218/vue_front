@@ -10,7 +10,7 @@ import {
     deleteSalesProductComponent,
     checkProductComponentSkuNo,
     selectProductComponent
-} from "../../api/index";
+} from "../../api/salesAPI";
 
 const salesStore = {
     namespaced: true,
@@ -124,6 +124,7 @@ const salesStore = {
     actions: {
         // 판매량 추가
         INSERT_MONTH_SALES(context, selectCon) {
+            console.log("판매량 추가 store");
 
             return insertMonthSales(selectCon)
                 .then((response) => {
@@ -137,6 +138,7 @@ const salesStore = {
 
         // 일부 판매량 조회
         SELECT_SALES(context, selectCon) {
+            console.log("판매량 조회 store");
 
             return selectSales(selectCon)
                 .then((response) => {
@@ -150,6 +152,7 @@ const salesStore = {
 
         // 월별 판매량 조회
         SELECT_MONTH_SALES(context, selectCon) {
+            console.log("월별 판매량 조회 store");
             return selectMonthSales(selectCon)
                 .then((response) => {
                     context.commit("SET_SELECT_MONTH_SALES", response.data.data);
@@ -162,6 +165,7 @@ const salesStore = {
         
         // 월별 판매량 수정 추가
         UPDATE_MONTH_SALES(context, selectCon) {
+            console.log("월별 판매량 수정 store");
             return updateMonthSales(selectCon)
                 .then((response) => {
                     context.commit("SET_UPDATE_MONTH_SALES", response.data.data);
@@ -174,6 +178,7 @@ const salesStore = {
 
         // 월별 판매량 삭제
         DELETE_MONTH_SALES(context, selectCon) {
+            console.log("월별 판매량 삭제 store");
             return deleteMonthSales(selectCon)
                 .then((response) => {
                     context.commit("SET_DELETE_MONTH_SALES", response.data.data);
@@ -198,19 +203,23 @@ const salesStore = {
 
         // 제품 구성품 추가
         INSERT_SALES_PRODUCT_COMPONENT(context, selectCon) {
+            
+            console.log("제품 구성품 추가 store");
 
-        return insertSalesProductComponent(selectCon)
-            .then((response) => {
-                context.commit("SET_INSERT_SALES_PRODUCT_COMPONENT", response.data.data);
-                return response.data;
-            })
-            .catch((error) => {
-                console.log(error.response);
-            });
+            return insertSalesProductComponent(selectCon)
+                .then((response) => {
+                    context.commit("SET_INSERT_SALES_PRODUCT_COMPONENT", response.data.data);
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
 
         // 제품 구성품 수정
         UPDATE_SALES_PRODUCT_COMPONENT(context, selectCon) {
+            console.log("제품 구성품 추가 store");
+
             return updateSalesProductComponent(selectCon)
                 .then((response) => {
                     context.commit("SET_UPDATE_SALES_PRODUCT_COMPONENT", response.data.data);
@@ -224,6 +233,8 @@ const salesStore = {
         
         // 제품 구성품 삭제
         DELETE_SALES_PRODUCT_COMPONENT(context, selectCon) {
+            
+            console.log("제품 구성품 삭제 store");
             return deleteSalesProductComponent(selectCon)
                 .then((response) => {
                     context.commit("SET_DELETE_SALES_PRODUCT_COMPONENT", response.data.data);
@@ -236,6 +247,7 @@ const salesStore = {
 
         // SKU 중복 조회
         CHECK_SKU_DUP(context, selectCon) {
+            console.log("SKU 중복 조회 store");
             return checkProductComponentSkuNo(selectCon)
                 .then((response) => {
                     context.commit("SET_CHECK_PRODUCT_RESULT", response.data.data);
@@ -260,6 +272,7 @@ const salesStore = {
 
         // 판매 구성품 조회
         SELECT_PRODUCT_COMPONENT(context, selectCon) {
+            console.log("판매 구성품 조회 store");
             return selectProductComponent(selectCon)
                 .then((response) => {
                     context.commit("SET_SELECT_PRODUCT_COMPONENT", response.data.data);

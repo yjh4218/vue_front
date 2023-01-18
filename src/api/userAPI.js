@@ -16,6 +16,23 @@ function userLogin(user) {
   });
 }
 
+// 유저 로그아웃
+function userLogout(user) {
+
+  let data = {
+    accessToken: user.accessToken,
+    refreshToken: user.refreshToken,
+  };
+
+  console.log(data);
+
+  return axios.post(authUrl + "logout", data, {
+    header: { "Content-Type": `application/json` },
+  });
+}
+
+
 export {
-    userLogin
+    userLogin,
+    userLogout
 }

@@ -1,22 +1,25 @@
 const { defineConfig } = require("@vue/cli-service");
-const path = require('path');
+const path = require("path");
 
 module.exports = defineConfig({
   transpileDependencies: true,
   runtimeCompiler: true,
+  // build를 한 코드를 넣을 장소
   outputDir: "../src/main/resources/static",
+  // 실제로 실행되는 웹페이지의 index
+  // indexPath: "../static/index.html",
+
   devServer: {
     port: 3030,
-    proxy: "http://localhost:3000"
+    proxy: "http://localhost:3000",
+    historyApiFallback: true,
   },
   chainWebpack: (config) => {
     config.module.rules.delete("eslint");
-    config
-      .plugin('html')
-      .tap(args => {
-          args[0].title = "품질관리 페이지";
-          return args;
-      })
+    config.plugin("html").tap((args) => {
+      args[0].title = "품질관리 페이지";
+      return args;
+    });
   },
   css: {
     loaderOptions: {
@@ -24,16 +27,16 @@ module.exports = defineConfig({
         data: `
           @import "@/styles/_variables.scss";
           @import "@/styles/_mixins.scss";
-        `
-      }
-    }
+        `,
+      },
+    },
   },
   configureWebpack: {
     resolve: {
-      extensions: ['.js', '.vue', '.json'],
+      extensions: [".js", ".vue", ".json"],
       alias: {
-        '@': path.resolve('src'),
-      }
+        "@": path.resolve("src"),
+      },
     },
     module: {
       rules: [
@@ -43,16 +46,16 @@ module.exports = defineConfig({
           // include: /fileData/,
           use: [
             {
-              loader: 'file-loader',
+              loader: "file-loader",
               options: {
-                name: 'fileData/[name].[ext]',
-                // outputPath: 'fileData/',
+                name: "[name].[ext]",
+                // outputPath: "fileData/",
                 // publicPath: 'fileData/'
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
-      ]
-    }
+      ],
+    },
   },
 });

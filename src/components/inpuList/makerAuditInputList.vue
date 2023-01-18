@@ -465,7 +465,7 @@ export default {
           var tmpFileData = [];
 
           this.$store.state.getMakerAudit.makerAuditFiles.forEach((element) => {
-            var tmp = element.fileInPath.split(".");
+            var tmp = element.filePath.split(".");
 
             if (tmp[1] === "png" || tmp[1] === "jpg") {
               tmpImageFile.push(element);

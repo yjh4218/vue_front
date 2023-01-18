@@ -1,4 +1,7 @@
-import { userLogin } from "../../api/userAPI";
+import { 
+  userLogin,
+  userLogout 
+} from "../../api/userAPI";
 
 const loginStore = {
   namespaced: true,
@@ -6,11 +9,17 @@ const loginStore = {
     // axios 통신
     // 유저 로그인
     userLogin: [],
+    // 유저 로그아웃
+    userLogout:[],
   },
   getters: {
     // 유저 로그인 결과
     getUserLogin(state) {
       return state.userLogin;
+    },
+    // 유저 로그아웃 결과
+    getUserLogout(state) {
+      return state.userLogout;
     },
   },
   mutations: {
@@ -18,6 +27,10 @@ const loginStore = {
     // 유저 로그인 결과 저장
     SET_USER_LOGIN(state, userLogin) {
       state.userLogin = userLogin;
+    },
+    // 유저 로그아웃 결과 저장
+    SET_USER_LOGOUT(state, userLogout) {
+      state.userLogout = userLogout;
     },
   },
   actions: {
@@ -32,6 +45,20 @@ const loginStore = {
         .catch((error) => {
           console.log(error.response);
           context.commit("SET_USER_LOGIN", error.response);
+          return error.response;
+        });
+    },
+    // 유저 로그아웃
+    USER_LOGOUT(context, user) {
+
+      return userLogout(user)
+        .then((response) => {
+          context.commit("SET_USER_LOGOUT", response);
+          return response;
+        })
+        .catch((error) => {
+          console.log(error.response);
+          context.commit("SET_USER_LOGOUT", error.response);
           return error.response;
         });
     },

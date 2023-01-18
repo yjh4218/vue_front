@@ -34,6 +34,8 @@ function deleteProduct(product) {
 // 특정 상품 조회
 function selectProduct(selectCon) {
 
+  console.log(selectCon);
+
   let data = {
     header: { "Content-Type": `application/json` },
     params: {
@@ -43,6 +45,7 @@ function selectProduct(selectCon) {
       brandName: selectCon.brandName,
       maker: selectCon.maker,
       className: encodeURI(selectCon.className),
+      operation : encodeURI(selectCon.operation),
       downExcel : selectCon.downExcel
       // productCurseId: selectCon.productCurseId,
     },

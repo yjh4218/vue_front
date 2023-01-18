@@ -2,7 +2,7 @@
   <div>
     <b-overlay :show="spinnerState" rounded="sm">
       <div>
-      <!-- <div :class="[inputRead ? 'divEnable' : 'divDisable']"> -->
+        <!-- <div :class="[inputRead ? 'divEnable' : 'divDisable']"> -->
         <div :class="[inputRead ? 'divEnable' : 'divDisable']">
           <div class="row">
             <div class="col-md-4 mb-3">
@@ -25,6 +25,15 @@
                     :disabled="!skuNoState"
                   >
                     중복확인
+                  </b-button>
+                  <b-button
+                    style="margin-left: 10px"
+                    variant="primary"
+                    @click="searchProduct"
+                  >
+                    <!-- 
+                    v-b-modal.search-product-modal -->
+                    등록 제품 검색
                   </b-button>
                 </b-input-group-prepend>
               </b-input-group>
@@ -157,7 +166,6 @@
                   type="text"
                   v-model="expDate"
                   placeholder=""
-                  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                 ></b-form-input>
               </b-input-group>
             </div>
@@ -174,28 +182,33 @@
               </b-input-group>
             </div>
             <div class="col-md-4 mb-3">
+              <b-input-group prepend="운영여부">
+                <b-form-select
+                  v-model="operation"
+                  :options="operationOptions"
+                ></b-form-select>
+              </b-input-group>
+            </div>
+            <div class="col-md-4 mb-3">
               <b-input-group prepend="제품 중량(g)">
                 <b-form-input
                   type="text"
                   v-model="productWeight"
                   placeholder=""
-                  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                   value=""
                 ></b-form-input>
               </b-input-group>
             </div>
-            
           </div>
           <div class="row" v-if="className === '사료'">
             <div class="col-md-4 mb-3">
-              <b-input-group prepend="제품 수분율">
+              <b-input-group prepend="제품 수분율(%)">
                 <b-form-input
                   type="text"
                   v-model="moisture"
                   placeholder=""
                   value=""
                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                  
                 ></b-form-input>
               </b-input-group>
             </div>
@@ -282,7 +295,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="row">
           <div class="col-md-12 mb-3">
             <b-input-group prepend="사진 미리보기">
@@ -292,10 +305,9 @@
                 v-for="(item, index) in imgFiles"
                 :key="index"
               >
-                <span
-                  class="imgSizes"
-                >
-                  <button :class="[inputRead ? 'divEnable' : 'divDisable']"
+                <span class="imgSizes">
+                  <button
+                    :class="[inputRead ? 'divEnable' : 'divDisable']"
                     class="xBox"
                     v-b-modal.xBox-modal
                     @click="imgElementSave(index)"
@@ -303,6 +315,13 @@
                     x
                   </button>
                   <img :src="item.url" />
+                  <!-- <template v-if="item.mode === 'old'">
+                    <img :src="require(`@/`+item.url)" />
+                  </template>
+
+                  <template v-else>
+                    <img :src="item.url" />
+                  </template> -->
                 </span>
               </viewer>
             </b-input-group>
@@ -345,7 +364,7 @@
               </b-input-group>
             </div>
           </div>
-          
+
           <div class="row">
             <div class="col-md-12 mb-3">
               <b-input-group prepend="비고">
@@ -370,7 +389,7 @@
               </b-input-group>
             </div>
           </div>
-        </div>        
+        </div>
       </div>
       <div class="row" v-if="propsdata === 'insertView'">
         <div class="col-md-12 mb-3">
@@ -608,6 +627,20 @@
       </b-modal>
     </b-overlay>
 
+    <!-- 제품검색 팝업창. -->
+    <div>
+      <common-modal @close="closeSearchModal" v-if="searchModal">
+        <div v-if="modalName === 'searchProduct'">
+          <select-product-table
+            v-on:selectProductCheck="closeSearchModal"
+          ></select-product-table>
+          <template slot="footer">
+            <button @click="modalText">확인</button>
+          </template>
+        </div>
+      </common-modal>
+    </div>
+
     <!-- 모달창. -->
     <div>
       <confirm-modal @close="closeModal" v-if="modal">
@@ -722,6 +755,8 @@
 </template>
 
 <script>
+import commonModal from "../modal/commonModal.vue";
+import SelectProductTable from "../select/SelectProductTable.vue";
 import confirmModal from "../modal/ConfirmModal.vue";
 import { modalMixin } from "../../mixins/modalMixin.js";
 import { spinnerMixin } from "../../mixins/spinnerMixin.js";
@@ -731,6 +766,8 @@ import { fileMixin } from "../../mixins/fileMixin.js";
 
 export default {
   components: {
+    commonModal,
+    SelectProductTable,
     confirmModal,
   },
   mixins: [modalMixin, spinnerMixin, imageMixin, adminChkMixin, fileMixin],
@@ -744,10 +781,11 @@ export default {
       maker: null,
       makeDate: "",
       className: "",
-      storMethod:"",
+      storMethod: "",
       expDate: "0",
+      operation: "",
       productWeight: "",
-      moisture:"0",
+      moisture: "0",
       rawMaterialName: "",
       packingUnit: "",
       productStandard: "",
@@ -757,16 +795,14 @@ export default {
       productChangeContent: "",
       productReply: [],
       selectReply: [],
-      makerOptions:[
-        { value: null, text: '제품 분류를 선택해주세요.' },
-      ],
-      makerOptions1:[],
-      makerOptions2:[],
-      makerOptions3:[],
-      makerOptions4:[],
-      makerOptions5:[],
-      makerOptions6:[],
-      makerOptions7:[],
+      makerOptions: [{ value: null, text: "제품 분류를 선택해주세요." }],
+      makerOptions1: [],
+      makerOptions2: [],
+      makerOptions3: [],
+      makerOptions4: [],
+      makerOptions5: [],
+      makerOptions6: [],
+      makerOptions7: [],
       makerOptions8: [{ value: null, text: "제품 분류를 선택해주세요." }],
       classNameOptions: [
         { value: "사료", text: "1. 사료" },
@@ -777,45 +813,86 @@ export default {
         { value: "화장품", text: "6. 화장품" },
         { value: "기타", text: "7. 기타" },
       ],
-      storMethodOption1:[
+      operationOptions:[
+        { value: "출시예정", text: "1. 출시예정" },
+        { value: "상품 운영 중", text: "2. 상품 운영 중" },
+        { value: "판매중단(단종)", text: "3. 판매중단(단종)" },
+      ],
+      storMethodOption1: [
         { value: "1. 실온보관", text: "1. 실온보관" },
-        { value: "2. 실온보관 후 개봉 시 냉장 보관", text: "2. 실온보관 후 개봉 시 냉장 보관" },
-        { value: "3. 실온보관 후 개봉 시 즉시 섭취", text: "3. 실온보관 후 개봉 시 즉시 섭취" },
+        {
+          value: "2. 실온보관 후 개봉 시 냉장 보관",
+          text: "2. 실온보관 후 개봉 시 냉장 보관",
+        },
+        {
+          value: "3. 실온보관 후 개봉 시 즉시 섭취",
+          text: "3. 실온보관 후 개봉 시 즉시 섭취",
+        },
         { value: "4. 별도 보관 방법 없음", text: "4. 별도 보관 방법 없음" },
       ],
-      storMethodOption2:[
+      storMethodOption2: [
         { value: "1. 실온보관", text: "1. 실온보관" },
-        { value: "2. 실온보관 후 개봉 시 냉장 보관", text: "2. 실온보관 후 개봉 시 냉장 보관" },
+        {
+          value: "2. 실온보관 후 개봉 시 냉장 보관",
+          text: "2. 실온보관 후 개봉 시 냉장 보관",
+        },
         { value: "3. 별도 보관 방법 없음", text: "3. 별도 보관 방법 없음" },
       ],
-      storMethodOption3:[
+      storMethodOption3: [
         { value: "1. 실온보관", text: "1. 실온보관" },
-        { value: "2. 직사광선을 피해서 실온보관", text: "2. 직사광선을 피해서 실온보관" },
-        { value: "3. 실온보관 후 개봉 시 냉장 보관", text: "3. 실온보관 후 개봉 시 냉장 보관" },
+        {
+          value: "2. 직사광선을 피해서 실온보관",
+          text: "2. 직사광선을 피해서 실온보관",
+        },
+        {
+          value: "3. 실온보관 후 개봉 시 냉장 보관",
+          text: "3. 실온보관 후 개봉 시 냉장 보관",
+        },
         { value: "4. 별도 보관 방법 없음", text: "4. 별도 보관 방법 없음" },
       ],
-      storMethodOption4:[
+      storMethodOption4: [
         { value: "1. 실온보관", text: "1. 실온보관" },
-        { value: "2. 어린이의 손이 닿지 않는 곳에 보관", text: "2. 어린이의 손이 닿지 않는 곳에 보관" },
+        {
+          value: "2. 어린이의 손이 닿지 않는 곳에 보관",
+          text: "2. 어린이의 손이 닿지 않는 곳에 보관",
+        },
         { value: "3. 화기에 주의해서 보관", text: "3. 화기에 주의해서 보관" },
         { value: "4. 별도 보관 방법 없음", text: "4. 별도 보관 방법 없음" },
       ],
-      storMethodOption5:[
+      storMethodOption5: [
         { value: "1. 실온보관", text: "1. 실온보관" },
-        { value: "2. 직사광선을 피해서 실온보관", text: "2. 직사광선을 피해서 실온보관" },
-        { value: "3. 실온보관 후 개봉 시 즉시 사용", text: "3. 실온보관 후 개봉 시 즉시 사용" },
+        {
+          value: "2. 직사광선을 피해서 실온보관",
+          text: "2. 직사광선을 피해서 실온보관",
+        },
+        {
+          value: "3. 실온보관 후 개봉 시 즉시 사용",
+          text: "3. 실온보관 후 개봉 시 즉시 사용",
+        },
         { value: "4. 별도 보관 방법 없음", text: "4. 별도 보관 방법 없음" },
       ],
-      storMethodOption6:[
+      storMethodOption6: [
         { value: "1. 실온보관", text: "1. 실온보관" },
-        { value: "2. 직사광선을 피해서 실온보관", text: "2. 직사광선을 피해서 실온보관" },
-        { value: "3. 실온보관 후 개봉 시 즉시 사용", text: "3. 실온보관 후 개봉 시 즉시 사용" },
+        {
+          value: "2. 직사광선을 피해서 실온보관",
+          text: "2. 직사광선을 피해서 실온보관",
+        },
+        {
+          value: "3. 실온보관 후 개봉 시 즉시 사용",
+          text: "3. 실온보관 후 개봉 시 즉시 사용",
+        },
         { value: "4. 별도 보관 방법 없음", text: "4. 별도 보관 방법 없음" },
       ],
-      storMethodOption7:[
+      storMethodOption7: [
         { value: "1. 실온보관", text: "1. 실온보관" },
-        { value: "2. 직사광선을 피해서 실온보관", text: "2. 직사광선을 피해서 실온보관" },
-        { value: "3. 실온보관 후 개봉 시 즉시 사용", text: "3. 실온보관 후 개봉 시 즉시 사용" },
+        {
+          value: "2. 직사광선을 피해서 실온보관",
+          text: "2. 직사광선을 피해서 실온보관",
+        },
+        {
+          value: "3. 실온보관 후 개봉 시 즉시 사용",
+          text: "3. 실온보관 후 개봉 시 즉시 사용",
+        },
         { value: "4. 별도 보관 방법 없음", text: "4. 별도 보관 방법 없음" },
       ],
       storMethodOption8: [{ value: "", text: "제품 분류를 선택해주세요." }],
@@ -862,8 +939,42 @@ export default {
     skuNoState() {
       return this.skuNo.length > 11 ? true : false;
     },
+    // 제품 조회 및 결과값 입력
+    selectProdut() {
+      return this.$store.getters.getSkuProduct;
+    },
+  },
+  watch: {
+    // 제품 조회 및 결과값 입력
+    selectProdut(val) {
+      console.log(val);
+      // this.productId = val.id;
+      // this.skuNo = val.skuNo;
+      // this.productName = val.productName;
+      this.brandName = val.brandName;
+      this.maker = val.maker;
+      this.makeDate = val.makeDate;
+      this.className = val.className;
+      this.operation = val.operation;
+      this.storMethod = val.storMethod;
+      this.moisture = val.moisture;
+      this.expDate = val.expDate;
+      this.productWeight = val.productWeight;
+      this.rawMaterialName = val.rawMaterialName;
+      this.packingUnit = val.packingUnit;
+      this.productStandard = val.productStandard;
+      this.calorie = val.calorie;
+      this.sodium = val.sodium;
+      this.note = val.note;
+      this.productReply = val.productChangeReplies;
+    },
   },
   methods: {
+    // 제품 검색
+    searchProduct() {
+      this.searchModal = true;
+      this.modalName = "searchProduct";
+    },
     // sku-no 중복 확인
     searchProductDup() {
       this.openSpinner();
@@ -876,13 +987,11 @@ export default {
           this.modalName = "checkSkuNo";
 
           if (response.data === 1) {
-            
             this.skuNoDuplication = true;
             this.insertState = false;
             this.openModal();
             this.closeSpinner();
           } else if (response.data === 0) {
-            
             this.skuNoDuplication = false;
             this.confirmSkuNo = this.skuNo;
             this.insertState = true;
@@ -903,6 +1012,7 @@ export default {
         this.maker = this.$store.state.getProduct.maker;
         this.makeDate = this.$store.state.getProduct.makeDate;
         this.className = this.$store.state.getProduct.className;
+        this.operation = this.$store.state.getProduct.operation;
         this.storMethod = this.$store.state.getProduct.storMethod;
         this.moisture = this.$store.state.getProduct.moisture;
         this.expDate = this.$store.state.getProduct.expDate;
@@ -932,8 +1042,9 @@ export default {
           var tmpImageFile = [];
           var tmpFileData = [];
 
+          console.log(this.$store.state.getProduct.productFile);
           this.$store.state.getProduct.productFile.forEach((element) => {
-            var tmp = element.fileInPath.split(".");
+            var tmp = element.filePath.split(".");
 
             if (tmp[1] === "png" || tmp[1] === "jpg") {
               tmpImageFile.push(element);
@@ -944,63 +1055,86 @@ export default {
           this.imgUpdate(tmpImageFile, "file");
           this.updateFileData(tmpFileData);
         }
-      } 
+      }
     },
     // 제품 분류에 따른 제조사 정보 조회
-    chkMakerList(){
+    chkMakerList() {
       this.openSpinner();
-      
+
       // 제조사 정보가 없을 경우 재조회
-      if(this.$store.getters["makerStore/getSelectMakerProduct"].length === 0 ){
-        this.$store.dispatch("makerStore/SELECT_MAKER", {
-          makerName: "",
-          makerAddress: "",
-          makerPerson: "",
-          makerPhone: "",
-          className: [],
-          newProduct : "product"
-        })
-        .then((response) => {
-          if (response.data === 0) {
-            console.log("데이터 실패");
-            console.log(response);
-          } else{
-            this.saveMakerList();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      } else{
+      if (
+        this.$store.getters["makerStore/getSelectMakerProduct"].length === 0
+      ) {
+        this.$store
+          .dispatch("makerStore/SELECT_MAKER", {
+            makerName: "",
+            makerAddress: "",
+            makerPerson: "",
+            makerPhone: "",
+            className: [],
+            newProduct: "product",
+          })
+          .then((response) => {
+            if (response.data === 0) {
+              console.log("데이터 실패");
+              console.log(response);
+            } else {
+              this.saveMakerList();
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
         this.saveMakerList();
       }
     },
     // 제조사 정보 리스트로 변환
-    saveMakerList(){
+    saveMakerList() {
       // 제조사 리스트에 데이터 입력
-      this.$store.getters["makerStore/getSelectMakerProduct"].forEach(element => {
-        switch(element.className){
-          case "사료":
-            this.makerOptions1.push({"value" : element.makerName, "text" :element.makerName})
-            break;
-          case "동물용 의료기기":
-            this.makerOptions2.push({"value" : element.makerName, "text" :element.makerName})
-            break;
-          case "동물용 의약외품":
-            this.makerOptions3.push({"value" : element.makerName, "text" :element.makerName})
-            break;
-          case "공산품":
-            this.makerOptions4.push({"value" : element.makerName, "text" :element.makerName})
-            break;
-          case "생활화학제품":
-            this.makerOptions5.push({"value" : element.makerName, "text" :element.makerName})
-            break;
-          case "화장품":
-            this.makerOptions6.push({"value" : element.makerName, "text" :element.makerName})
-            break;
+      this.$store.getters["makerStore/getSelectMakerProduct"].forEach(
+        (element) => {
+          switch (element.className) {
+            case "사료":
+              this.makerOptions1.push({
+                value: element.makerName,
+                text: element.makerName,
+              });
+              break;
+            case "동물용 의료기기":
+              this.makerOptions2.push({
+                value: element.makerName,
+                text: element.makerName,
+              });
+              break;
+            case "동물용 의약외품":
+              this.makerOptions3.push({
+                value: element.makerName,
+                text: element.makerName,
+              });
+              break;
+            case "공산품":
+              this.makerOptions4.push({
+                value: element.makerName,
+                text: element.makerName,
+              });
+              break;
+            case "생활화학제품":
+              this.makerOptions5.push({
+                value: element.makerName,
+                text: element.makerName,
+              });
+              break;
+            case "화장품":
+              this.makerOptions6.push({
+                value: element.makerName,
+                text: element.makerName,
+              });
+              break;
+          }
         }
-      });
-      
+      );
+
       this.closeSpinner();
     },
     // 상품정보 변경
@@ -1012,13 +1146,12 @@ export default {
       });
     },
     // 제품 분류 수정
-    classNameChange(){
-      if(this.className !== '사료'){
+    classNameChange() {
+      if (this.className !== "사료") {
         this.calorie = "0";
-        this.sodium  = "0";
+        this.sodium = "0";
         this.moisture = "0";
       }
-
       this.maker = null;
     },
     // 제품 추가
@@ -1038,7 +1171,7 @@ export default {
         this.$store.commit("productStore/SET_INSERT_PRODUCT", "3");
 
         this.imgFiles.forEach((element) => {
-            this.formData.append("file", element["file"]);
+          this.formData.append("file", element["file"]);
         });
 
         // this.formData.append("fileData", this.fileData);
@@ -1053,8 +1186,9 @@ export default {
           maker: this.maker,
           makeDate: this.makeDate,
           className: this.className,
-          storMethod : this.storMethod,
-          moisture : this.moisture,
+          operation : this.operation,
+          storMethod: this.storMethod,
+          moisture: this.moisture,
           expDate: this.expDate,
           productWeight: this.productWeight,
           rawMaterialName: this.rawMaterialName,
@@ -1083,12 +1217,10 @@ export default {
             this.modalName = "insertProduct";
 
             if (response.data === 1) {
-              
               this.insertState = true;
               this.openModal();
               this.closeSpinner();
             } else if (response.data === 0) {
-              
               this.insertState = false;
               this.openModal();
               this.closeSpinner();
@@ -1103,16 +1235,15 @@ export default {
     },
     // 제품 수정진행
     updateProduct() {
-      
       this.openSpinner();
       this.$store.commit("productStore/SET_UPDATE_PRODUCT", "3");
 
       this.imgFiles.forEach((element) => {
-          if (element["file"]) {
-            this.formData.append("file", element["file"]);
-          } else if (element["imgId"]) {
-            this.formData.append("fileId", element["imgId"]);
-          }
+        if (element["file"]) {
+          this.formData.append("file", element["file"]);
+        } else if (element["imgId"]) {
+          this.formData.append("fileId", element["imgId"]);
+        }
       });
 
       this.fileData.forEach((element) => {
@@ -1131,8 +1262,9 @@ export default {
         maker: this.maker,
         makeDate: this.makeDate,
         className: this.className,
-        storMethod : this.storMethod,
-        moisture : this.moisture,
+        operation : this.operation,
+        storMethod: this.storMethod,
+        moisture: this.moisture,
         expDate: this.expDate,
         productWeight: this.productWeight,
         rawMaterialName: this.rawMaterialName,
@@ -1164,6 +1296,7 @@ export default {
         .dispatch("productStore/UPDATE_PRODUCT", this.formData)
         .then((response) => {
           this.modalName = "updateProduct";
+          console.log(response);
 
           if (response.data === 1) {
             this.updateState = true;
@@ -1178,12 +1311,10 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-      
     },
 
     // 제품 삭제
     deleteProduct() {
-      
       this.openSpinner();
 
       this.$store.commit("productStore/SET_DELETE_PRODUCT", "3");
@@ -1208,7 +1339,6 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-      
     },
 
     // 리플 수정진행
@@ -1230,7 +1360,10 @@ export default {
         var tmpReply = [];
         this.productReply.forEach((element) => {
           if (element.selected) {
-            tmpReply.push({replyId : element.id, changeReplyData : element.productChangeReply});
+            tmpReply.push({
+              replyId: element.id,
+              changeReplyData: element.productChangeReply,
+            });
           }
         });
 
@@ -1317,7 +1450,7 @@ export default {
         this.modalName = "noAdmin";
 
         this.openModal();
-      } else{
+      } else {
         this.inputRead = true;
       }
     },

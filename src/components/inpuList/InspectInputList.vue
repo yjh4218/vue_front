@@ -4,7 +4,7 @@
       <div>
         <div :class="[inputRead ? 'divEnable' : 'divDisable']">
           <div class="row">
-            <div class="col-md-4 mb-3">
+            <div class="col-md-5 mb-3">
               <b-input-group prepend="SKU-NO">
                 <b-form-input
                   type="text"
@@ -14,7 +14,7 @@
                   maxlength="12"
                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                   required
-                  readonly
+                  disabled
                 ></b-form-input>
                 <b-input-group-prepend>
                   <b-button variant="primary" @click="searchProduct">
@@ -23,9 +23,21 @@
                     제품검색
                   </b-button>
                 </b-input-group-prepend>
+                <b-input-group-prepend v-if="propsdata === 'insertView'">
+                  <b-button
+                    variant="primary"
+                    @click="importReg"
+                    style="margin-left: 10px"
+                    :disabled="!skuNo"
+                  >
+                    <!-- 
+                    v-b-modal.search-product-modal -->
+                    직전 등록 불러오기
+                  </b-button>
+                </b-input-group-prepend>
               </b-input-group>
             </div>
-            <div class="col-md-5 mb-3">
+            <div class="col-md-4 mb-3">
               <b-input-group prepend="제품명">
                 <b-form-input
                   type="text"
@@ -33,6 +45,7 @@
                   placeholder=""
                   value=""
                   readonly
+                  disabled
                 ></b-form-input>
               </b-input-group>
             </div>
@@ -43,7 +56,7 @@
                   v-model="className"
                   placeholder=""
                   value=""
-                  readonly
+                  disabled
                 ></b-form-input>
               </b-input-group>
             </div>
@@ -68,7 +81,7 @@
               </b-input-group>
             </div>
             <div class="col-md-3 mb-3">
-              <b-input-group prepend="유통기한">
+              <b-input-group prepend="유통기한(제조일자)">
                 <b-form-input
                   type="date"
                   v-model="lotDate"
@@ -77,19 +90,8 @@
                 ></b-form-input>
               </b-input-group>
             </div>
-            <div class="col-md-3 mb-3">
-              <b-input-group prepend="성상">
-               <b-form-select
-                  v-model="appearance"
-                  :options="appearanceOptions"
-                ></b-form-select>
-              </b-input-group>
-            </div>
-            
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-3" v-if="className === '1. 사료'">
-              <b-input-group prepend="수분율">
+            <div class="col-md-3 mb-3" v-if="className === '사료'">
+              <b-input-group prepend="수분율(%)">
                 <b-form-input
                   type="text"
                   v-model="moisture"
@@ -98,27 +100,52 @@
                 ></b-form-input>
               </b-input-group>
             </div>
-            <div class="col-md-6 mb-3" v-else>
-              <b-input-group prepend="색상">
-                <b-form-input
-                  type="text"
-                  v-model="color"
-                  placeholder=""
-                  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                ></b-form-input>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <b-input-group prepend="성상">
+                <b-form-textarea
+                  id="textarea-default"
+                  v-model="appearance"
+                  rows="2"
+                  max-rows="3"
+                ></b-form-textarea>
               </b-input-group>
             </div>
             <div class="col-md-6 mb-3">
-              <b-input-group prepend="크기">
-                <b-form-input
-                  type="text"
-                  v-model="size"
-                  placeholder=""
-                ></b-form-input>
+              <b-input-group prepend="형태/색상">
+                <b-form-textarea
+                  id="textarea-default"
+                  v-model="color"
+                  rows="2"
+                  max-rows="3"
+                ></b-form-textarea>
               </b-input-group>
             </div>
           </div>
-          <div class="row" v-if="className === '4. 공산품'">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <b-input-group prepend="크기">
+                <b-form-textarea
+                  id="textarea-default"
+                  v-model="size"
+                  rows="2"
+                  max-rows="3"
+                ></b-form-textarea>
+              </b-input-group>
+            </div>
+            <div class="col-md-6 mb-3">
+              <b-input-group prepend="관능">
+                <b-form-textarea
+                  id="textarea-default"
+                  v-model="sensuality"
+                  rows="2"
+                  max-rows="3"
+                ></b-form-textarea>
+              </b-input-group>
+            </div>
+          </div>
+          <div class="row" v-if="className === '공산품'">
             <div class="col-md-6 mb-3">
               <b-input-group prepend="파손여부">
                 <b-form-textarea
@@ -140,7 +167,7 @@
               </b-input-group>
             </div>
           </div>
-          <div class="row" v-if="className === '4. 공산품'">
+          <div class="row" v-if="className === '공산품'">
             <div class="col-md-12 mb-3">
               <b-input-group prepend="작동여부">
                 <b-form-textarea
@@ -152,7 +179,15 @@
               </b-input-group>
             </div>
           </div>
-          <div class="row" v-else-if="className === '2. 동물용 의료기기' || className === '3. 동물용 의약외품' || className === '5. 생활화학제품' || className === '6. 화장품'">
+          <div
+            class="row"
+            v-else-if="
+              className === '동물용 의료기기' ||
+              className === '동물용 의약외품' ||
+              className === '생활화학제품' ||
+              className === '화장품'
+            "
+          >
             <div class="col-md-12 mb-3">
               <b-input-group prepend="사용성">
                 <b-form-textarea
@@ -246,10 +281,9 @@
                 v-for="(item, index) in imgFiles"
                 :key="index"
               >
-                <span
-                  class="imgSizes"
-                >
-                  <button :class="[inputRead ? 'divEnable' : 'divDisable']"
+                <span class="imgSizes">
+                  <button
+                    :class="[inputRead ? 'divEnable' : 'divDisable']"
                     class="xBox"
                     v-b-modal.xBox-modal
                     @click="imgElementSave(index)"
@@ -463,6 +497,9 @@
         <div v-if="modalName === 'noAdmin'">
           <p>관리자가 아니기 때문에 추가, 수정, 삭제할 수 없습니다.</p>
         </div>
+        <div v-if="modalName === 'noReg'">
+          <p>직전 등록한 검수 내용이 없습니다.</p>
+        </div>
 
         <!-- <template slot="footer">
           <button @click="modalText">확인</button>
@@ -527,19 +564,20 @@ export default {
       skuNo: "",
       productName: "",
       inspectDate: "",
-      appearance:"",
+      appearance: "",
       decideResult: "",
       lotDate: "",
       moisture: "",
-      color:"",
-      size:"",
-      damage:"",
-      finishState:"",
-      checkWork:"",
-      usability :"",
-      foreignBody :"",
-      weight:"",
-      checkPacking:"",
+      color: "",
+      size: "",
+      damage: "",
+      sensuality: "",
+      finishState: "",
+      checkWork: "",
+      usability: "",
+      foreignBody: "",
+      weight: "",
+      checkPacking: "",
       inspectContent: "",
       specialReport: "",
       decideResultOptions: [
@@ -549,12 +587,11 @@ export default {
       ],
       appearanceOptions: [
         { value: "적합", text: "적합" },
-        { value: "부적합", text: "부적합" }
+        { value: "부적합", text: "부적합" },
       ],
-      className:"",
+      className: "",
       confirmSkuNo: "",
       inputRead: true,
-      skuNoDuplication: true,
       searchModal: false,
       insertState: 3,
       updateState: 3,
@@ -569,6 +606,10 @@ export default {
     selectProdut() {
       return this.$store.getters.getSkuProduct;
     },
+    // 직전등록 검수 조회
+    selectInspectReg() {
+      return this.$store.getters["inspectStore/getSelectInspectReg"];
+    },
   },
   watch: {
     // 제품 조회 및 결과값 입력
@@ -577,6 +618,36 @@ export default {
       this.skuNo = val.skuNo;
       this.productName = val.productName;
       this.className = val.className;
+    },
+
+    // 직전등록 검수 조회
+    selectInspectReg(val) {
+      console.log(val);
+      // // this.inspectDate = val.data.inspectDate;
+      // // this.decideResult = val.data.decideResult;
+      // this.lotDate = val.data.lotDate;
+      if (val.data === null || val.data === undefined) {
+        this.modalName = "noReg";
+
+        this.openModal();
+      } else {
+        // this.moisture = val.data.moisture;
+        this.appearance = val.data.appearance;
+        this.color = val.data.color;
+        this.size = val.data.size;
+        this.damage = val.data.damage;
+        this.sensuality = val.data.sensuality;
+        this.finishState = val.data.finishState;
+        this.checkWork = val.data.checkWork;
+        this.usability = val.data.usability;
+        this.foreignBody = val.data.foreignBody;
+        this.weight = val.data.weight;
+        this.checkPacking = val.data.checkPacking;
+        this.inspectContent = val.data.inspectContent;
+        this.specialReport = val.data.specialReport;
+      }
+
+      this.closeSpinner();
     },
   },
   methods: {
@@ -587,6 +658,7 @@ export default {
     },
     // 검수 상세 정보 입력
     updateData() {
+      console.log(this.$store.state.getInspect);
       if (this.propsdata === "updateView") {
         this.inspectId = this.$store.state.getInspect.id;
         this.productId = this.$store.state.getInspect.product.id;
@@ -601,10 +673,11 @@ export default {
         this.color = this.$store.state.getInspect.color;
         this.size = this.$store.state.getInspect.size;
         this.damage = this.$store.state.getInspect.damage;
+        this.sensuality = this.$store.state.getInspect.sensuality;
         this.finishState = this.$store.state.getInspect.finishState;
         this.checkWork = this.$store.state.getInspect.checkWork;
-        this.usability  = this.$store.state.getInspect.usability;
-        this.foreignBody  = this.$store.state.getInspect.foreignBody;
+        this.usability = this.$store.state.getInspect.usability;
+        this.foreignBody = this.$store.state.getInspect.foreignBody;
         this.weight = this.$store.state.getInspect.weight;
         this.checkPacking = this.$store.state.getInspect.checkPacking;
         this.inspectContent = this.$store.state.getInspect.inspectContent;
@@ -615,7 +688,7 @@ export default {
         if (this.$store.state.getInspect.imageFile.length > 0) {
           this.imgUpdate(this.$store.state.getInspect.imageFile);
         }
-      } 
+      }
     },
     // 등록 완료 되었을 경우 초기화
     roturInit() {
@@ -636,6 +709,15 @@ export default {
         this.inputRead = true;
       }
     },
+    // 직전 등록 불러오기
+    importReg() {
+      this.openSpinner();
+      let data = {
+        productId: this.productId,
+        skuNo: this.skuNo,
+      };
+      this.$store.dispatch("inspectStore/SELECT_INSPECT_REG", data);
+    },
     // 검수 추가
     insertInspect() {
       // 관리자가 아닐 경우 추가 불가능
@@ -648,7 +730,7 @@ export default {
       }
       // 관리자일 경우 추가 가능
       else {
-        // this.openSpinner();
+        this.openSpinner();
         this.$store.commit("inspectStore/SET_INSERT_INSPECT", 3);
 
         this.imgFiles.forEach((element) => {
@@ -662,17 +744,18 @@ export default {
           inspectDate: this.inspectDate,
           decideResult: this.decideResult,
           lotDate: this.lotDate,
-          appearance : this.appearance,
+          appearance: this.appearance,
           moisture: this.moisture,
-          color : this.color,
-          size : this.size,
-          damage : this.damage,
-          finishState : this.finishState,
-          checkWork : this.checkWork,
-          usability  : this.usability,
-          foreignBody  : this.foreignBody,
-          weight : this.weight,
-          checkPacking : this.checkPacking,
+          color: this.color,
+          size: this.size,
+          damage: this.damage,
+          sensuality: this.sensuality,
+          finishState: this.finishState,
+          checkWork: this.checkWork,
+          usability: this.usability,
+          foreignBody: this.foreignBody,
+          weight: this.weight,
+          checkPacking: this.checkPacking,
           inspectContent: this.inspectContent,
           specialReport: this.specialReport,
         };
@@ -692,7 +775,7 @@ export default {
           .dispatch("inspectStore/INSERT_INSPECT", this.formData)
           .then((response) => {
             this.modalName = "insertInspect";
-            
+
             // 검수 추가 성공
             if (response.data === 1) {
               this.insertState = 1;
@@ -707,12 +790,10 @@ export default {
             }
             // 검수 등록 실패
             else if (response.data === 0) {
-              
               this.insertState = 0;
             }
           })
           .catch((error) => {
-            
             console.log(error);
           });
 
@@ -721,16 +802,15 @@ export default {
     },
     // 검수 수정진행
     updateInspect() {
-      
       this.openSpinner();
       this.$store.commit("inspectStore/SET_UPDATE_INSPECT", 3);
 
       this.imgFiles.forEach((element) => {
-          if (element["file"]) {
-            this.formData.append("image", element["file"]);
-          } else if (element["imgId"]) {
-            this.formData.append("imgId", element["imgId"]);
-          }
+        if (element["file"]) {
+          this.formData.append("image", element["file"]);
+        } else if (element["imgId"]) {
+          this.formData.append("imgId", element["imgId"]);
+        }
       });
 
       let data = {
@@ -740,17 +820,18 @@ export default {
         inspectDate: this.inspectDate,
         decideResult: this.decideResult,
         lotDate: this.lotDate,
-        appearance : this.appearance,
+        appearance: this.appearance,
         moisture: this.moisture,
-        color : this.color,
-        size : this.size,
-        damage : this.damage,
-        finishState : this.finishState,
-        checkWork : this.checkWork,
-        usability  : this.usability,
-        foreignBody  : this.foreignBody,
-        weight : this.weight,
-        checkPacking : this.checkPacking,
+        color: this.color,
+        size: this.size,
+        damage: this.damage,
+        sensuality: this.sensuality,
+        finishState: this.finishState,
+        checkWork: this.checkWork,
+        usability: this.usability,
+        foreignBody: this.foreignBody,
+        weight: this.weight,
+        checkPacking: this.checkPacking,
         inspectContent: this.inspectContent,
         specialReport: this.specialReport,
       };
@@ -787,13 +868,10 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-      
     },
     // 검수 삭제 진행
     deleteInspect() {
-    
       this.openSpinner();
-      console.log("검수 삭제 진행");
       this.$store.commit("inspectStore/SET_DELETE_INSPECT", 3);
 
       this.$store
@@ -808,16 +886,14 @@ export default {
           }
           // 검수 업데이트 실패
           else if (response.data === 0) {
-            
             this.deleteState = 0;
             this.openModal();
             this.closeSpinner();
-          }          
+          }
         })
         .catch((error) => {
           console.log(error);
         });
-      
     },
   },
 };

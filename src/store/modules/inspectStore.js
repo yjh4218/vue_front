@@ -5,6 +5,7 @@ import {
   selectInspect,
   selectPageInspect,
   selectInspectExcel,
+  selectInspectReg,
 } from "../../api/inspectAPI";
 
 const inspectStore = {
@@ -20,6 +21,8 @@ const inspectStore = {
     deleteInspect: {},
     // 제품 검색 내역 저장
     searchData: {},
+    // 직전등록 검수 조회
+    selectInspectReg: [],
   },
   getters: {
     // 검수 입력 데이터 확인
@@ -41,6 +44,10 @@ const inspectStore = {
     // 제품 검색 내역 저장
     getSearchData(state) {
       return state.searchData;
+    },
+    // 직전등록 검수 조회
+    getSelectInspectReg(state) {
+      return state.selectInspectReg;
     },
   },
   mutations: {
@@ -64,6 +71,10 @@ const inspectStore = {
     SET_SEARCH_DATA(state, searchData) {
       state.searchData = searchData;
     },
+    // 직전등록 검수 조회
+    SET_SELECT_INSPECT_REG(state, selectInspectReg) {
+      state.selectInspectReg = selectInspectReg;
+    },
   },
   actions: {
     // 신규 검수 추가
@@ -80,7 +91,6 @@ const inspectStore = {
 
     // 검수 수정 추가
     UPDATE_INSPECT(context, selectCon) {
-
       return updateInspect(selectCon)
         .then((response) => {
           context.commit("SET_UPDATE_INSPECT", response.data.data);
@@ -93,7 +103,6 @@ const inspectStore = {
 
     // 검수 삭제
     DELETE_INSPECT(context, selectCon) {
-
       return deleteInspect(selectCon)
         .then((response) => {
           context.commit("SET_DELETE_INSPECT", response.data.data);
@@ -117,7 +126,6 @@ const inspectStore = {
     },
     // 검수 조회(처음)
     SELECT_INSPECT(context, selectCon) {
-
       return selectInspect(selectCon)
         .then((response) => {
           context.commit("SET_SELECT_INSPECT", response.data);
@@ -130,7 +138,6 @@ const inspectStore = {
 
     // 검수 엑셀 다운
     SELECT_INSPECT_EXCEL(context, selectCon) {
-
       return selectInspectExcel(selectCon)
         .then((response) => {
           context.commit("SET_SELECT_INSPECT", response.data);
@@ -143,10 +150,24 @@ const inspectStore = {
 
     // 페이지에 맞는 검색
     SELECT_PAGE_INSPECT(context, selectCon) {
+      console.log(context);
+      console.log(selectCon);
 
       return selectPageInspect(selectCon)
         .then((response) => {
           context.commit("SET_SELECT_INSPECT", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
+    },
+
+    // 직전 등록 검수 조회(처음)
+    SELECT_INSPECT_REG(context, selectCon) {
+      return selectInspectReg(selectCon)
+        .then((response) => {
+          context.commit("SET_SELECT_INSPECT_REG", response.data);
           return response.data;
         })
         .catch((error) => {
