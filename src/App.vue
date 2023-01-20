@@ -4,18 +4,15 @@
       <sidebar-menu></sidebar-menu>
       <div>
         <template v-if="logoutFlag">
+          
           <b-button variant="primary" class="rightBoxPosition" @click="login">
             로그인
           </b-button>
         </template>
         <template v-else>
-          <!-- <template>
-            <span class="userNamePosition">
-              <div>환영합니다.</div>
-              <div>{{ userName }} 님.</div>
-            </span>
-          </template> -->
-
+          <b-button variant="primary" class="timerBoxPosition" @click="refreshTokenReCheck">
+            {{ countMin }}:{{ countSec }} 연장
+          </b-button>
           <b-button variant="primary" class="rightBoxPosition" @click="logout">
             로그아웃
           </b-button>
@@ -31,6 +28,8 @@
 
 <script>
 import SidebarMenu from "./components/menu/SidebarMenu.vue";
+// import VueCookies from 'vue-cookies'
+import { refreshTokenRe } from './api/userAPI'
 
 export default {
   name: "app",
@@ -41,29 +40,14 @@ export default {
     return {
       logoutFlag: true,
       userName: "",
+      countMin : 0,
+      countSec: 0,
+      countFlag : '',
     };
-  },
-
-  created() {
-    window.addEventListener("beforeunload", this.leaving);
-  },
-  beforeCreate() {
-    let localVuex = localStorage.getItem("vuex"); // local storage에 vuex 저장여부 확인
-    if (localVuex) {
-      // 저장되어 있는 경우 session storage로 이동 후 local 제거
-      localVuex = JSON.parse(localVuex);
-      console.log(localVuex);
-      this.$store.commit(
-        "loginStore/SET_USER_LOGIN",
-        localVuex.loginStore.userLogin
-      );
-      localStorage.removeItem("vuex");
-    }
   },
   mounted() {
     this.chkLoginFun();
   },
-
   methods: {
     login() {
       this.$router.push("/userLogin");
@@ -71,85 +55,116 @@ export default {
     logout() {
       this.openSpinner();
 
-      let checkUser = this.$store.getters["loginStore/getUserLogin"];
-      console.log(checkUser.data.body.data);
-      console.log(checkUser.data.body.data.accessToken);
-      console.log(checkUser.data.body.data.refreshToken);
+      // let checkUser = this.$store.getters["loginStore/getUserLogin"];
       
       this.$store
         .dispatch("loginStore/USER_LOGOUT", {
-          accessToken: checkUser.data.body.data.accessToken,
-          refreshToken: checkUser.data.body.data.refreshToken,
+          accessToken: this.$cookies.get("accessToken"),
+          refreshToken: this.$cookies.get("refreshToken"),
         })
         .then((response) => {
-          console.log(response);
-          // 통신 성공 시
-          if (response.status === 200) {
-            // 로그인 실패
-            // if (response.data.body.result === "fail") {
-            //   this.modalName = "200";
-            //   this.modalMessage = response.data.body.massage;
-            //   this.openModal();
-            // }
-            // // 로그인 성공 시
-            // else {
-            //   this.$store.dispatch("makerStore/SELECT_MAKER", {
-            //     makerName: "",
-            //     makerAddress: "",
-            //     makerPerson: "",
-            //     makerPhone: "",
-            //     className: [],
-            //     newProduct: "product",
-            //   });
-
-            //   this.roturInit();
-            // }
-          }
-          // 통신 실패 시 진행
-          else if (response.status === 401) {
-            this.modalName = "401";
-            this.openModal();
-          } else {
-            this.modalName = "500";
-            this.openModal();
-          }
+          console.log(response.data.body.massage);
+          // 통신 성공 
         })
         .catch((error) => {
           console.log(error);
         });
+        
+        // 쿠키 삭제
+        if(this.$cookies.isKey("accessToken")){
+          this.$cookies.remove("accessToken");
+        }
+        if(this.$cookies.isKey("refreshToken")){
+          this.$cookies.remove("refreshToken");
+        }
+        if(this.$cookies.isKey("tokenTime")){
+          this.$cookies.remove("tokenTime");
+        }
+        if(this.$cookies.isKey("ROLE")){
+          this.$cookies.remove("ROLE");
+        }
       this.$store.commit("loginStore/SET_USER_LOGIN", []);
       this.$router.push("/userLogin");
       this.logoutFlag = true;
-      localStorage.removeItem("vuex");
-    },
-    leaving() {
-      // this.logout();
-      sessionStorage.removeItem("vuex");
     },
     // 로그인 여부 확인
     chkLoginFun() {
       // 로그인 되어 있을 경우 로그아웃 버튼 활성화
-      // console.log("로그인 여부 확인 진행");
-      // console.log(this.$store.getters["loginStore/getUserLogin"]);
-      if (
-        this.$store.getters["loginStore/getUserLogin"].status === 200 &&
-        this.$store.getters["loginStore/getUserLogin"].data.body.result ===
-          "success"
-      ) {
-        this.logoutFlag = false;
-        this.userName =
-          this.$store.getters["loginStore/getUserLogin"].data.body.data.email;
-        this.newTab();
+      console.log("로그인 여부 확인 진행");
+
+      // 쿠키 존재하면 삭제
+      if(this.$cookies.isKey("accessToken")){
+        this.$cookies.remove("accessToken");
       }
-      // 로그인 되어 있지 않을 경우 로그아웃 버튼 비활성화
-      else {
-        this.logout();
+      if(this.$cookies.isKey("refreshToken")){
+        this.$cookies.remove("refreshToken");
+      }
+      if(this.$cookies.isKey("tokenTime")){
+        this.$cookies.remove("tokenTime");
+      }
+      if(this.$cookies.isKey("ROLE")){
+        this.$cookies.remove("ROLE");
+      }
+
+      console.log(this.$store.getters["loginStore/getUserLogin"]);
+      if(this.$store.getters["loginStore/getUserLogin"].status !== undefined){
+        // 쿠키 설정
+        this.$cookies.set("accessToken", this.$store.getters["loginStore/getUserLogin"].data.body.data.accessToken, '30m')
+        this.$cookies.set("refreshToken", this.$store.getters["loginStore/getUserLogin"].data.body.data.refreshToken, "7d")
+        this.$cookies.set("tokenTime", new Date(this.$store.getters["loginStore/getUserLogin"].data.body.data.accessTokenExpiresIn).getTime(), "40m")
+        this.$cookies.set("ROLE", this.$store.getters["loginStore/getUserLogin"].data.body.data.role, "7d")
+
+        // 쿠키 생성 완료되면 타이머 실행
+        if(this.$cookies.isKey("accessToken") !== null){
+          this.logoutFlag = false;
+          this.setTimeCount()
+        }
+      }
+      
+      console.log(this.$cookies.get("tokenTime"));
+      console.log(this.$cookies.get("ROLE"));
+      
+    },
+
+    // 로그인 타이머 설정
+    setTimeCount(){
+      console.log("로그인 타이머 설정");
+      console.log(this.$cookies.get("tokenTime"));
+      var nowDate = new Date();
+      var tmpCount = (this.$cookies.get("tokenTime") - nowDate.getTime())/1000/60
+      
+      // 로그인 시간 설정
+      this.countMin = tmpCount.toFixed()
+      this.countSec = 0
+      
+      // console.log(this.countMin + ", " + this.countSec);
+      if(this.countMin > 0) {
+        this.countDownTimer()
       }
     },
-    // 데이터 저장 후 새로운 탭을 열게 되면 localStorage에 전달.
-    newTab() {
-      // console.log("localStorage 저장");
-      localStorage.setItem("vuex", sessionStorage.getItem("vuex")); // vuex session to local
+    // 로그인 유지 가능 시간
+    countDownTimer () {
+      clearInterval(this.countFlag);
+      if (this.countMin >= 0 && this.countSec >= 0){
+        if(this.countMin > 0 && this.countSec === 0){
+          this.countMin -= 1
+          this.countSec = 60
+        }
+        this.countSec -= 1
+        this.countFlag = setInterval(this.countDownTimer, 1000)
+      } else {
+        if(this.logoutFlag === false){
+          alert("로그인 화면으로 이동합니다.")
+          this.logout()
+        }
+      }
+    },
+    // 로그인 시간 연장 처리
+      async refreshTokenReCheck(){
+      clearInterval(this.countFlag);
+      this.countFlag = null;
+      await refreshTokenRe();
+      this.setTimeCount()
     },
     // 모달 열기
     openModal() {
@@ -164,7 +179,6 @@ export default {
     roturInit() {
       this.closeSpinner();
       this.$router.push("/productSel");
-      // this.$router.go();
     },
     // 스피너 열기
     openSpinner() {
@@ -262,6 +276,13 @@ tr:hover {
   right: 25px;
   margin-top: 10px;
   width: 100px;
+  z-index: 10;
+}
+.timerBoxPosition {
+  position: absolute;
+  right: 135px;
+  margin-top: 10px;
+  width: 105px;
   z-index: 10;
 }
 .userNamePosition {

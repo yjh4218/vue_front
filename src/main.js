@@ -9,7 +9,7 @@ import VueSidebarMenu from 'vue-sidebar-menu'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
+import VueCookies from "vue-cookies"
 
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 // Import Bootstrap and BootstrapVue CSS files (order is important)
@@ -22,6 +22,8 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(Viewer)
 Vue.use(VueSidebarMenu)
+//쿠키를 사용한다.
+Vue.use(VueCookies);
 
 library.add(faUserSecret)
 

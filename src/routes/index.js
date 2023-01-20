@@ -1,5 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import VueCookies from 'vue-cookies'
+import { refreshTokenRe } from '../api/userAPI'
 import mainpage from "../views/MainPage.vue";
 import userLogin from '../views/login/UserLogin.vue';
 import inspectSelView from "../views/inspect/InspectSelView.vue";
@@ -151,4 +153,38 @@ export const router = new VueRouter({
       component: claimInView,
     },
   ],
+  
+});
+
+router.beforeEach(async (to, from, next) => {
+  // to : 이동할 url
+  // from : 현재 url
+  // next : to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
+
+  var nowDate = new Date();
+  var maxDate = (VueCookies.get("tokenTime") - nowDate.getTime())/1000/60
+
+  if(to.fullPath === '/userLogin'){
+    return next();
+  }
+
+  if(VueCookies.isKey("accessToken") === null){
+    return next("/userLogin");
+  }
+
+  if(VueCookies.get("tokenTime") !== null && maxDate < 10){
+    console.log("accessToken 만료. 재발급 진행");
+    await refreshTokenRe();
+  } 
+  
+  if (to.matched.some(record => record.meta.unauthorized) || VueCookies.get("accessToken")){
+    console.log("토큰에 문제 없음");
+    return next();
+  }
+  else{
+    console.log("토큰에 문제 발생");
+    alert('로그인 시간이 만료되었습니다. \n로그인 창으로 이동합니다.');
+    return next("/userLogin");
+  }
+
 });

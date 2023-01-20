@@ -217,7 +217,7 @@ export default {
   methods: {
     // 데이터 조회
     searchData() {
-      console.log(this.$route.name);
+      // console.log(this.$route.name);
       this.spinnerStart();
       if (
         this.$route.name === "selectAllProduct" ||
@@ -239,7 +239,7 @@ export default {
           className: this.className,
           operation: this.operation
         };
-        console.log(data);
+        // console.log(data);
         // 검색 데이터 저장
         this.$store.commit("productStore/SET_SEARCH_DATA", data);
 

@@ -73,13 +73,11 @@ export default {
   },
   methods: {
     chkLogin() {
-      console.log("들어옴");
-      if (
-        this.$store.getters["loginStore/getUserLogin"].status === 200 &&
-        this.$store.getters["loginStore/getUserLogin"].data.body.result ===
-          "success"
-      ) {
+      // console.log("들어옴");
+      if(this.$cookies.isKey("accessToken")) {
         this.roturInit();
+      } else{
+        this.$store.commit("loginStore/SET_USER_LOGIN", []);
       }
     },
     userLogin() {
@@ -137,6 +135,7 @@ export default {
     },
     // 로그인이 되었을 경우
     roturInit() {
+      // console.log("로그인 확인되서 상품조회로 이동");
       this.closeSpinner();
       this.$router.push("/productSel");
       // this.$router.go();

@@ -157,7 +157,7 @@ export default {
       } else {
         this.openSpinner();
         let tmpSearchData = this.$store.getters["productStore/getSearchData"];
-        console.log(tmpSearchData);
+        // console.log(tmpSearchData);
 
         let data = {
           downExcel: "excel",
@@ -172,7 +172,7 @@ export default {
         this.$store.dispatch("productStore/SELECT_PRODUCT", data)
           .then((response) => {
             this.modalName = "excelDataDown";
-            console.log(response);
+            // console.log(response);
 
             /** exceljs 사용 */
             const ExcelJS = require('exceljs');
@@ -362,7 +362,7 @@ export default {
               },
             ]
 
-            console.log(response.data);
+            // console.log(response.data);
             response.data.map((item) =>{
               sheet.addRow(item);
             })
@@ -484,7 +484,7 @@ export default {
     },
     // 더블 클릭 이벤트
     productDetails(item) {
-      console.log(item);
+      // console.log(item);
       this.$store.commit("SET_PRODUCT", "");
 
       var tempData = {};
@@ -531,7 +531,7 @@ export default {
     },
     // 상품정보 변경
     selectReplyData(item) {
-      console.log(item);
+      // console.log(item);
       this.selectReply.forEach((element, index) => {
         if (element.id === item.id) {
           this.selectReply[index].selected = item.selected;
@@ -560,7 +560,7 @@ export default {
     },
     // 단종제품 테이블 row 색상 변경
     cptItems() {
-      console.log(this.getSelectProduct);
+      // console.log(this.getSelectProduct);
       return this.getSelectProduct.map((item) => {
         let tmp = item;
         // console.log(item);
@@ -595,7 +595,7 @@ export default {
   watch: {
     // 제품 조회 및 결과값 입력
     SelectProduct(val) {
-      console.log(val);
+      // console.log(val);
       let tmpSearchData = this.$store.getters["productStore/getSearchData"];
       if (tmpSearchData.page === 0) {
         // 총 검색 수량 확인

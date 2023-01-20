@@ -11,6 +11,8 @@ const loginStore = {
     userLogin: [],
     // 유저 로그아웃
     userLogout:[],
+    // 토큰 시간
+    tokenTime: 0
   },
   getters: {
     // 유저 로그인 결과
@@ -21,6 +23,10 @@ const loginStore = {
     getUserLogout(state) {
       return state.userLogout;
     },
+    // 토큰 시간 공유
+    getTokenTime(state){
+      return state.tokenTime
+    }
   },
   mutations: {
     // axios 통신결과 조회
@@ -32,6 +38,8 @@ const loginStore = {
     SET_USER_LOGOUT(state, userLogout) {
       state.userLogout = userLogout;
     },
+    // 토큰 시간 설정
+    
   },
   actions: {
     // 유저 로그인
